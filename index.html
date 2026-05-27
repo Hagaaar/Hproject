@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NCPD Kiroshi Interface - H</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cp-yellow: #fcee0a;
+  --cp-bg: #0b1118;
+  --cp-panel: #141d26;
+  --cp-border: #233242;
+  --cp-cyan: #00f0ff;
+  --cp-red: #ff003c;
+  --cp-text: #e0e0e0;
+  --cp-muted: #6b7d8f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--cp-bg); color: var(--cp-text); }
+body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+#app { height: 100%; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; position: relative; background: var(--cp-bg); }
+
+/* Header */
+#hdr { 
+  flex-shrink: 0; 
+  background: var(--cp-yellow); 
+  color: #000; 
+  padding: 30px 20px 40px; 
+  position: relative; 
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), 85% calc(100% - 15px), 82% 100%, 75% 100%, 72% calc(100% - 15px), 30% calc(100% - 15px), 27% calc(100% - 5px), 20% calc(100% - 5px), 17% calc(100% - 15px), 0 calc(100% - 15px));
+  z-index: 10;
+}
+.h-top { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.h-top span { opacity: 0.8; }
+.h1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+.h-name { font-size: 32px; font-weight: 700; line-height: 1; }
+.h-lv { font-size: 14px; font-weight: 600; opacity: 0.7; }
+.h-ip { font-size: 20px; font-weight: 700; }
+.xb { height: 6px; background: rgba(0,0,0,0.15); margin-bottom: 5px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+.xbf { height: 100%; background: #000; transition: width 0.4s; }
+.xl { font-size: 12px; font-weight: 700; text-align: right; opacity: 0.8; }
+
+#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 16px 80px; }
+::-webkit-scrollbar { width: 0px; }
+
+/* Nav */
+#nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--cp-bg); display: flex; z-index: 1000; padding: 10px; gap: 5px; border-top: 1px solid var(--cp-border); }
+.nb { flex: 1; background: var(--cp-panel); border: none; color: var(--cp-muted); cursor: pointer; padding: 12px 0; font-size: 12px; font-weight: 700; letter-spacing: 1px; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); transition: 0.2s; }
+.nb.on { background: var(--cp-yellow); color: #000; }
+
+/* Sections */
+.sec { display: none; }
+.sec.on { display: block; animation: fade 0.2s ease-out; }
+@keyframes fade { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* Section Titles */
+.cp-header-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 25px 0 15px; }
+.cp-stripe { height: 18px; width: 40px; background: repeating-linear-gradient(-45deg, var(--cp-yellow), var(--cp-yellow) 6px, transparent 6px, transparent 10px); transform: skew(-20deg); }
+.cp-htitle { background: var(--cp-yellow); color: #000; font-size: 16px; font-weight: 700; padding: 2px 15px; letter-spacing: 1px; }
+
+/* Quest item */
+.qi { display: flex; align-items: stretch; background: var(--cp-yellow); color: #000; margin-bottom: 12px; cursor: pointer; user-select: none; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: 0.1s; }
+.qi:active { transform: scale(0.98); }
+.qi.dn { background: var(--cp-panel); color: var(--cp-muted); border-left: 2px solid var(--cp-cyan); }
+.qi-content { padding: 14px 16px; flex: 1; }
+.qt { font-size: 18px; font-weight: 600; margin-bottom: 2px; line-height: 1.1; display: flex; justify-content: space-between; }
+.qt-arrow { font-weight: 700; opacity: 0.5; }
+.qr { font-size: 13px; font-weight: 600; opacity: 0.8; }
+.qi.dn .qt { text-decoration: line-through; opacity: 0.6; }
+
+/* Exploit (Campaigns) */
+.ex { background: var(--cp-panel); border: 1px solid var(--cp-border); padding: 16px; margin-bottom: 12px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
+.ex.dn { opacity: 0.4; }
+.ex.boss { border-color: var(--cp-yellow); border-left: 4px solid var(--cp-yellow); }
+.et { font-size: 16px; font-weight: 600; line-height: 1.2; margin-bottom: 12px; }
+.er { display: flex; justify-content: space-between; align-items: flex-end; }
+.erw { font-size: 13px; color: var(--cp-cyan); font-weight: 600; }
+.ebtn { background: var(--cp-yellow); border: none; padding: 6px 16px; font-size: 14px; font-weight: 700; color: #000; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.ebtn:active { background: #fff; }
+.ex.boss .ebtn { background: var(--cp-red); color: white; }
+.ok-lbl { font-size: 14px; font-weight: 700; color: var(--cp-muted); }
+.lk { opacity: 0.2; pointer-events: none; }
+
+/* Progress bar */
+.pb { height: 4px; background: var(--cp-panel); margin-bottom: 20px; position: relative; }
+.pbf { height: 100%; background: var(--cp-yellow); transition: width 0.4s; }
+.ph { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.ph span { font-size: 13px; font-weight: 600; color: var(--cp-text); }
+
+/* Shop */
+.shbal { font-size: 28px; font-weight: 700; color: var(--cp-yellow); margin-bottom: 20px; text-align: center; }
+.shi { display: flex; align-items: center; justify-content: space-between; background: var(--cp-panel); padding: 14px 16px; margin-bottom: 10px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+.shn { font-size: 15px; font-weight: 600; flex: 1; margin-right: 15px; line-height: 1.2; }
+.shc { font-size: 15px; color: var(--cp-yellow); font-weight: 700; margin-right: 15px; }
+.shbtn { background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 8px 12px; font-size: 12px; font-weight: 700; color: var(--cp-text); cursor: pointer; font-family: inherit; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+.shbtn.np { color: var(--cp-muted); border-color: transparent; cursor: default; }
+.shbtn:not(.np) { background: var(--cp-cyan); color: #000; border: none; }
+
+/* Weight & Inputs */
+.wrow { display: flex; gap: 10px; margin-top: 15px; }
+.winp { flex: 1; background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 10px 15px; color: var(--cp-text); font-size: 16px; font-family: inherit; font-weight: 600; outline: none; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.winp:focus { border-color: var(--cp-yellow); }
+.wsave { background: var(--cp-yellow); border: none; padding: 10px 20px; color: #000; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.wi { font-size: 13px; color: var(--cp-text); font-weight: 600; }
+
+/* Stats Grid */
+.sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+.sc { background: var(--cp-panel); padding: 20px; text-align: center; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
+.sv { font-size: 36px; font-weight: 700; color: var(--cp-cyan); line-height: 1; }
+.sl { font-size: 12px; color: var(--cp-muted); font-weight: 700; margin-top: 5px; }
+.scamp { background: var(--cp-panel); padding: 15px; margin-bottom: 12px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+.scr { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+
+/* Toast */
+#tc { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 400px; pointer-events: none; }
+.ts { padding: 15px 20px; font-size: 14px; font-weight: 700; background: var(--cp-bg); border-left: 4px solid var(--cp-cyan); color: var(--cp-text); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.ts.gold { border-color: var(--cp-yellow); color: var(--cp-yellow); }
+.ts.err { border-color: var(--cp-red); color: var(--cp-red); }
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="hdr">
+  <div class="h-top">&lt; <span>TERMINAL ACCES</span></div>
+  <div class="h1">
+    <div><span class="h-name">H</span><br><span class="h-lv" id="hlv">NETRUNNER / ARCHITECTE</span></div>
+    <div class="h-ip">E$ <span id="hip">0</span></div>
+  </div>
+  <div class="xb"><div class="xbf" id="hxb" style="width:0%"></div></div>
+  <div class="xl" id="hxl">0 / 100 REP</div>
+</div>
+
+<div id="content">
+  <div id="s-d" class="sec on">
+    <div class="cp-header-wrap">
+      <div class="cp-stripe"></div><div class="cp-htitle" id="dt">MAINTENANCE</div><div class="cp-stripe"></div>
+    </div>
+    <div id="dl"></div>
+  </div>
+  
+  <div id="s-h" class="sec">
+    <div class="cp-header-wrap">
+      <div class="cp-stripe"></div><div class="cp-htitle" id="wt">CONTRATS</div><div class="cp-stripe"></div>
+    </div>
+    <div id="wl"></div>
+  </div>
+  
+  <div id="s-c" class="sec"><div id="cl"></div></div>
+  
+  <div id="s-s" class="sec">
+    <div class="cp-header-wrap">
+      <div class="cp-stripe"></div><div class="cp-htitle">BLACK MARKET</div><div class="cp-stripe"></div>
+    </div>
+    <div class="shbal">FONDS : E$ <span id="shb">0</span></div>
+    <div id="sl"></div>
+  </div>
+  
+  <div id="s-st" class="sec">
+    <div class="cp-header-wrap">
+      <div class="cp-stripe"></div><div class="cp-htitle">DATA LINK</div><div class="cp-stripe"></div>
+    </div>
+    <div class="sgrid" id="stg"></div>
+    <div id="stc"></div>
+  </div>
+</div>
+
+<nav id="nav">
+  <button class="nb on" onclick="go('d')" id="nb-d">SYSTEME</button>
+  <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
+  <button class="nb" onclick="go('c')" id="nb-c">CYBERWARE</button>
+  <button class="nb" onclick="go('s')" id="nb-s">MARCHE</button>
+  <button class="nb" onclick="go('st')" id="nb-st">STATS</button>
+</nav>
+</div>
+<div id="tc"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeldCrtLO2oU7_ng1uvfivUa1pZI6MAzxABoP4i1TnFhfU4lFmkUyb-ckR1A5-FFyM6A/exec';
+
+const DS = {
+  player:{level:1,xp:0,ip:0},
+  lastDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,
+  practiceWeek:0,weightStart:null,weightCurrent:null,
+  dailies:[
+    {id:'d1',t:'PURGE SYSTEME SANGUIN',done:false,xp:10,ip:1},
+    {id:'d2',t:'CHOC THERMIQUE',done:false,xp:10,ip:1},
+    {id:'d3',t:'DECONNEXION MATRICE',done:false,xp:10,ip:1},
+    {id:'d4',t:'REPAS OFFLINE',done:false,xp:10,ip:1},
+    {id:'d5',t:'CONSOMMATION ORGANIQUE',done:false,xp:10,ip:1},
+    {id:'d6',t:'RAVITAILLEMENT BIO-SYNTH',done:false,xp:10,ip:1},
+    {id:'d7',t:'PATROUILLE DE SECTEUR',done:false,xp:10,ip:1},
+    {id:'d8',t:'SIMULATEUR COMBAT 1H',done:false,xp:10,ip:2},
+    {id:'d9',t:'LECTURE ECLAT DONNEES',done:false,xp:10,ip:1},
+    {id:'d10',t:'BACKUP MEMOIRE LOCALE',done:false,xp:10,ip:1},
+    {id:'d11',t:'PROTOCOLE GLITCH SYSTEME',done:false,xp:10,ip:1},
+    {id:'d12',t:'ENTRAINEMENT NIBBLES',done:false,xp:10,ip:1},
+  ],
+  weeklies:[
+    {id:'w1',t:'OVERCLOCKING METABOLIQUE',done:false,xp:50,ip:8},
+    {id:'w2',t:'PREPARATION RATIONS COMBAT',done:false,xp:50,ip:8},
+    {id:'w3',t:'INJECTION DONNEES AUDIO',done:false,xp:50,ip:8},
+    {id:'w4',t:'NETTOYAGE DE LA PLANQUE',done:false,xp:50,ip:8},
+    {id:'w5',t:'MISE A JOUR RESEAU',done:false,xp:50,ip:8},
+    {id:'w6',t:'MAINTENANCE QUARANTAINE',done:false,xp:50,ip:8},
+  ],
+  portfolio:[
+    {id:'pf1',t:'INITIALISATION CRYPTAGE',done:false,xp:100,ip:20},
+    {id:'pf2',t:'PIRATAGE ACADEMIE MILITECH',done:false,xp:200,ip:40},
+    {id:'pf3',t:'EXTRACTION URBANISME',done:false,xp:200,ip:45},
+    {id:'pf4',t:'INFILTRATION SECTEUR LOURD',done:false,xp:175,ip:35},
+    {id:'pf5',t:'DECRYPTAGE FICHIERS PRO',done:false,xp:200,ip:40},
+    {id:'pf6',t:'VOL DONNEES AGENCES',done:false,xp:250,ip:50},
+    {id:'pf7',t:'SYNTHESE HOLOGRAPHIQUE',done:false,xp:250,ip:50},
+    {id:'pf8',t:'COMPILATION DAEMON',done:false,xp:500,ip:120,boss:true},
+  ],
+  memoire:[
+    {id:'m1',t:'ANCRAGE BIOGRAPHIQUE',done:false,xp:150,ip:30},
+    {id:'m2',t:'POSITION DISCIPLINAIRE',done:false,xp:175,ip:35},
+    {id:'m3',t:'INFILTRATION MUESPACH',done:false,xp:300,ip:60,boss:true},
+    {id:'m4',t:'FINALISATION PARTIE 3',done:false,xp:175,ip:35},
+    {id:'m5',t:'ASSEMBLAGE CODE SOURCE',done:false,xp:125,ip:25},
+    {id:'m6',t:'REVISION REGISTRE',done:false,xp:200,ip:40},
+    {id:'m7',t:'FORMATAGE FINAL',done:false,xp:150,ip:30},
+    {id:'m8',t:'CONNEXION ALT CUNNINGHAM',done:false,xp:750,ip:150,boss:true},
+  ],
+  poids:[
+    {id:'kg1',kg:1,t:'REMPLACEMENT TISSUS LOURDS',done:false,xp:50,ip:20},
+    {id:'kg2',kg:2,t:'AMELIORATION STRUCTURELLE',done:false,xp:75,ip:25},
+    {id:'kg5',kg:5,t:'CHASSIS ALLEGE MOD KIROSHI',done:false,xp:150,ip:60},
+    {id:'kg10',kg:10,t:'OPTIMISATION COMBAT',done:false,xp:300,ip:150},
+    {id:'kg15',kg:15,t:'IMPLANTS AVANCES',done:false,xp:400,ip:200},
+    {id:'kg20',kg:20,t:'CORPS ELITE MAXTAC',done:false,xp:750,ip:500,boss:true},
+  ],
+  guitare:[
+    {id:'g1',t:'ACCORDS KERRY EURODYNE',done:false,xp:150,ip:30},
+    {id:'g2',t:'TRANSITIONS FLUIDES',done:false,xp:200,ip:35},
+    {id:'g3',t:'SESSION COMPLETE STUDIO',done:false,xp:300,ip:50},
+    {id:'g4',t:'PREMIER GIG AFTERLIFE',done:false,xp:500,ip:75},
+  ],
+  shop:[
+    {id:'s_mystery',t:'CACHE MILITECH INCONNUE',cost:15},
+    {id:'s1',t:'SESSION BRAINDANCE',cost:20},
+    {id:'s28',t:'RATION PREMIUM NIBBLES',cost:30},
+    {id:'s2',t:'LIVRAISON SYNTH-VIANDE',cost:40},
+    {id:'s12',t:'ARCHIVE PHYSIQUE STYLET',cost:60},
+    {id:'s13',t:'RECALIBRATION SQUELETTE',cost:80},
+    {id:'s14',t:'MODULE DIVERTISSEMENT',cost:80},
+    {id:'s3',t:'RESTAURANT CORPO',cost:100},
+    {id:'s15',t:'GIG UNDERGROUND',cost:100},
+    {id:'s16',t:'ARCHIVE PRE-GUERRE',cost:120},
+    {id:'s17',t:'MODULE COLLECTOR',cost:140},
+    {id:'s4',t:'MAINTENANCE MUSCULAIRE',cost:150},
+    {id:'s18',t:'IMPRESSION HOLO MAX',cost:180},
+    {id:'s19',t:'ARCHIVE PRE-GUERRE XL',cost:200},
+    {id:'s5',t:'CUVE BACTA SPA',cost:220},
+    {id:'s20',t:'AMORTISSEURS COURSE',cost:220},
+    {id:'s21',t:'FESTIVAL MAJEUR PARIS',cost:220},
+    {id:'s22',t:'ARCHIVE BLACKSAD',cost:220},
+    {id:'s6',t:'SYNTH-CUIR BLINDAGE',cost:280},
+    {id:'s7',t:'PACK NANOTECH MINEUR',cost:350},
+    {id:'s23',t:'AMORTISSEURS PREMIUM',cost:350},
+    {id:'s24',t:'OPTIQUE KIROSHI 85MM',cost:400},
+    {id:'s8',t:'PACK NANOTECH MOYEN',cost:600},
+    {id:'s25',t:'OPTIQUE GRAND ANGLE',cost:600},
+    {id:'s9',t:'PACK NANOTECH LOURD',cost:900},
+    {id:'s27',t:'OPTIQUE CORPO MAX',cost:1200},
+    {id:'s26',t:'KIROSHI LEGENDAIRE',cost:1200},
+    {id:'s10',t:'VOL LONDRES',cost:1800},
+    {id:'s11',t:'EXPEDITION IRLANDE',cost:2800},
+  ]
+};
+
+const KEY='cp_rlg_v3';
+
+function load(){
+  try{const d=localStorage.getItem(KEY);S=d?JSON.parse(d):JSON.parse(JSON.stringify(DS));}
+  catch(e){S=JSON.parse(JSON.stringify(DS));}
+  const flds=['dailies','weeklies','portfolio','memoire','poids','guitare','shop'];
+  flds.forEach(f=>{if(!S[f])S[f]=JSON.parse(JSON.stringify(DS[f]));});
+  if(S.practiceWeek===undefined)S.practiceWeek=0;
+  if(S.weightStart===undefined)S.weightStart=null;
+  if(S.weightCurrent===undefined)S.weightCurrent=null;
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(S));}
+
+function today(){const n=new Date();return `${n.getFullYear()}-${p2(n.getMonth()+1)}-${p2(n.getDate())}`;}
+function p2(n){return String(n).padStart(2,'0');}
+function weekId(){
+  const d=new Date(),day=d.getDay()||7;
+  d.setDate(d.getDate()+4-day);
+  const y=d.getFullYear(),s=new Date(y,0,1);
+  return y+'-W'+Math.ceil((((d-s)/86400000)+1)/7);
+}
+
+function toast(msg,type=''){
+  const el=document.createElement('div');
+  el.className='ts'+(type?' '+type:'');
+  el.textContent=msg;
+  document.getElementById('tc').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+function checkReset(){
+  const td=today(),wid=weekId();
+  if(S.lastDate!==td){
+    if(S.lastDate)S.daysPlayed=(S.daysPlayed||0)+1;
+    S.dailies.forEach(d=>d.done=false);
+    S.lastDate=td;
+  }
+  if(S.lastWeekId!==wid){
+    S.weeklies.forEach(w=>w.done=false);
+    S.practiceWeek=0;
+    S.lastWeekId=wid;
+  }
+  save();
+}
+
+function addXP(xp){
+  S.player.xp+=xp;
+  const need=()=>S.player.level*100;
+  let up=false;
+  while(S.player.xp>=need()&&S.player.level<50){S.player.xp-=need();S.player.level++;up=true;}
+  if(up)toast('STREET CRED UP : LEVEL '+S.player.level,'gold');
+}
+
+function rHdr(){
+  const p=S.player;
+  document.getElementById('hlv').textContent='LEVEL '+p.level+' / CORPO';
+  document.getElementById('hip').textContent=p.ip;
+  document.getElementById('shb').textContent=p.ip;
+  const need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
+  document.getElementById('hxb').style.width=pct+'%';
+  document.getElementById('hxl').textContent=p.xp+' / '+need+' REP';
+}
+
+function buildUI(arr, type) {
+  return arr.map(d=>`
+    <div class="qi${d.done?' dn':''}" onclick="tTask('${type}','${d.id}')">
+      <div class="qi-content">
+        <div class="qt"><span>${d.t}</span><span class="qt-arrow">&gt;</span></div>
+        <div class="qr">+${d.xp} REP${d.ip>0?` // +${d.ip} E$`:''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function rDailies(){
+  const done=S.dailies.filter(d=>d.done).length;
+  document.getElementById('dt').textContent=`MAINTENANCE ${done}/${S.dailies.length}`;
+  document.getElementById('dl').innerHTML=buildUI(S.dailies, 'dailies');
+}
+
+function rHebdo(){
+  const done=S.weeklies.filter(w=>w.done).length;
+  document.getElementById('wt').textContent=`CONTRATS ${done}/${S.weeklies.length}`;
+  document.getElementById('wl').innerHTML=buildUI(S.weeklies, 'weeklies');
+}
+
+function tTask(type, id){
+  const it=S[type].find(d=>d.id===id);if(!it)return;
+  if(!it.done){it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;if(it.ip>0)toast('TRANSFERT RECU : +'+it.ip+' E$','gold');}
+  else{it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);S.totalDone=Math.max(0,(S.totalDone||0)-1);}
+  save(); 
+  if(type === 'dailies') rDailies(); else rHebdo();
+  rHdr();
+}
+
+function exList(items,key){
+  return items.map((ex,i)=>{
+    const locked=(key==='portfolio'||key==='memoire')&&i>0&&!items[i-1].done;
+    return `<div class="ex${ex.done?' dn':''}${ex.boss?' boss':''}${locked?' lk':''}">
+      <div class="et">${ex.t}</div>
+      <div class="er">
+        <div class="erw">+${ex.xp} REP // +${ex.ip} E$</div>
+        ${ex.done?'<span class="ok-lbl">UPLOAD TERMINé</span>':`<button class="ebtn" onclick="valEx('${key}','${ex.id}')">EXECUTER</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function valEx(key,id){
+  const it=S[key].find(e=>e.id===id);if(!it||it.done)return;
+  if(!confirm('LANCER PROTOCOLE : "'+it.t.substring(0,25)+'..." ?'))return;
+  it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
+  toast(it.boss?'CIBLE NEUTRALISEE : +'+it.ip+' E$':'DONNEES EXTRAITES : +'+it.ip+' E$','gold');
+  save();rCamps();rHdr();
+}
+
+function headerTitle(name) {
+  return `<div class="cp-header-wrap"><div class="cp-stripe"></div><div class="cp-htitle">${name}</div><div class="cp-stripe"></div></div>`;
+}
+
+function rCamps(){
+  const pLoss=S.weightStart&&S.weightCurrent?Math.max(0,S.weightStart-S.weightCurrent):0;
+  const gActive=S.guitare.find(g=>!g.done);
+  const camps=[
+    {key:'portfolio',name:'PORTFOLIO',items:S.portfolio},
+    {key:'memoire',name:'PROJET RELIC',items:S.memoire},
+  ];
+  let h='';
+  camps.forEach(c=>{
+    const done=c.items.filter(e=>e.done).length,tot=c.items.length,pct=Math.round(done/tot*100);
+    h+=`${headerTitle(c.name)}
+      <div class="ph"><span>${done}/${tot} NODES</span><span>${pct}% COMPILé</span></div>
+      <div class="pb"><div class="pbf" style="width:${pct}%"></div></div>
+      ${exList(c.items,c.key)}`;
+  });
+
+  h+=`${headerTitle('BIOMETRIE')}
+    <div class="ex">
+      <div class="wi">${S.weightStart?'MASSE INIT : '+S.weightStart+' KG // ACTUELLE : '+S.weightCurrent+' KG // DIFFERENCE : '+pLoss.toFixed(1)+' KG':'SCAN REQUIS : ENTRER MASSE (KG)'}</div>
+      <div class="wrow">
+        <input class="winp" type="number" id="winp" placeholder="${S.weightCurrent||'MASSE'}" step="0.1">
+        <button class="wsave" onclick="logW()">SAUVER</button>
+      </div>
+    </div>
+    ${S.poids.map(m=>`
+    <div class="ex${m.done?' dn':''}${m.boss?' boss':''}">
+      <div class="et">${m.t}</div>
+      <div class="er">
+        <div class="erw">+${m.xp} REP // +${m.ip} E$</div>
+        <span style="font-size:12px;font-weight:700;color:${m.done?'var(--cp-cyan)':'var(--cp-muted)'}">${m.done?'ACTIF':'OFFLINE'}</span>
+      </div>
+    </div>`).join('')}`;
+
+  const gDone=S.guitare.filter(g=>g.done).length,gPct=Math.round(gDone/S.guitare.length*100);
+  h+=`${headerTitle('ROCKERBOY')}
+    <div class="ph"><span>${gDone}/${S.guitare.length} SEQUENCES</span><span>${gPct}% COMPILé</span></div>
+    <div class="pb"><div class="pbf" style="width:${gPct}%"></div></div>
+    <div class="ex">
+      <div style="font-size:13px;color:var(--cp-text);font-weight:600;margin-bottom:10px">SEQUENCE : ${gActive?gActive.t:'MAITRISE TOTALE'}</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <button class="wsave" style="flex:1;padding:8px" onclick="logG(15)">15M</button>
+        <button class="wsave" style="flex:1;padding:8px" onclick="logG(30)">30M</button>
+        <button class="wsave" style="flex:1;padding:8px;background:var(--cp-cyan)" onclick="logG(60)">1H+</button>
+      </div>
+      <div style="font-size:12px;color:var(--cp-yellow);font-weight:700">SYNCHRO HEBDO : ${S.practiceWeek||0}</div>
+    </div>
+    ${exList(S.guitare,'guitare')}`;
+
+  document.getElementById('cl').innerHTML=h;
+}
+
+function logW(){
+  const v=parseFloat(document.getElementById('winp').value);
+  if(isNaN(v)||v<30||v>300){toast('ERREUR : MASSE INVALIDE', 'err');return;}
+  if(!S.weightStart)S.weightStart=v;
+  S.weightCurrent=v;
+  const loss=Math.max(0,S.weightStart-v);
+  S.poids.forEach(m=>{
+    if(!m.done&&loss>=m.kg){
+      m.done=true;addXP(m.xp);S.player.ip+=m.ip;
+      toast('UPGRADE DEBLOQUE : +'+m.ip+' E$','gold');
+    }
+  });
+  save();rCamps();rHdr();
+  toast('DONNEES BIOMETRIQUES MAJ');
+}
+
+function logG(min){
+  const xp=min>=60?15:min>=30?10:5,ip=min>=60?1:0;
+  addXP(xp);S.player.ip+=ip;S.practiceWeek=(S.practiceWeek||0)+1;
+  save();rCamps();rHdr();
+  toast('SYNCHRO MUSICALE : +'+xp+' REP');
+}
+
+function rShop(){
+  document.getElementById('shb').textContent=S.player.ip;
+  document.getElementById('sl').innerHTML=S.shop.map(s=>{
+    const can=S.player.ip>=s.cost;
+    return `<div class="shi">
+      <span class="shn">${s.t}</span>
+      <span class="shc">${s.cost} E$</span>
+      <button class="shbtn${can?'':' np'}" onclick="${can?`buyIt('${s.id}')`:''}">
+        ${can?'ACQUERIR':'FUNDS REQUIS'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function buyIt(id){
+  const it=S.shop.find(s=>s.id===id);if(!it||S.player.ip<it.cost)return;
+  if(!confirm('TRANSFERER '+it.cost+' E$ POUR : '+it.t+' ?'))return;
+  
+  S.player.ip-=it.cost;
+  
+  if(id === 's_mystery') {
+    const loots = [
+      {m: 'HACK REUSSI : +30 E$', ip: 30, xp: 0},
+      {m: 'ECLAT MILITAIRE : +200 REP', ip: 0, xp: 200},
+      {m: 'PASS ACCES VIP : 1H BRAINDANCE GRATUITE', ip: 0, xp: 0},
+      {m: 'ERREUR TRANSFERT : REMBOURSEMENT 10 E$', ip: 10, xp: 0}
+    ];
+    const loot = loots[Math.floor(Math.random()*loots.length)];
+    if(loot.ip) S.player.ip += loot.ip;
+    if(loot.xp) addXP(loot.xp);
+    toast(loot.m, 'gold');
+  } else {
+    toast('TRANSACTION VALIDEE','gold');
+  }
+
+  save();rShop();rHdr();
+}
+
+function uploadData() {
+  toast('CONNEXION AU SERVEUR H PROJECT...');
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(S),
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8',
+    }
+  })
+  .then(response => response.text())
+  .then(text => {
+    toast('UPLOAD REUSSI : DONNEES SAUVEGARDEES', 'gold');
+  })
+  .catch(error => {
+    toast('ERREUR SYSTEME : CONNEXION ECHOUEE', 'err');
+    console.error(error);
+  });
+}
+
+function rStats(){
+  document.getElementById('stg').innerHTML=`
+    <div class="sc"><div class="sv">${S.player.level}</div><div class="sl">STREET CRED</div></div>
+    <div class="sc"><div class="sv">${S.player.ip}</div><div class="sl">EDDIES DISPO</div></div>
+    <div class="sc"><div class="sv">${S.totalDone||0}</div><div class="sl">GIGS REMPLIS</div></div>
+    <div class="sc"><div class="sv">${S.daysPlayed||0}</div><div class="sl">CYCLES ACTIFS</div></div>`;
+  
+  const cs=[
+    {n:'PORTFOLIO',items:S.portfolio},
+    {n:'PROJET RELIC',items:S.memoire},
+    {n:'ROCKERBOY',items:S.guitare},
+  ];
+  
+  let html = cs.map(c=>{
+    const done=c.items.filter(e=>e.done).length,pct=Math.round(done/c.items.length*100);
+    return `<div class="scamp">
+      <div class="scr"><span style="color:var(--cp-yellow)">${c.n}</span><span style="color:var(--cp-text)">${done}/${c.items.length}</span></div>
+      <div class="pb"><div class="pbf" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  html += `<div style="margin-top: 20px;">
+    <button class="wsave" style="width: 100%; padding: 15px; font-size: 16px; background: var(--cp-cyan);" onclick="uploadData()">UPLOAD SUR SERVEUR H PROJECT</button>
+  </div>`;
+
+  document.getElementById('stc').innerHTML = html;
+}
+
+function go(tab){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+tab).classList.add('on');
+  document.getElementById('nb-'+tab).classList.add('on');
+  document.getElementById('content').scrollTop=0;
+  if(tab==='d')rDailies();
+  else if(tab==='h')rHebdo();
+  else if(tab==='c')rCamps();
+  else if(tab==='s')rShop();
+  else if(tab==='st')rStats();
+}
+
+load();checkReset();rHdr();rDailies();
+</script>
+</body>
+</html>
