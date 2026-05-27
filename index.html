@@ -18,117 +18,36 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-/* Grille de points (Dot grid) en fond */
-html, body { 
-  height: 100%; 
-  overflow: hidden; 
-  background-color: var(--cp-bg);
-  background-image: radial-gradient(rgba(252, 238, 10, 0.15) 1px, transparent 1px);
-  background-size: 24px 24px;
-  color: var(--cp-text); 
-}
-
+html, body { height: 100%; overflow: hidden; background-color: var(--cp-bg); background-image: radial-gradient(rgba(252, 238, 10, 0.15) 1px, transparent 1px); background-size: 24px 24px; color: var(--cp-text); }
 body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-
 #app { height: 100%; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; position: relative; }
 
-/* Wrapper du header pour l'ombre de profondeur sans casser le clip-path */
+/* ---- HEADER ---- */
 #hdr-wrap {
-  position: fixed;
-  top: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  z-index: 100;
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; z-index: 100;
   filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.85));
 }
-
-/* Header avec découpe géométrique exacte de l'image de référence */
-/* Header avec découpe géométrique affinée (amplitude / 2 et épaisseur réduite) */
-#hdr { 
-  background: var(--cp-yellow); 
-  color: #000; 
-  padding: 15px 20px 55px 20px; 
+#hdr {
+  background: var(--cp-yellow); color: #000; padding: 15px 20px 55px 20px;
   clip-path: polygon(
-    0 0,
-    100% 0,
-    
-    /* Ligne médiane de base */
-    100% calc(100% - 25px),
-
-    /* Trait droit 3 (le plus fin et à moitié profondeur) */
-    99.3% calc(100% - 25px),
-    99.3% calc(100% - 12.5px), 99% calc(100% - 12.5px), 99% calc(100% - 18px), 99.3% calc(100% - 18px),
-    99.3% calc(100% - 25px),
-
-    /* Trait droit 2 */
-    97.5% calc(100% - 25px),
-    97.5% calc(100% - 12.5px), 97.2% calc(100% - 12.5px), 97.2% calc(100% - 18px), 97.5% calc(100% - 18px),
-    97.5% calc(100% - 25px),
-
-    /* Trait droit 1 (légèrement plus large mais affiné) */
-    94% calc(100% - 25px),
-    94% calc(100% - 12.5px), 93.2% calc(100% - 12.5px), 93.2% calc(100% - 18px), 94% calc(100% - 18px),
-    94% calc(100% - 25px),
-
-    /* Ligne droite jusqu'au sablier central */
-    50.8% calc(100% - 25px),
-
-    /* Sablier : Triangle inférieur (îlot flottant aminci) */
-    50.8% calc(100% - 12.5px), 49.2% calc(100% - 12.5px), 50% calc(100% - 18.5px), 50.8% calc(100% - 12.5px),
-    50.8% calc(100% - 25px),
-
-    /* Sablier : Triangle supérieur (découpe plus petite) */
-    50% calc(100% - 32.5px),
-    49.2% calc(100% - 25px),
-
-    /* Ligne droite jusqu'à la montagne gauche */
-    33% calc(100% - 25px),
-
-    /* Montée vers le sommet gauche (hauteur divisée par 2) */
-    28% calc(100% - 37.5px),
-
-    /* Découpes internes de la montagne (plus fines) */
-    /* Point 3 (droite) */
-    26.2% calc(100% - 37.5px),
-    26.2% calc(100% - 27.5px), 25.9% calc(100% - 27.5px), 25.9% calc(100% - 29.5px), 26.2% calc(100% - 29.5px),
-    26.2% calc(100% - 37.5px),
-
-    /* Point 2 (milieu, plus profond) */
-    24.7% calc(100% - 37.5px),
-    24.7% calc(100% - 22.5px), 24.4% calc(100% - 22.5px), 24.4% calc(100% - 29.5px), 24.7% calc(100% - 29.5px),
-    24.7% calc(100% - 37.5px),
-
-    /* Point 1 (gauche) */
-    23.2% calc(100% - 37.5px),
-    23.2% calc(100% - 25.5px), 22.9% calc(100% - 25.5px), 22.9% calc(100% - 27.5px), 23.2% calc(100% - 27.5px),
-    23.2% calc(100% - 37.5px),
-
-    /* Fin du sommet gauche */
-    21% calc(100% - 37.5px),
-
-    /* Descente vers la fosse de gauche (profondeur divisée par 2) */
-    17% calc(100% - 12.5px),
-
-    /* Fond de la fosse */
-    11% calc(100% - 12.5px),
-
-    /* Remontée vers la ligne médiane finale */
-    9% calc(100% - 25px),
-
-    /* Bordure extrême gauche */
-    0 calc(100% - 25px)
+    0 0, 100% 0, 100% calc(100% - 25px),
+    99.3% calc(100% - 25px), 99.3% calc(100% - 12.5px), 99% calc(100% - 12.5px), 99% calc(100% - 18px), 99.3% calc(100% - 18px), 99.3% calc(100% - 25px),
+    97.5% calc(100% - 25px), 97.5% calc(100% - 12.5px), 97.2% calc(100% - 12.5px), 97.2% calc(100% - 18px), 97.5% calc(100% - 18px), 97.5% calc(100% - 25px),
+    94% calc(100% - 25px), 94% calc(100% - 12.5px), 93.2% calc(100% - 12.5px), 93.2% calc(100% - 18px), 94% calc(100% - 18px), 94% calc(100% - 25px),
+    50.8% calc(100% - 25px), 50.8% calc(100% - 12.5px), 49.2% calc(100% - 12.5px), 50% calc(100% - 18.5px), 50.8% calc(100% - 12.5px), 50.8% calc(100% - 25px),
+    50% calc(100% - 32.5px), 49.2% calc(100% - 25px),
+    33% calc(100% - 25px), 28% calc(100% - 37.5px),
+    26.2% calc(100% - 37.5px), 26.2% calc(100% - 27.5px), 25.9% calc(100% - 27.5px), 25.9% calc(100% - 29.5px), 26.2% calc(100% - 29.5px), 26.2% calc(100% - 37.5px),
+    24.7% calc(100% - 37.5px), 24.7% calc(100% - 22.5px), 24.4% calc(100% - 22.5px), 24.4% calc(100% - 29.5px), 24.7% calc(100% - 29.5px), 24.7% calc(100% - 37.5px),
+    23.2% calc(100% - 37.5px), 23.2% calc(100% - 25.5px), 22.9% calc(100% - 25.5px), 22.9% calc(100% - 27.5px), 23.2% calc(100% - 27.5px), 23.2% calc(100% - 37.5px),
+    21% calc(100% - 37.5px), 17% calc(100% - 12.5px), 11% calc(100% - 12.5px), 9% calc(100% - 25px), 0 calc(100% - 25px)
   );
 }
-
 .h-top { font-size: 12px; font-weight: 700; opacity: 0.8; margin-bottom: 10px; letter-spacing: 1px; }
-
-/* Indicateur de synchro */
 .sync-status { position: absolute; top: 15px; right: 20px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 5px; letter-spacing: 1px; }
 .sync-dot { width: 6px; height: 6px; background: #000; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-.sync-status.synching .sync-dot { background: #000; animation: blink 0.8s infinite; }
-.sync-status.synched .sync-dot { background: #000; }
+.sync-status.synching .sync-dot { animation: blink 0.8s infinite; }
 .sync-status.offline { color: var(--cp-red); }
 .sync-status.offline .sync-dot { background: var(--cp-red); }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -136,41 +55,62 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .h1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
 .h-name { font-size: 28px; font-weight: 700; line-height: 1; }
 .h-lv { font-size: 13px; font-weight: 600; opacity: 0.7; }
-.h-ip { font-size: 22px; font-weight: 700; }
+.h-right { text-align: right; }
+.h-ip { font-size: 22px; font-weight: 700; line-height: 1.1; }
+.h-streak { font-size: 12px; font-weight: 700; opacity: 0.85; margin-top: 2px; }
 .xb { height: 4px; background: rgba(0,0,0,0.15); margin-bottom: 4px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
 .xbf { height: 100%; background: #000; transition: width 0.4s; }
 .xl { font-size: 11px; font-weight: 700; text-align: right; opacity: 0.8; }
 
-/* Animations de Points (Haut Droite, dans le wrapper pour glisser sur l'ombre) */
-#gain-anim { position: absolute; top: 40px; right: 20px; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; z-index: 200; pointer-events: none; }
-.gain-pop { background: var(--cp-bg); border: 1px solid var(--cp-cyan); color: var(--cp-cyan); padding: 4px 12px; font-size: 14px; font-weight: 700; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); animation: dropFade 1.2s ease-out forwards; box-shadow: 0 0 10px rgba(0,240,255,0.2); text-shadow: 0 0 4px rgba(0,240,255,0.5); }
+/* ---- GAIN ANIMATION — centered, descends ---- */
+#gain-anim {
+  position: fixed;
+  top: 158px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 6px; align-items: center;
+  z-index: 500; pointer-events: none;
+  width: max-content;
+}
+.gain-pop {
+  background: var(--cp-bg); border: 1px solid var(--cp-cyan); color: var(--cp-cyan);
+  padding: 5px 16px; font-size: 15px; font-weight: 700;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  animation: dropFade 1.5s ease-out forwards;
+  box-shadow: 0 0 12px rgba(0,240,255,0.25); text-shadow: 0 0 4px rgba(0,240,255,0.5);
+  white-space: nowrap;
+}
 @keyframes dropFade {
-  0% { opacity: 0; transform: translateY(-10px); }
-  15% { opacity: 1; transform: translateY(0); }
-  70% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(15px); }
+  0%   { opacity: 0; transform: translateY(0px);  }
+  15%  { opacity: 1; transform: translateY(0px);  }
+  65%  { opacity: 1; transform: translateY(8px);  }
+  100% { opacity: 0; transform: translateY(55px); }
 }
 
-/* Contenu avec padding ajusté pour passer sous l'ombre du header */
-#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 155px 16px 90px; }
+/* ---- CONTENT ---- */
+#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 158px 16px 90px; }
 ::-webkit-scrollbar { width: 0px; }
 
-/* Nav */
-#nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--cp-bg); display: flex; z-index: 1000; padding: 10px; gap: 5px; border-top: 1px solid var(--cp-border); }
+/* ---- NAV ---- */
+#nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; background: var(--cp-bg);
+  display: flex; z-index: 1000; padding: 10px; gap: 5px;
+  border-top: 1px solid var(--cp-border);
+}
 .nb { flex: 1; background: var(--cp-panel); border: none; color: var(--cp-muted); cursor: pointer; padding: 12px 0; font-size: 12px; font-weight: 700; letter-spacing: 1px; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); transition: 0.2s; }
 .nb.on { background: var(--cp-yellow); color: #000; }
 
-/* Sections */
 .sec { display: none; }
 .sec.on { display: block; animation: fade 0.2s ease-out; }
 @keyframes fade { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-/* Titres de Section */
-.cp-header-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 25px 0 15px; }
+/* ---- SECTION HEADERS ---- */
+.cp-header-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0 15px; }
 .cp-stripe { height: 18px; width: 40px; background: repeating-linear-gradient(-45deg, var(--cp-yellow), var(--cp-yellow) 6px, transparent 6px, transparent 10px); transform: skew(-20deg); }
 .cp-htitle { background: var(--cp-yellow); color: #000; font-size: 16px; font-weight: 700; padding: 2px 15px; letter-spacing: 1px; }
 
-/* Objets / Quêtes */
+/* ---- QUEST ITEMS ---- */
 .qi { display: flex; align-items: stretch; background: var(--cp-yellow); color: #000; margin-bottom: 12px; cursor: pointer; user-select: none; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: 0.1s; }
 .qi:active { transform: scale(0.98); }
 .qi.dn { background: var(--cp-panel); color: var(--cp-muted); border-left: 2px solid var(--cp-cyan); }
@@ -182,44 +122,65 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .qr { font-size: 13px; font-weight: 700; opacity: 0.9; }
 .qi.dn .qt { text-decoration: line-through; opacity: 0.6; }
 
-/* Exploits (Campagnes) */
+/* ---- EXPEDITION ITEMS ---- */
 .ex { background: var(--cp-panel); border: 1px solid var(--cp-border); padding: 16px; margin-bottom: 12px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
-.ex.dn { opacity: 0.4; }
+.ex.dn { opacity: 0.6; border-color: transparent; }
 .ex.boss { border-color: var(--cp-yellow); border-left: 4px solid var(--cp-yellow); }
 .et { font-size: 16px; font-weight: 600; line-height: 1.2; margin-bottom: 4px; }
 .ex .qdesc { color: var(--cp-muted); opacity: 0.8; margin-bottom: 12px; }
-.er { display: flex; justify-content: space-between; align-items: flex-end; }
+.er { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
 .erw { font-size: 13px; color: var(--cp-cyan); font-weight: 600; }
-.ebtn { background: var(--cp-yellow); border: none; padding: 6px 16px; font-size: 14px; font-weight: 700; color: #000; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.ebtn { background: var(--cp-yellow); border: none; padding: 6px 16px; font-size: 14px; font-weight: 700; color: #000; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); white-space: nowrap; }
+.ebtn.cancel { background: transparent; border: 1px solid var(--cp-muted); color: var(--cp-muted); }
 .ebtn:active { background: #fff; }
 .ex.boss .ebtn { background: var(--cp-red); color: white; }
-.ok-lbl { font-size: 14px; font-weight: 700; color: var(--cp-muted); }
 .lk { opacity: 0.2; pointer-events: none; }
 
-/* Progress bar */
-.pb { height: 4px; background: rgba(20,29,38,0.8); margin-bottom: 20px; position: relative; }
+/* ---- PROGRESS ---- */
+.pb { height: 4px; background: rgba(20,29,38,0.8); margin-bottom: 20px; }
 .pbf { height: 100%; background: var(--cp-yellow); transition: width 0.4s; }
 .ph { display: flex; justify-content: space-between; margin-bottom: 8px; }
 .ph span { font-size: 13px; font-weight: 600; color: var(--cp-text); }
 
-/* Shop */
-.shbal { font-size: 28px; font-weight: 700; color: var(--cp-yellow); margin-bottom: 20px; text-align: center; }
+/* ---- ACCORDION ---- */
+.acc-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--cp-yellow); color: #000;
+  padding: 11px 16px; margin: 18px 0 0;
+  cursor: pointer; user-select: none;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  font-size: 15px; font-weight: 700; letter-spacing: 1px;
+  transition: opacity 0.1s;
+}
+.acc-hdr:active { opacity: 0.85; }
+.acc-hdr-left { display: flex; align-items: center; gap: 10px; }
+.acc-badge { background: rgba(0,0,0,0.18); padding: 1px 8px; font-size: 11px; font-weight: 700; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+.acc-arrow { font-size: 10px; opacity: 0.7; }
+.acc-body { padding-top: 12px; }
+.acc-body.closed { display: none; }
+
+/* ---- SHOP ---- */
+.shbal { font-size: 28px; font-weight: 700; color: var(--cp-yellow); margin-bottom: 15px; text-align: center; }
+.shop-filters { display: flex; gap: 8px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 4px; }
+.shop-filters::-webkit-scrollbar { display: none; }
+.sf-btn { background: var(--cp-panel); border: 1px solid var(--cp-border); color: var(--cp-muted); padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.5px; white-space: nowrap; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); transition: 0.15s; }
+.sf-btn.on { background: var(--cp-yellow); color: #000; border-color: var(--cp-yellow); }
 .shi { display: flex; align-items: center; justify-content: space-between; background: var(--cp-panel); padding: 14px 16px; margin-bottom: 10px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 .shn { font-size: 15px; font-weight: 600; line-height: 1.2; }
 .shi .qdesc { margin-bottom: 0; margin-top: 4px; color: var(--cp-muted); }
-.shc { font-size: 15px; color: var(--cp-yellow); font-weight: 700; margin-right: 15px; }
-.shbtn { background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 8px 12px; font-size: 12px; font-weight: 700; color: var(--cp-text); cursor: pointer; font-family: inherit; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+.shc { font-size: 15px; color: var(--cp-yellow); font-weight: 700; margin-right: 15px; white-space: nowrap; }
+.shbtn { background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 8px 12px; font-size: 12px; font-weight: 700; color: var(--cp-text); cursor: pointer; font-family: inherit; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); white-space: nowrap; }
 .shbtn.np { color: var(--cp-muted); border-color: transparent; cursor: default; }
 .shbtn:not(.np) { background: var(--cp-cyan); color: #000; border: none; }
 
-/* Weight & Inputs */
+/* ---- WEIGHT / GUITAR INPUTS ---- */
 .wrow { display: flex; gap: 10px; margin-top: 15px; }
 .winp { flex: 1; background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 10px 15px; color: var(--cp-text); font-size: 16px; font-family: inherit; font-weight: 600; outline: none; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .winp:focus { border-color: var(--cp-yellow); }
 .wsave { background: var(--cp-yellow); border: none; padding: 10px 20px; color: #000; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .wi { font-size: 13px; color: var(--cp-text); font-weight: 600; }
 
-/* Stats Grid */
+/* ---- STATS ---- */
 .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
 .sc { background: var(--cp-panel); padding: 20px; text-align: center; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
 .sv { font-size: 36px; font-weight: 700; color: var(--cp-cyan); line-height: 1; }
@@ -227,17 +188,28 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .scamp { background: var(--cp-panel); padding: 15px; margin-bottom: 12px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 .scr { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
 
-/* Toasts (Haut Centre) */
+/* ---- TOAST ---- */
 #tc { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 400px; pointer-events: none; }
-.ts { padding: 15px 20px; font-size: 14px; font-weight: 700; background: var(--cp-bg); border-left: 4px solid var(--cp-cyan); color: var(--cp-text); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.ts { padding: 15px 20px; font-size: 14px; font-weight: 700; background: var(--cp-bg); border-left: 4px solid var(--cp-cyan); color: var(--cp-text); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: fade 0.3s; }
 .ts.gold { border-color: var(--cp-yellow); color: var(--cp-yellow); }
 .ts.err { border-color: var(--cp-red); color: var(--cp-red); }
+
+/* ---- MODAL ---- */
+#modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 24, 0.9); z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(3px); }
+#modal-overlay.on { display: flex; animation: fade 0.2s ease-out; }
+.modal-box { background: var(--cp-panel); border: 2px solid var(--cp-yellow); width: 100%; max-width: 350px; padding: 20px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.modal-title { color: var(--cp-yellow); font-size: 18px; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; }
+.modal-text { color: var(--cp-text); font-size: 14px; margin-bottom: 25px; font-weight: 600; white-space: pre-line; }
+.modal-btns { display: flex; gap: 10px; }
+.btn-ok { flex: 1; background: var(--cp-yellow); color: #000; border: none; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.btn-cancel { flex: 1; background: transparent; color: var(--cp-red); border: 1px solid var(--cp-red); padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.btn-ok:active { background: #fff; }
+.btn-cancel:active { background: rgba(255,0,60,0.2); }
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- Wrapper du Header pour l'ombre -->
 <div id="hdr-wrap">
   <div id="hdr">
     <div class="sync-status synched" id="sync-ui">
@@ -245,15 +217,22 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
     </div>
     <div class="h-top">PLAYER PROFIL</div>
     <div class="h1">
-      <div><span class="h-name">H</span><br><span class="h-lv" id="hlv">NETRUNNER / ARCHITECTE</span></div>
-      <div class="h-ip">E$ <span id="hip">0</span></div>
+      <div>
+        <span class="h-name">H</span><br>
+        <span class="h-lv" id="hlv">NETRUNNER / ARCHITECTE</span>
+      </div>
+      <div class="h-right">
+        <div class="h-ip">E$ <span id="hip">0</span></div>
+        <div class="h-streak" id="hstreak">🔥 0 JOURS</div>
+      </div>
     </div>
     <div class="xb"><div class="xbf" id="hxb" style="width:0%"></div></div>
     <div class="xl" id="hxl">0 / 100 REP</div>
   </div>
-  <!-- Animation des points placée dans le wrapper -->
-  <div id="gain-anim"></div>
 </div>
+
+<!-- Gain animation : fixed, centré, descend -->
+<div id="gain-anim"></div>
 
 <div id="content">
   <div id="s-d" class="sec on">
@@ -262,16 +241,16 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
     </div>
     <div id="dl"></div>
   </div>
-  
+
   <div id="s-h" class="sec">
     <div class="cp-header-wrap">
       <div class="cp-stripe"></div><div class="cp-htitle" id="wt">CONTRATS</div><div class="cp-stripe"></div>
     </div>
     <div id="wl"></div>
   </div>
-  
+
   <div id="s-c" class="sec"><div id="cl"></div></div>
-  
+
   <div id="s-s" class="sec">
     <div class="cp-header-wrap">
       <div class="cp-stripe"></div><div class="cp-htitle">BLACK MARKET</div><div class="cp-stripe"></div>
@@ -279,7 +258,7 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
     <div class="shbal">FONDS : E$ <span id="shb">0</span></div>
     <div id="sl"></div>
   </div>
-  
+
   <div id="s-st" class="sec">
     <div class="cp-header-wrap">
       <div class="cp-stripe"></div><div class="cp-htitle">DATA LINK</div><div class="cp-stripe"></div>
@@ -297,214 +276,259 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
   <button class="nb" onclick="go('st')" id="nb-st">STATS</button>
 </nav>
 </div>
+
 <div id="tc"></div>
+
+<div id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">CONFIRMATION</div>
+    <div class="modal-text" id="modal-text"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">ANNULER</button>
+      <button class="btn-ok" onclick="executeConfirm()">EXÉCUTER</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeldCrtLO2oU7_ng1uvfivUa1pZI6MAzxABoP4i1TnFhfU4lFmkUyb-ckR1A5-FFyM6A/exec';
+const KEY = 'cp_rlg_v8';
 
+// ─── DEFAULT STATE ──────────────────────────────────────────────────────────
 const DS = {
-  player:{level:1,xp:0,ip:0},
-  lastDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,
-  practiceWeek:0,weightStart:null,weightCurrent:null,
+  player: { level:1, xp:0, ip:0, streak:0 },
+  lastDate:'', lastWeekId:'', totalDone:0, daysPlayed:0,
+  practiceWeek:0, weightStart:null, weightCurrent:null,
   dailies:[
-    {id:'d1',t:'PURGE SYSTEME SANGUIN', desc:'Boire une grande quantité d\'eau', done:false,xp:10,ip:1},
-    {id:'d2',t:'CHOC THERMIQUE', desc:'Douche chaud / froid', done:false,xp:10,ip:1},
-    {id:'d3',t:'DECONNEXION MATRICE', desc:'10 min de méditation', done:false,xp:10,ip:1},
-    {id:'d4',t:'REPAS OFFLINE', desc:'Prendre un repas sans aucun écran', done:false,xp:10,ip:1},
-    {id:'d5',t:'CONSOMMATION ORGANIQUE', desc:'Manger 1 fruit dans la journée', done:false,xp:10,ip:1},
-    {id:'d6',t:'RAVITAILLEMENT BIO-SYNTH', desc:'Avoir 50% de légumes aux repas', done:false,xp:10,ip:1},
-    {id:'d7',t:'PATROUILLE DE SECTEUR', desc:'30 minutes minimum de mouvement / marche', done:false,xp:10,ip:1},
-    {id:'d8',t:'SIMULATEUR COMBAT 1H', desc:'Séance de sport intense (1 heure)', done:false,xp:10,ip:2},
-    {id:'d9',t:'LECTURE ECLAT DONNEES', desc:'15 minutes de lecture', done:false,xp:10,ip:1},
-    {id:'d10',t:'BACKUP MEMOIRE LOCALE', desc:'Faire son journaling en fin de journée', done:false,xp:10,ip:1},
-    {id:'d11',t:'PROTOCOLE GLITCH SYSTEME', desc:'Faire 20 pompes à chaque éternuement', done:false,xp:10,ip:1},
-    {id:'d12',t:'ENTRAINEMENT NIBBLES', desc:'15 minutes de jeu au laser avec Jiji', done:false,xp:10,ip:1},
+    {id:'d1',  t:'PURGE SYSTEME SANGUIN',    desc:"Boire une grande quantité d'eau",             done:false, xp:10, ip:1},
+    {id:'d2',  t:'CHOC THERMIQUE',           desc:'Douche chaud / froid',                        done:false, xp:10, ip:1},
+    {id:'d3',  t:'DECONNEXION MATRICE',      desc:'10 min de méditation',                        done:false, xp:10, ip:1},
+    {id:'d4',  t:'REPAS OFFLINE',            desc:'Prendre un repas sans aucun écran',           done:false, xp:10, ip:1},
+    {id:'d5',  t:'CONSOMMATION ORGANIQUE',   desc:'Manger 1 fruit dans la journée',              done:false, xp:10, ip:1},
+    {id:'d6',  t:'RAVITAILLEMENT BIO-SYNTH', desc:'Avoir 50% de légumes aux repas',              done:false, xp:10, ip:1},
+    {id:'d7',  t:'PATROUILLE DE SECTEUR',    desc:'30 minutes minimum de mouvement / marche',    done:false, xp:10, ip:1},
+    {id:'d8',  t:'SIMULATEUR COMBAT 1H',     desc:"Séance de sport intense (1 heure)",           done:false, xp:10, ip:2},
+    {id:'d9',  t:'LECTURE ECLAT DONNEES',    desc:'15 minutes de lecture',                       done:false, xp:10, ip:1},
+    {id:'d10', t:'BACKUP MEMOIRE LOCALE',    desc:'Faire son journaling en fin de journée',      done:false, xp:10, ip:1},
+    {id:'d11', t:'PROTOCOLE GLITCH SYSTEME', desc:"Faire 20 pompes à chaque éternuement",        done:false, xp:10, ip:1},
+    {id:'d12', t:'ENTRAINEMENT NIBBLES',     desc:'15 minutes de jeu au laser avec Jiji',        done:false, xp:10, ip:1},
   ],
   weeklies:[
-    {id:'w1',t:'OVERCLOCKING METABOLIQUE', desc:'Jeûner un jour complet', done:false,xp:50,ip:8},
-    {id:'w2',t:'PREPARATION RATIONS COMBAT', desc:'Faire du batch cooking ou des plats one-pot', done:false,xp:50,ip:8},
-    {id:'w3',t:'INJECTION DONNEES AUDIO', desc:'Écouter un livre audio ou un podcast', done:false,xp:50,ip:8},
-    {id:'w4',t:'NETTOYAGE DE LA PLANQUE', desc:'Faire l\'entretien complet de l\'appartement', done:false,xp:50,ip:8},
-    {id:'w5',t:'MISE A JOUR RESEAU', desc:'Prendre des nouvelles des proches par téléphone', done:false,xp:50,ip:8},
-    {id:'w6',t:'MAINTENANCE QUARANTAINE', desc:'Changement litière complète et brossage de Jiji', done:false,xp:50,ip:8},
+    {id:'w1', t:'OVERCLOCKING METABOLIQUE',  desc:'Jeûner un jour complet',                               done:false, xp:50, ip:8},
+    {id:'w2', t:'PREPARATION RATIONS COMBAT',desc:'Faire du batch cooking ou des plats one-pot',          done:false, xp:50, ip:8},
+    {id:'w3', t:'INJECTION DONNEES AUDIO',   desc:'Écouter un livre audio ou un podcast',                 done:false, xp:50, ip:8},
+    {id:'w4', t:'NETTOYAGE DE LA PLANQUE',   desc:"Faire l'entretien complet de l'appartement",           done:false, xp:50, ip:8},
+    {id:'w5', t:'MISE A JOUR RESEAU',        desc:'Prendre des nouvelles des proches par téléphone',      done:false, xp:50, ip:8},
+    {id:'w6', t:'MAINTENANCE QUARANTAINE',   desc:'Changement litière complète et brossage de Jiji',      done:false, xp:50, ip:8},
   ],
   portfolio:[
-    {id:'pf1',t:'INITIALISATION CRYPTAGE', desc:'Setup InDesign et 3 fichiers Book validés', done:false,xp:100,ip:20},
-    {id:'pf2',t:'PIRATAGE ACADEMIE MILITECH', desc:'Finaliser Architecture école (Vol.1 Lot 1)', done:false,xp:200,ip:40},
-    {id:'pf3',t:'EXTRACTION URBANISME', desc:'Finaliser Workshops + Concours + Urbanisme', done:false,xp:200,ip:45},
-    {id:'pf4',t:'INFILTRATION SECTEUR LOURD', desc:'Finaliser ALSH Spechbach, Muespach et Sovia', done:false,xp:175,ip:35},
-    {id:'pf5',t:'DECRYPTAGE FICHIERS PRO', desc:'Finaliser Standards + Urbanisme pro (Vol.2)', done:false,xp:200,ip:40},
-    {id:'pf6',t:'VOL DONNEES AGENCES', desc:'Finaliser Concours Lycée Mermoz + ALSH Aspach', done:false,xp:250,ip:50},
-    {id:'pf7',t:'SYNTHESE HOLOGRAPHIQUE', desc:'Finaliser Graphisme, 3D et Photo (Vol.3)', done:false,xp:250,ip:50},
-    {id:'pf8',t:'COMPILATION DAEMON', desc:'Export PDF × 3 + Lancement de la commande Lulu', done:false,xp:500,ip:120,boss:true},
+    {id:'pf1', t:'INITIALISATION CRYPTAGE',    desc:'Setup InDesign et 3 fichiers Book validés',                   done:false, xp:100, ip:20},
+    {id:'pf2', t:'PIRATAGE ACADEMIE MILITECH', desc:'Finaliser Architecture école (Vol.1 Lot 1)',                   done:false, xp:200, ip:40},
+    {id:'pf3', t:'EXTRACTION URBANISME',       desc:'Finaliser Workshops + Concours + Urbanisme',                   done:false, xp:200, ip:45},
+    {id:'pf4', t:'INFILTRATION SECTEUR LOURD', desc:'Finaliser ALSH Spechbach, Muespach et Sovia',                 done:false, xp:175, ip:35},
+    {id:'pf5', t:'DECRYPTAGE FICHIERS PRO',    desc:'Finaliser Standards + Urbanisme pro (Vol.2)',                  done:false, xp:200, ip:40},
+    {id:'pf6', t:'VOL DONNEES AGENCES',        desc:'Finaliser Concours Lycée Mermoz + ALSH Aspach',               done:false, xp:250, ip:50},
+    {id:'pf7', t:'SYNTHESE HOLOGRAPHIQUE',     desc:'Finaliser Graphisme, 3D et Photo (Vol.3)',                     done:false, xp:250, ip:50},
+    {id:'pf8', t:'COMPILATION DAEMON',         desc:'Export PDF × 3 + Lancement de la commande Lulu',              done:false, xp:500, ip:120, boss:true},
   ],
   memoire:[
-    {id:'m1',t:'ANCRAGE BIOGRAPHIQUE', desc:'Rédiger Partie 1 : Ancrage biographique (4 sections)', done:false,xp:150,ip:30},
-    {id:'m2',t:'POSITION DISCIPLINAIRE', desc:'Rédiger Sections 2.1 et 2.2 : Position disciplinaire', done:false,xp:175,ip:35},
-    {id:'m3',t:'INFILTRATION MUESPACH', desc:'Rédiger Section 2.3 : Étude de cas ALSH Muespach', done:false,xp:300,ip:60,boss:true},
-    {id:'m4',t:'FINALISATION PARTIE 3', desc:'Rédiger Sections 2.4, la Partie 3 et l\'Introduction', done:false,xp:175,ip:35},
-    {id:'m5',t:'ASSEMBLAGE CODE SOURCE', desc:'Faire l\'assemblage global du mémoire et les corrections', done:false,xp:125,ip:25},
-    {id:'m6',t:'REVISION REGISTRE', desc:'Faire la révision V2 (registre praticien)', done:false,xp:200,ip:40},
-    {id:'m7',t:'FORMATAGE FINAL', desc:'Terminer la mise en page et la relecture finale', done:false,xp:150,ip:30},
-    {id:'m8',t:'CONNEXION ALT CUNNINGHAM', desc:'Validation et dépôt final du mémoire HMONP', done:false,xp:750,ip:150,boss:true},
+    {id:'m1', t:'ANCRAGE BIOGRAPHIQUE',   desc:'Rédiger Partie 1 : Ancrage biographique (4 sections)',          done:false, xp:150, ip:30},
+    {id:'m2', t:'POSITION DISCIPLINAIRE', desc:'Rédiger Sections 2.1 et 2.2 : Position disciplinaire',          done:false, xp:175, ip:35},
+    {id:'m3', t:'INFILTRATION MUESPACH',  desc:'Rédiger Section 2.3 : Étude de cas ALSH Muespach',              done:false, xp:300, ip:60, boss:true},
+    {id:'m4', t:'FINALISATION PARTIE 3',  desc:"Rédiger Sections 2.4, la Partie 3 et l'Introduction",           done:false, xp:175, ip:35},
+    {id:'m5', t:'ASSEMBLAGE CODE SOURCE', desc:'Faire l'assemblage global du mémoire et les corrections',        done:false, xp:125, ip:25},
+    {id:'m6', t:'REVISION REGISTRE',      desc:'Faire la révision V2 (registre praticien)',                      done:false, xp:200, ip:40},
+    {id:'m7', t:'FORMATAGE FINAL',        desc:'Terminer la mise en page et la relecture finale',                done:false, xp:150, ip:30},
+    {id:'m8', t:'CONNEXION ALT CUNNINGHAM',desc:'Validation et dépôt final du mémoire HMONP',                   done:false, xp:750, ip:150, boss:true},
   ],
   poids:[
-    {id:'kg1',kg:1,t:'REMPLACEMENT TISSUS LOURDS', desc:'Atteindre une perte de 1 kg', done:false,xp:50,ip:20},
-    {id:'kg2',kg:2,t:'AMELIORATION STRUCTURELLE', desc:'Atteindre une perte de 2 kg', done:false,xp:75,ip:25},
-    {id:'kg5',kg:5,t:'CHASSIS ALLEGE MOD KIROSHI', desc:'Atteindre une perte de 5 kg', done:false,xp:150,ip:60},
-    {id:'kg10',kg:10,t:'OPTIMISATION COMBAT', desc:'Atteindre une perte de 10 kg', done:false,xp:300,ip:150},
-    {id:'kg15',kg:15,t:'IMPLANTS AVANCES', desc:'Atteindre une perte de 15 kg', done:false,xp:400,ip:200},
-    {id:'kg20',kg:20,t:'CORPS ELITE MAXTAC', desc:'Objectif final : Atteindre une perte de 20 kg', done:false,xp:750,ip:500,boss:true},
+    {id:'kg1',  kg:1,  t:'REMPLACEMENT TISSUS LOURDS', desc:'Atteindre une perte de 1 kg',            done:false, xp:50,  ip:20},
+    {id:'kg2',  kg:2,  t:'AMELIORATION STRUCTURELLE',  desc:'Atteindre une perte de 2 kg',            done:false, xp:75,  ip:25},
+    {id:'kg5',  kg:5,  t:'CHASSIS ALLEGE MOD KIROSHI', desc:'Atteindre une perte de 5 kg',            done:false, xp:150, ip:60},
+    {id:'kg10', kg:10, t:'OPTIMISATION COMBAT',        desc:'Atteindre une perte de 10 kg',           done:false, xp:300, ip:150},
+    {id:'kg15', kg:15, t:'IMPLANTS AVANCES',           desc:'Atteindre une perte de 15 kg',           done:false, xp:400, ip:200},
+    {id:'kg20', kg:20, t:'CORPS ELITE MAXTAC',         desc:'Objectif final : Atteindre une perte de 20 kg', done:false, xp:750, ip:500, boss:true},
   ],
   guitare:[
-    {id:'g1',t:'ACCORDS KERRY EURODYNE', desc:'Palier 1 : Maîtriser 6 accords fondamentaux', done:false,xp:150,ip:30},
-    {id:'g2',t:'TRANSITIONS FLUIDES', desc:'Palier 2 : Maîtriser les transitions entre les accords', done:false,xp:200,ip:35},
-    {id:'g3',t:'SESSION COMPLETE STUDIO', desc:'Palier 3 : Jouer son premier morceau de bout en bout', done:false,xp:300,ip:50},
-    {id:'g4',t:'PREMIER GIG AFTERLIFE', desc:'Palier 4 : Avoir un répertoire de 5 morceaux ou plus', done:false,xp:500,ip:75},
+    {id:'g1', t:'ACCORDS KERRY EURODYNE',  desc:'Palier 1 : Maîtriser 6 accords fondamentaux',             done:false, xp:150, ip:30},
+    {id:'g2', t:'TRANSITIONS FLUIDES',     desc:'Palier 2 : Maîtriser les transitions entre les accords',  done:false, xp:200, ip:35},
+    {id:'g3', t:'SESSION COMPLETE STUDIO', desc:'Palier 3 : Jouer son premier morceau de bout en bout',    done:false, xp:300, ip:50},
+    {id:'g4', t:'PREMIER GIG AFTERLIFE',   desc:'Palier 4 : Avoir un répertoire de 5 morceaux ou plus',    done:false, xp:500, ip:75},
   ],
   shop:[
-    {id:'s_mystery',t:'CACHE MILITECH INCONNUE', desc:'Coffre mystère (Récompenses aléatoires surprises)', cost:15},
-    {id:'s1',t:'SESSION BRAINDANCE', desc:'Une soirée gaming sans aucune culpabilité', cost:20},
-    {id:'s28',t:'RATION PREMIUM NIBBLES', desc:'Acheter un nouveau jouet ou une friandise pour Jiji', cost:30},
-    {id:'s2',t:'LIVRAISON SYNTH-VIANDE', desc:'Se commander un repas plaisir (sushi, pizza...)', cost:40},
-    {id:'s12',t:'ARCHIVE PHYSIQUE STYLET', desc:'Acheter un beau carnet Leuchtturm et un stylo Rotring', cost:60},
-    {id:'s13',t:'RECALIBRATION SQUELETTE', desc:'Se payer une séance de remise en place chez l\'ostéopathe', cost:80},
-    {id:'s14',t:'MODULE DIVERTISSEMENT', desc:'S\'acheter un jeu vidéo standard', cost:80},
-    {id:'s3',t:'RESTAURANT CORPO', desc:'S\'offrir un très bon restaurant', cost:100},
-    {id:'s15',t:'GIG UNDERGROUND', desc:'Place de concert à Strasbourg ou Basel', cost:100},
-    {id:'s16',t:'ARCHIVE PRE-GUERRE', desc:'S\'acheter un livre Taschen ou Phaidon standard', cost:120},
-    {id:'s17',t:'MODULE COLLECTOR', desc:'S\'acheter une édition collector de jeu vidéo', cost:140},
-    {id:'s4',t:'MAINTENANCE MUSCULAIRE', desc:'S\'offrir une session de massage d\'1 heure', cost:150},
-    {id:'s18',t:'IMPRESSION HOLO MAX', desc:'Faire une impression grand format d\'une de ses photos', cost:180},
-    {id:'s19',t:'ARCHIVE PRE-GUERRE XL', desc:'S\'acheter un grand livre Taschen XL ou une monographie', cost:200},
-    {id:'s5',t:'CUVE BACTA SPA', desc:'Passer une journée aux thermes ou au SPA', cost:220},
-    {id:'s20',t:'AMORTISSEURS COURSE', desc:'S\'acheter des chaussures de sport de haute qualité', cost:220},
-    {id:'s21',t:'FESTIVAL MAJEUR PARIS', desc:'Billet pour un concert ou festival à Paris', cost:220},
-    {id:'s22',t:'ARCHIVE BLACKSAD', desc:'S\'offrir l\'intégrale Blacksad en édition limitée', cost:220},
-    {id:'s6',t:'SYNTH-CUIR BLINDAGE', desc:'S\'acheter de beaux vêtements (budget ~80€)', cost:280},
-    {id:'s7',t:'PACK NANOTECH MINEUR', desc:'S\'acheter un petit kit LEGO (<50€)', cost:350},
-    {id:'s23',t:'AMORTISSEURS PREMIUM', desc:'S\'acheter des chaussures lifestyle haut de gamme', cost:350},
-    {id:'s24',t:'OPTIQUE KIROSHI 85MM', desc:'S\'acheter l\'objectif photo portrait 85mm f/1.8', cost:400},
-    {id:'s8',t:'PACK NANOTECH MOYEN', desc:'S\'acheter un kit LEGO moyen (50–120€)', cost:600},
-    {id:'s25',t:'OPTIQUE GRAND ANGLE', desc:'S\'acheter un objectif d\'architecture (entrée de gamme)', cost:600},
-    {id:'s9',t:'PACK NANOTECH LOURD', desc:'S\'acheter un gros kit LEGO (>150€)', cost:900},
-    {id:'s27',t:'OPTIQUE CORPO MAX', desc:'S\'acheter un objectif grand angle archi haut de gamme', cost:1200},
-    {id:'s26',t:'KIROSHI LEGENDAIRE', desc:'S\'acheter l\'objectif photo portrait 85mm f/1.4', cost:1200},
-    {id:'s10',t:'VOL LONDRES', desc:'S\'offrir un week-end à Londres', cost:1800},
-    {id:'s11',t:'EXPEDITION IRLANDE', desc:'S\'offrir un voyage en Irlande de 5 à 7 jours', cost:2800},
+    {id:'s_mystery', t:'CACHE MILITECH INCONNUE',  desc:'Coffre mystère (Récompenses aléatoires surprises)',            cost:15,   cat:'fun'},
+    {id:'s1',        t:'SESSION BRAINDANCE',        desc:'Une soirée gaming sans aucune culpabilité',                    cost:20,   cat:'fun'},
+    {id:'s28',       t:'RATION PREMIUM NIBBLES',    desc:'Acheter un nouveau jouet ou une friandise pour Jiji',          cost:30,   cat:'fun'},
+    {id:'s2',        t:'LIVRAISON SYNTH-VIANDE',    desc:"Se commander un repas plaisir (sushi, pizza...)",              cost:40,   cat:'fun'},
+    {id:'s12',       t:'ARCHIVE PHYSIQUE STYLET',   desc:'Acheter un beau carnet Leuchtturm et un stylo Rotring',        cost:60,   cat:'gear'},
+    {id:'s13',       t:'RECALIBRATION SQUELETTE',   desc:"Se payer une séance de remise en place chez l'ostéopathe",     cost:80,   cat:'xp'},
+    {id:'s14',       t:'MODULE DIVERTISSEMENT',     desc:"S'acheter un jeu vidéo standard",                              cost:80,   cat:'fun'},
+    {id:'s3',        t:'RESTAURANT CORPO',          desc:"S'offrir un très bon restaurant",                              cost:100,  cat:'xp'},
+    {id:'s15',       t:'GIG UNDERGROUND',           desc:'Place de concert à Strasbourg ou Basel',                       cost:100,  cat:'fun'},
+    {id:'s16',       t:'ARCHIVE PRE-GUERRE',        desc:"S'acheter un livre Taschen ou Phaidon standard",               cost:120,  cat:'gear'},
+    {id:'s17',       t:'MODULE COLLECTOR',          desc:"S'acheter une édition collector de jeu vidéo",                 cost:140,  cat:'fun'},
+    {id:'s4',        t:'MAINTENANCE MUSCULAIRE',    desc:"S'offrir une session de massage d'1 heure",                    cost:150,  cat:'xp'},
+    {id:'s18',       t:'IMPRESSION HOLO MAX',       desc:"Faire une impression grand format d'une de ses photos",        cost:180,  cat:'xp'},
+    {id:'s19',       t:'ARCHIVE PRE-GUERRE XL',     desc:"S'acheter un grand livre Taschen XL ou une monographie",       cost:200,  cat:'gear'},
+    {id:'s5',        t:'CUVE BACTA SPA',            desc:'Passer une journée aux thermes ou au SPA',                     cost:220,  cat:'xp'},
+    {id:'s20',       t:'AMORTISSEURS COURSE',       desc:"S'acheter des chaussures de sport de haute qualité",           cost:220,  cat:'gear'},
+    {id:'s21',       t:'FESTIVAL MAJEUR PARIS',     desc:'Billet pour un concert ou festival à Paris',                   cost:220,  cat:'fun'},
+    {id:'s22',       t:'ARCHIVE BLACKSAD',          desc:"S'offrir l'intégrale Blacksad en édition limitée",             cost:220,  cat:'gear'},
+    {id:'s6',        t:'SYNTH-CUIR BLINDAGE',       desc:"S'acheter de beaux vêtements (budget ~80€)",                   cost:280,  cat:'gear'},
+    {id:'s7',        t:'PACK NANOTECH MINEUR',      desc:"S'acheter un petit kit LEGO (<50€)",                           cost:350,  cat:'fun'},
+    {id:'s23',       t:'AMORTISSEURS PREMIUM',      desc:"S'acheter des chaussures lifestyle haut de gamme",             cost:350,  cat:'gear'},
+    {id:'s24',       t:'OPTIQUE KIROSHI 85MM',      desc:"S'acheter l'objectif photo portrait 85mm f/1.8",               cost:400,  cat:'gear'},
+    {id:'s8',        t:'PACK NANOTECH MOYEN',       desc:"S'acheter un kit LEGO moyen (50–120€)",                        cost:600,  cat:'fun'},
+    {id:'s25',       t:'OPTIQUE GRAND ANGLE',       desc:"S'acheter un objectif d'architecture (entrée de gamme)",       cost:600,  cat:'gear'},
+    {id:'s9',        t:'PACK NANOTECH LOURD',       desc:"S'acheter un gros kit LEGO (>150€)",                           cost:900,  cat:'fun'},
+    {id:'s27',       t:'OPTIQUE CORPO MAX',         desc:"S'acheter un objectif grand angle archi haut de gamme",        cost:1200, cat:'gear'},
+    {id:'s26',       t:'KIROSHI LEGENDAIRE',        desc:"S'acheter l'objectif photo portrait 85mm f/1.4",               cost:1200, cat:'gear'},
+    {id:'s10',       t:'VOL LONDRES',               desc:"S'offrir un week-end à Londres",                               cost:1800, cat:'xp'},
+    {id:'s11',       t:'EXPEDITION IRLANDE',        desc:"S'offrir un voyage en Irlande de 5 à 7 jours",                 cost:2800, cat:'xp'},
   ]
 };
 
-const KEY='cp_rlg_v8';
-
-// Système Auto-Sync
+// ─── RUNTIME STATE ───────────────────────────────────────────────────────────
+let S = {};
+let shopFilter = 'all';
+const accordionState = {}; // key → true(open) | false(closed); undefined = open by default
+let confirmAction = null;
 let syncTimer = null;
 
-function setSyncStatus(state) {
-  const ui = document.getElementById('sync-ui');
-  const txt = document.getElementById('sync-txt');
-  ui.className = 'sync-status ' + state.toLowerCase();
-  txt.textContent = state;
+// ─── DEEP MERGE ───────────────────────────────────────────────────────────────
+// Starts from the latest DS (adds new items/fields), then overlays saved user state.
+function deepMerge(defaults, saved) {
+  if (!saved) return JSON.parse(JSON.stringify(defaults));
+  const r = JSON.parse(JSON.stringify(defaults));
+
+  // Player fields (new keys like streak default to DS values if missing in save)
+  if (saved.player) r.player = { ...r.player, ...saved.player };
+
+  // Top-level primitives
+  ['lastDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent']
+    .forEach(k => { if (saved[k] !== undefined) r[k] = saved[k]; });
+
+  // Arrays: keep all DS items (incl. new ones), restore saved done/state
+  ['dailies','weeklies','portfolio','memoire','poids','guitare','shop'].forEach(key => {
+    if (saved[key] && Array.isArray(saved[key])) {
+      r[key] = r[key].map(def => {
+        const sv = saved[key].find(s => s.id === def.id);
+        return sv ? { ...def, done: sv.done !== undefined ? sv.done : def.done } : def;
+      });
+    }
+  });
+
+  return r;
 }
 
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function showConfirm(title, text, action) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-text').textContent  = text;
+  confirmAction = action;
+  document.getElementById('modal-overlay').classList.add('on');
+}
+function closeModal()    { document.getElementById('modal-overlay').classList.remove('on'); confirmAction = null; }
+function executeConfirm(){ if (confirmAction) confirmAction(); closeModal(); }
+
+// ─── SYNC ─────────────────────────────────────────────────────────────────────
+function setSyncStatus(st) {
+  const ui = document.getElementById('sync-ui'), txt = document.getElementById('sync-txt');
+  ui.className = 'sync-status ' + st.toLowerCase();
+  txt.textContent = st;
+}
 function triggerSync() {
   setSyncStatus('SYNCHING');
-  if(syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(doSync, 2500); 
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(S), headers:{'Content-Type':'text/plain;charset=utf-8'} })
+      .then(r => setSyncStatus(r.ok ? 'SYNCHED' : 'OFFLINE'))
+      .catch(() => setSyncStatus('OFFLINE'));
+  }, 2500);
 }
 
-function doSync() {
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(S),
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-  })
-  .then(response => {
-    if (response.ok) setSyncStatus('SYNCHED');
-    else setSyncStatus('OFFLINE');
-  })
-  .catch(() => setSyncStatus('OFFLINE'));
+// ─── PERSISTENCE ─────────────────────────────────────────────────────────────
+function load() {
+  try {
+    const d = localStorage.getItem(KEY);
+    S = deepMerge(DS, d ? JSON.parse(d) : null);
+  } catch(e) {
+    S = JSON.parse(JSON.stringify(DS));
+  }
 }
+function save() { localStorage.setItem(KEY, JSON.stringify(S)); triggerSync(); }
 
-function load(){
-  try{const d=localStorage.getItem(KEY);S=d?JSON.parse(d):JSON.parse(JSON.stringify(DS));}
-  catch(e){S=JSON.parse(JSON.stringify(DS));}
-  const flds=['dailies','weeklies','portfolio','memoire','poids','guitare','shop'];
-  flds.forEach(f=>{if(!S[f])S[f]=JSON.parse(JSON.stringify(DS[f]));});
-  if(S.practiceWeek===undefined)S.practiceWeek=0;
-  if(S.weightStart===undefined)S.weightStart=null;
-  if(S.weightCurrent===undefined)S.weightCurrent=null;
-}
-
-function save(){
-  localStorage.setItem(KEY,JSON.stringify(S));
-  triggerSync(); 
-}
-
-function today(){const n=new Date();return `${n.getFullYear()}-${p2(n.getMonth()+1)}-${p2(n.getDate())}`;}
-function p2(n){return String(n).padStart(2,'0');}
-function weekId(){
-  const d=new Date(),day=d.getDay()||7;
+// ─── DATE UTILS ──────────────────────────────────────────────────────────────
+function today()  { const n=new Date(); return `${n.getFullYear()}-${p2(n.getMonth()+1)}-${p2(n.getDate())}`; }
+function p2(n)    { return String(n).padStart(2,'0'); }
+function weekId() {
+  const d=new Date(), day=d.getDay()||7;
   d.setDate(d.getDate()+4-day);
-  const y=d.getFullYear(),s=new Date(y,0,1);
+  const y=d.getFullYear(), s=new Date(y,0,1);
   return y+'-W'+Math.ceil((((d-s)/86400000)+1)/7);
 }
 
-function toast(msg,type=''){
-  const el=document.createElement('div');
-  el.className='ts'+(type?' '+type:'');
-  el.textContent=msg;
-  document.getElementById('tc').appendChild(el);
-  setTimeout(()=>el.remove(),3500);
-}
-
-// Animation de point flottante (Haut Droite)
-function showGain(rep, ed) {
-  const container = document.getElementById('gain-anim');
-  const el = document.createElement('div');
-  el.className = 'gain-pop';
-  let txt = `+${rep} REP`;
-  if (ed > 0) txt += ` // +${ed} E$`;
-  el.textContent = txt;
-  container.appendChild(el);
-  setTimeout(() => el.remove(), 1200);
-}
-
-function checkReset(){
-  const td=today(),wid=weekId();
-  if(S.lastDate!==td){
-    if(S.lastDate)S.daysPlayed=(S.daysPlayed||0)+1;
-    S.dailies.forEach(d=>d.done=false);
-    S.lastDate=td;
+// ─── DAILY RESET + STREAK ────────────────────────────────────────────────────
+function checkReset() {
+  const td=today(), wid=weekId();
+  if (S.lastDate !== td) {
+    if (S.lastDate) {
+      S.daysPlayed = (S.daysPlayed||0) + 1;
+      // Streak: maintain if ≥ 70% dailies completed
+      const frac = S.dailies.filter(d=>d.done).length / S.dailies.length;
+      S.player.streak = frac >= 0.7 ? (S.player.streak||0) + 1 : 0;
+    }
+    S.dailies.forEach(d => d.done = false);
+    S.lastDate = td;
   }
-  if(S.lastWeekId!==wid){
-    S.weeklies.forEach(w=>w.done=false);
-    S.practiceWeek=0;
-    S.lastWeekId=wid;
+  if (S.lastWeekId !== wid) {
+    S.weeklies.forEach(w => w.done = false);
+    S.practiceWeek = 0;
+    S.lastWeekId = wid;
   }
   save();
 }
 
-function addXP(xp){
-  S.player.xp+=xp;
-  const need=()=>S.player.level*100;
-  let up=false;
-  while(S.player.xp>=need()&&S.player.level<50){S.player.xp-=need();S.player.level++;up=true;}
-  if(up)toast('STREET CRED UP : LEVEL '+S.player.level,'gold');
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+function toast(msg, type='') {
+  const el = document.createElement('div');
+  el.className = 'ts' + (type ? ' '+type : '');
+  el.textContent = msg;
+  document.getElementById('tc').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
 }
 
-function rHdr(){
-  const p=S.player;
-  document.getElementById('hlv').textContent='LEVEL '+p.level+' / CORPO';
-  document.getElementById('hip').textContent=p.ip;
-  document.getElementById('shb').textContent=p.ip;
-  const need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
-  document.getElementById('hxb').style.width=pct+'%';
-  document.getElementById('hxl').textContent=p.xp+' / '+need+' REP';
+function showGain(rep, ed) {
+  const el = document.createElement('div');
+  el.className = 'gain-pop';
+  el.textContent = `+${rep} REP` + (ed > 0 ? ` // +${ed} E$` : '');
+  document.getElementById('gain-anim').appendChild(el);
+  setTimeout(() => el.remove(), 1500);
 }
 
+function addXP(xp) {
+  S.player.xp += xp;
+  while (S.player.xp >= S.player.level * 100 && S.player.level < 50) {
+    S.player.xp -= S.player.level * 100;
+    S.player.level++;
+    toast('STREET CRED UP : LEVEL ' + S.player.level, 'gold');
+  }
+}
+
+// ─── HEADER ──────────────────────────────────────────────────────────────────
+function rHdr() {
+  const p = S.player, need = p.level * 100, pct = Math.min(100, Math.round(p.xp/need*100));
+  document.getElementById('hlv').textContent     = 'LEVEL '+p.level+' / CORPO';
+  document.getElementById('hip').textContent     = p.ip;
+  document.getElementById('shb').textContent     = p.ip;
+  document.getElementById('hstreak').textContent = '🔥 '+(p.streak||0)+' JOURS';
+  document.getElementById('hxb').style.width     = pct+'%';
+  document.getElementById('hxl').textContent     = p.xp+' / '+need+' REP';
+}
+
+// ─── TASK LISTS ──────────────────────────────────────────────────────────────
 function buildUI(arr, type) {
-  return arr.map(d=>`
+  return arr.map(d => `
     <div class="qi${d.done?' dn':''}" onclick="tTask('${type}','${d.id}')">
       <div class="qi-content">
         <div class="qt"><span>${d.t}</span><span class="qt-arrow">+</span></div>
@@ -514,77 +538,111 @@ function buildUI(arr, type) {
     </div>`).join('');
 }
 
-function rDailies(){
-  const done=S.dailies.filter(d=>d.done).length;
-  document.getElementById('dt').textContent=`MAINTENANCE ${done}/${S.dailies.length}`;
-  document.getElementById('dl').innerHTML=buildUI(S.dailies, 'dailies');
+function rDailies() {
+  const done = S.dailies.filter(d=>d.done).length;
+  document.getElementById('dt').textContent = `MAINTENANCE ${done}/${S.dailies.length}`;
+  document.getElementById('dl').innerHTML   = buildUI(S.dailies, 'dailies');
+}
+function rHebdo() {
+  const done = S.weeklies.filter(w=>w.done).length;
+  document.getElementById('wt').textContent = `CONTRATS ${done}/${S.weeklies.length}`;
+  document.getElementById('wl').innerHTML   = buildUI(S.weeklies, 'weeklies');
 }
 
-function rHebdo(){
-  const done=S.weeklies.filter(w=>w.done).length;
-  document.getElementById('wt').textContent=`CONTRATS ${done}/${S.weeklies.length}`;
-  document.getElementById('wl').innerHTML=buildUI(S.weeklies, 'weeklies');
-}
-
-function tTask(type, id){
-  const it=S[type].find(d=>d.id===id);if(!it)return;
-  if(!it.done){
+function tTask(type, id) {
+  const it = S[type].find(d=>d.id===id); if (!it) return;
+  if (!it.done) {
     it.done=true; addXP(it.xp); S.player.ip+=it.ip; S.totalDone=(S.totalDone||0)+1;
     showGain(it.xp, it.ip);
   } else {
     it.done=false; S.player.xp=Math.max(0,S.player.xp-it.xp); S.player.ip=Math.max(0,S.player.ip-it.ip); S.totalDone=Math.max(0,(S.totalDone||0)-1);
   }
-  save(); 
-  if(type === 'dailies') rDailies(); else rHebdo();
+  save();
+  if (type==='dailies') rDailies(); else rHebdo();
   rHdr();
 }
 
-function exList(items,key){
-  return items.map((ex,i)=>{
-    const locked=(key==='portfolio'||key==='memoire')&&i>0&&!items[i-1].done;
+// ─── EXPEDITION LIST ─────────────────────────────────────────────────────────
+function exList(items, key) {
+  return items.map((ex, i) => {
+    const locked = (key==='portfolio'||key==='memoire') && i>0 && !items[i-1].done;
     return `<div class="ex${ex.done?' dn':''}${ex.boss?' boss':''}${locked?' lk':''}">
       <div class="et">${ex.t}</div>
       <div class="qdesc">// ${ex.desc}</div>
       <div class="er">
         <div class="erw">+${ex.xp} REP // +${ex.ip} E$</div>
-        ${ex.done?'<span class="ok-lbl">UPLOAD TERMINé</span>':`<button class="ebtn" onclick="valEx('${key}','${ex.id}')">EXECUTER</button>`}
+        ${ex.done
+          ? `<button class="ebtn cancel" onclick="cancelEx('${key}','${ex.id}')">ANNULER</button>`
+          : `<button class="ebtn" onclick="valEx('${key}','${ex.id}')">EXECUTER</button>`}
       </div>
     </div>`;
   }).join('');
 }
 
-function valEx(key,id){
-  const it=S[key].find(e=>e.id===id);if(!it||it.done)return;
-  if(!confirm('LANCER PROTOCOLE : "'+it.t.substring(0,25)+'..." ?'))return;
-  it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
-  showGain(it.xp, it.ip);
-  toast(it.boss?'CIBLE NEUTRALISEE':'DONNEES EXTRAITES','gold');
-  save();rCamps();rHdr();
-}
-
-function headerTitle(name) {
-  return `<div class="cp-header-wrap"><div class="cp-stripe"></div><div class="cp-htitle">${name}</div><div class="cp-stripe"></div></div>`;
-}
-
-function rCamps(){
-  const pLoss=S.weightStart&&S.weightCurrent?Math.max(0,S.weightStart-S.weightCurrent):0;
-  const gActive=S.guitare.find(g=>!g.done);
-  const camps=[
-    {key:'portfolio',name:'PORTFOLIO',items:S.portfolio},
-    {key:'memoire',name:'PROJET RELIC',items:S.memoire},
-  ];
-  let h='';
-  camps.forEach(c=>{
-    const done=c.items.filter(e=>e.done).length,tot=c.items.length,pct=Math.round(done/tot*100);
-    h+=`${headerTitle(c.name)}
-      <div class="ph"><span>${done}/${tot} NODES</span><span>${pct}% COMPILé</span></div>
-      <div class="pb"><div class="pbf" style="width:${pct}%"></div></div>
-      ${exList(c.items,c.key)}`;
+function valEx(key, id) {
+  const it = S[key].find(e=>e.id===id); if (!it||it.done) return;
+  showConfirm('LANCEMENT PROTOCOLE', 'Exécuter : '+it.t+' ?', () => {
+    it.done=true; addXP(it.xp); S.player.ip+=it.ip; S.totalDone=(S.totalDone||0)+1;
+    showGain(it.xp, it.ip);
+    toast(it.boss?'CIBLE NEUTRALISEE':'DONNEES EXTRAITES','gold');
+    save(); rCamps(); rHdr();
   });
+}
+function cancelEx(key, id) {
+  const it = S[key].find(e=>e.id===id); if (!it||!it.done) return;
+  showConfirm('ANNULATION PROTOCOLE', 'Révoquer :\n'+it.t+' ?\n(La REP et les E$ seront déduits)', () => {
+    it.done=false;
+    S.player.xp=Math.max(0,S.player.xp-it.xp); S.player.ip=Math.max(0,S.player.ip-it.ip);
+    S.totalDone=Math.max(0,(S.totalDone||0)-1);
+    toast('PROTOCOLE REVOQUE','err');
+    save(); rCamps(); rHdr();
+  });
+}
 
-  h+=`${headerTitle('BIOMETRIE')}
+// ─── ACCORDION ───────────────────────────────────────────────────────────────
+function toggleAcc(key) {
+  accordionState[key] = (accordionState[key] === false) ? true : false;
+  rCamps();
+}
+function buildAcc(key, title, badge, content) {
+  const open = accordionState[key] !== false;
+  return `
+    <div class="acc-hdr" onclick="toggleAcc('${key}')">
+      <div class="acc-hdr-left">
+        <span>${title}</span>
+        ${badge ? `<span class="acc-badge">${badge}</span>` : ''}
+      </div>
+      <span class="acc-arrow">${open ? '▲' : '▼'}</span>
+    </div>
+    <div class="acc-body${open ? '' : ' closed'}">${content}</div>`;
+}
+
+// ─── CYBERWARE ───────────────────────────────────────────────────────────────
+function rCamps() {
+  const pLoss = (S.weightStart&&S.weightCurrent) ? Math.max(0, S.weightStart-S.weightCurrent) : 0;
+  const gActive = S.guitare.find(g=>!g.done);
+  let h = '';
+
+  // Portfolio
+  const pfD=S.portfolio.filter(e=>e.done).length, pfT=S.portfolio.length, pfP=Math.round(pfD/pfT*100);
+  h += buildAcc('portfolio','PORTFOLIO',`${pfD}/${pfT}`,`
+    <div class="ph"><span>${pfD}/${pfT} NODES</span><span>${pfP}% COMPILÉ</span></div>
+    <div class="pb"><div class="pbf" style="width:${pfP}%"></div></div>
+    ${exList(S.portfolio,'portfolio')}`);
+
+  // Mémoire
+  const mD=S.memoire.filter(e=>e.done).length, mT=S.memoire.length, mP=Math.round(mD/mT*100);
+  h += buildAcc('memoire','PROJET RELIC',`${mD}/${mT}`,`
+    <div class="ph"><span>${mD}/${mT} NODES</span><span>${mP}% COMPILÉ</span></div>
+    <div class="pb"><div class="pbf" style="width:${mP}%"></div></div>
+    ${exList(S.memoire,'memoire')}`);
+
+  // Biométrie (milestones non-réversibles : aucun bouton cancel, set uniquement par logW)
+  h += buildAcc('biometrie','BIOMETRIE',`${pLoss.toFixed(1)} KG`,`
     <div class="ex">
-      <div class="wi">${S.weightStart?'MASSE INIT : '+S.weightStart+' KG // ACTUELLE : '+S.weightCurrent+' KG // DIFFERENCE : '+pLoss.toFixed(1)+' KG':'SCAN REQUIS : ENTRER MASSE (KG)'}</div>
+      <div class="wi">${S.weightStart
+        ? `MASSE INIT : ${S.weightStart} KG &nbsp;|&nbsp; ACTUELLE : ${S.weightCurrent} KG &nbsp;|&nbsp; DIFF : ${pLoss.toFixed(1)} KG`
+        : 'SCAN REQUIS : ENTRER MASSE INITIALE (KG)'}</div>
       <div class="wrow">
         <input class="winp" type="number" id="winp" placeholder="${S.weightCurrent||'MASSE'}" step="0.1">
         <button class="wsave" onclick="logW()">SAUVER</button>
@@ -596,16 +654,17 @@ function rCamps(){
       <div class="qdesc">// ${m.desc}</div>
       <div class="er">
         <div class="erw">+${m.xp} REP // +${m.ip} E$</div>
-        <span style="font-size:12px;font-weight:700;color:${m.done?'var(--cp-cyan)':'var(--cp-muted)'}">${m.done?'ACTIF':'OFFLINE'}</span>
+        <span style="font-size:12px;font-weight:700;color:${m.done?'var(--cp-cyan)':'var(--cp-muted)'}">${m.done?'✓ ACTIF':'OFFLINE'}</span>
       </div>
-    </div>`).join('')}`;
+    </div>`).join('')}`);
 
-  const gDone=S.guitare.filter(g=>g.done).length,gPct=Math.round(gDone/S.guitare.length*100);
-  h+=`${headerTitle('ROCKERBOY')}
-    <div class="ph"><span>${gDone}/${S.guitare.length} SEQUENCES</span><span>${gPct}% COMPILé</span></div>
-    <div class="pb"><div class="pbf" style="width:${gPct}%"></div></div>
+  // Rockerboy
+  const gD=S.guitare.filter(g=>g.done).length, gP=Math.round(gD/S.guitare.length*100);
+  h += buildAcc('rockerboy','ROCKERBOY',`${gD}/${S.guitare.length}`,`
+    <div class="ph"><span>${gD}/${S.guitare.length} SEQUENCES</span><span>${gP}% COMPILÉ</span></div>
+    <div class="pb"><div class="pbf" style="width:${gP}%"></div></div>
     <div class="ex">
-      <div style="font-size:14px;color:var(--cp-text);font-weight:700;margin-bottom:10px">SEQUENCE : ${gActive?gActive.t:'MAITRISE TOTALE'}</div>
+      <div style="font-size:14px;color:var(--cp-text);font-weight:700;margin-bottom:10px">SEQUENCE : ${gActive?gActive.t:'MAÎTRISE TOTALE'}</div>
       <div style="display:flex;gap:10px;margin-bottom:12px;">
         <button class="wsave" style="flex:1;padding:8px" onclick="logG(15)">15M</button>
         <button class="wsave" style="flex:1;padding:8px" onclick="logG(30)">30M</button>
@@ -613,111 +672,116 @@ function rCamps(){
       </div>
       <div style="font-size:12px;color:var(--cp-yellow);font-weight:700">SYNCHRO HEBDO : ${S.practiceWeek||0}</div>
     </div>
-    ${exList(S.guitare,'guitare')}`;
+    ${exList(S.guitare,'guitare')}`);
 
-  document.getElementById('cl').innerHTML=h;
+  document.getElementById('cl').innerHTML = h;
 }
 
-function logW(){
-  const v=parseFloat(document.getElementById('winp').value);
-  if(isNaN(v)||v<30||v>300){toast('ERREUR : MASSE INVALIDE', 'err');return;}
-  if(!S.weightStart)S.weightStart=v;
-  S.weightCurrent=v;
-  const loss=Math.max(0,S.weightStart-v);
-  S.poids.forEach(m=>{
-    if(!m.done&&loss>=m.kg){
-      m.done=true;addXP(m.xp);S.player.ip+=m.ip;
-      showGain(m.xp, m.ip);
-    }
+// ─── WEIGHT ──────────────────────────────────────────────────────────────────
+function logW() {
+  const v = parseFloat(document.getElementById('winp').value);
+  if (isNaN(v)||v<30||v>300) { toast('ERREUR : MASSE INVALIDE','err'); return; }
+  if (!S.weightStart) S.weightStart = v;
+  S.weightCurrent = v;
+  const loss = Math.max(0, S.weightStart - v);
+  // Milestones non-réversibles : on set done=true mais jamais done=false
+  S.poids.forEach(m => {
+    if (!m.done && loss >= m.kg) { m.done=true; addXP(m.xp); S.player.ip+=m.ip; showGain(m.xp,m.ip); }
   });
-  save();rCamps();rHdr();
-  toast('DONNEES BIOMETRIQUES MAJ');
+  save(); rCamps(); rHdr();
+  toast('DONNÉES BIOMÉTRIQUES MAJ');
 }
 
-function logG(min){
-  const xp=min>=60?15:min>=30?10:5,ip=min>=60?1:0;
-  addXP(xp);S.player.ip+=ip;S.practiceWeek=(S.practiceWeek||0)+1;
-  save();rCamps();rHdr();
-  showGain(xp, ip);
+// ─── GUITAR ──────────────────────────────────────────────────────────────────
+function logG(min) {
+  const xp=min>=60?15:min>=30?10:5, ip=min>=60?1:0;
+  addXP(xp); S.player.ip+=ip; S.practiceWeek=(S.practiceWeek||0)+1;
+  save(); rCamps(); rHdr(); showGain(xp,ip);
 }
 
-function rShop(){
-  document.getElementById('shb').textContent=S.player.ip;
-  document.getElementById('sl').innerHTML=S.shop.map(s=>{
-    const can=S.player.ip>=s.cost;
-    return `<div class="shi">
-      <div style="flex:1; margin-right:15px;">
-        <div class="shn">${s.t}</div>
-        <div class="qdesc">// ${s.desc}</div>
-      </div>
-      <span class="shc">${s.cost} E$</span>
-      <button class="shbtn${can?'':' np'}" onclick="${can?`buyIt('${s.id}')`:''}">
-        ${can?'ACQUERIR':'FONDS REQUIS'}
-      </button>
-    </div>`;
-  }).join('');
+// ─── SHOP ────────────────────────────────────────────────────────────────────
+function setShopFilter(cat) { shopFilter=cat; rShop(); }
+
+function rShop() {
+  document.getElementById('shb').textContent = S.player.ip;
+  const cats=[{id:'all',lbl:'TOUT'},{id:'fun',lbl:'🎮 PLAISIR'},{id:'gear',lbl:'🔧 MATOS'},{id:'xp',lbl:'🌍 AVENTURE'}];
+  const filters = `<div class="shop-filters">${cats.map(c=>`
+    <button class="sf-btn${shopFilter===c.id?' on':''}" onclick="setShopFilter('${c.id}')">${c.lbl}</button>`).join('')}</div>`;
+
+  const list = (shopFilter==='all' ? S.shop : S.shop.filter(s=>s.cat===shopFilter))
+    .map(s => {
+      const can = S.player.ip >= s.cost;
+      return `<div class="shi">
+        <div style="flex:1;margin-right:15px;">
+          <div class="shn">${s.t}</div>
+          <div class="qdesc">// ${s.desc}</div>
+        </div>
+        <span class="shc">${s.cost} E$</span>
+        <button class="shbtn${can?'':' np'}" onclick="${can?`buyIt('${s.id}')`:''}">${can?'ACQUERIR':'FONDS REQUIS'}</button>
+      </div>`;
+    }).join('');
+
+  document.getElementById('sl').innerHTML = filters + list;
 }
 
-function buyIt(id){
-  const it=S.shop.find(s=>s.id===id);if(!it||S.player.ip<it.cost)return;
-  if(!confirm('TRANSFERER '+it.cost+' E$ POUR : '+it.t+' ?'))return;
-  
-  S.player.ip-=it.cost;
-  
-  if(id === 's_mystery') {
-    const loots = [
-      {m: 'HACK REUSSI : +30 E$', ip: 30, xp: 0},
-      {m: 'ECLAT MILITAIRE : +200 REP', ip: 0, xp: 200},
-      {m: 'PASS ACCES VIP : 1H BRAINDANCE GRATUITE', ip: 0, xp: 0},
-      {m: 'ERREUR TRANSFERT : REMBOURSEMENT 10 E$', ip: 10, xp: 0}
-    ];
-    const loot = loots[Math.floor(Math.random()*loots.length)];
-    if(loot.ip) S.player.ip += loot.ip;
-    if(loot.xp) addXP(loot.xp);
-    toast(loot.m, 'gold');
-  } else {
-    toast('TRANSACTION VALIDEE','gold');
-  }
-
-  save();rShop();rHdr();
+function buyIt(id) {
+  const it = S.shop.find(s=>s.id===id); if (!it||S.player.ip<it.cost) return;
+  showConfirm('MARCHÉ NOIR','Transférer '+it.cost+' E$ pour acquérir :\n'+it.t+' ?', () => {
+    S.player.ip -= it.cost;
+    if (id==='s_mystery') {
+      const loots=[
+        {m:'HACK REUSSI : +30 E$',ip:30,xp:0},
+        {m:'ECLAT MILITAIRE : +200 REP',ip:0,xp:200},
+        {m:'PASS ACCES VIP : 1H BRAINDANCE GRATUITE',ip:0,xp:0},
+        {m:'ERREUR TRANSFERT : REMBOURSEMENT 10 E$',ip:10,xp:0}
+      ];
+      const l=loots[Math.floor(Math.random()*loots.length)];
+      if(l.ip)S.player.ip+=l.ip; if(l.xp)addXP(l.xp);
+      toast(l.m,'gold');
+    } else { toast('TRANSACTION VALIDEE','gold'); }
+    save(); rShop(); rHdr();
+  });
 }
 
-function rStats(){
+// ─── STATS ───────────────────────────────────────────────────────────────────
+function rStats() {
+  const p = S.player;
   document.getElementById('stg').innerHTML=`
-    <div class="sc"><div class="sv">${S.player.level}</div><div class="sl">STREET CRED</div></div>
-    <div class="sc"><div class="sv">${S.player.ip}</div><div class="sl">EDDIES DISPO</div></div>
-    <div class="sc"><div class="sv">${S.totalDone||0}</div><div class="sl">GIGS REMPLIS</div></div>
-    <div class="sc"><div class="sv">${S.daysPlayed||0}</div><div class="sl">CYCLES ACTIFS</div></div>`;
-  
-  const cs=[
+    <div class="sc"><div class="sv">${p.level}</div><div class="sl">STREET CRED</div></div>
+    <div class="sc"><div class="sv">${p.ip}</div><div class="sl">EDDIES DISPO</div></div>
+    <div class="sc"><div class="sv" style="color:var(--cp-yellow)">${p.streak||0}🔥</div><div class="sl">STREAK JOURS</div></div>
+    <div class="sc"><div class="sv">${S.totalDone||0}</div><div class="sl">GIGS REMPLIS</div></div>`;
+
+  document.getElementById('stc').innerHTML=[
     {n:'PORTFOLIO',items:S.portfolio},
     {n:'PROJET RELIC',items:S.memoire},
     {n:'ROCKERBOY',items:S.guitare},
-  ];
-  
-  document.getElementById('stc').innerHTML = cs.map(c=>{
-    const done=c.items.filter(e=>e.done).length,pct=Math.round(done/c.items.length*100);
+  ].map(c=>{
+    const d=c.items.filter(e=>e.done).length,p=Math.round(d/c.items.length*100);
     return `<div class="scamp">
-      <div class="scr"><span style="color:var(--cp-yellow)">${c.n}</span><span style="color:var(--cp-text)">${done}/${c.items.length}</span></div>
-      <div class="pb"><div class="pbf" style="width:${pct}%"></div></div>
+      <div class="scr"><span style="color:var(--cp-yellow)">${c.n}</span><span>${d}/${c.items.length}</span></div>
+      <div class="pb"><div class="pbf" style="width:${p}%"></div></div>
     </div>`;
   }).join('');
 }
 
-function go(tab){
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function go(tab) {
+  checkReset();
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
   document.getElementById('content').scrollTop=0;
-  if(tab==='d')rDailies();
-  else if(tab==='h')rHebdo();
-  else if(tab==='c')rCamps();
-  else if(tab==='s')rShop();
+  if(tab==='d')      rDailies();
+  else if(tab==='h') rHebdo();
+  else if(tab==='c') rCamps();
+  else if(tab==='s') rShop();
   else if(tab==='st')rStats();
 }
 
-load();checkReset();rHdr();rDailies();
+// ─── INIT ────────────────────────────────────────────────────────────────────
+load(); checkReset(); rHdr(); rDailies();
 </script>
 </body>
 </html>
