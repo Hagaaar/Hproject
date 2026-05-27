@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NCPD Kiroshi Interface - H</title>
+<title>H PROJECT - Kiroshi Interface</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -18,32 +18,141 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; background: var(--cp-bg); color: var(--cp-text); }
+
+/* Grille de points (Dot grid) en fond */
+html, body { 
+  height: 100%; 
+  overflow: hidden; 
+  background-color: var(--cp-bg);
+  background-image: radial-gradient(rgba(252, 238, 10, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--cp-text); 
+}
+
 body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-#app { height: 100%; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; position: relative; background: var(--cp-bg); }
+#app { height: 100%; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; position: relative; }
 
-/* Header */
+/* Wrapper du header pour l'ombre de profondeur sans casser le clip-path */
+#hdr-wrap {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  z-index: 100;
+  filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.85));
+}
+
+/* Header avec découpe géométrique exacte de l'image de référence */
+/* Header avec découpe géométrique affinée (amplitude / 2 et épaisseur réduite) */
 #hdr { 
-  flex-shrink: 0; 
   background: var(--cp-yellow); 
   color: #000; 
-  padding: 30px 20px 40px; 
-  position: relative; 
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), 85% calc(100% - 15px), 82% 100%, 75% 100%, 72% calc(100% - 15px), 30% calc(100% - 15px), 27% calc(100% - 5px), 20% calc(100% - 5px), 17% calc(100% - 15px), 0 calc(100% - 15px));
-  z-index: 10;
-}
-.h-top { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-.h-top span { opacity: 0.8; }
-.h1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
-.h-name { font-size: 32px; font-weight: 700; line-height: 1; }
-.h-lv { font-size: 14px; font-weight: 600; opacity: 0.7; }
-.h-ip { font-size: 20px; font-weight: 700; }
-.xb { height: 6px; background: rgba(0,0,0,0.15); margin-bottom: 5px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
-.xbf { height: 100%; background: #000; transition: width 0.4s; }
-.xl { font-size: 12px; font-weight: 700; text-align: right; opacity: 0.8; }
+  padding: 15px 20px 55px 20px; 
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    
+    /* Ligne médiane de base */
+    100% calc(100% - 25px),
 
-#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 16px 80px; }
+    /* Trait droit 3 (le plus fin et à moitié profondeur) */
+    99.3% calc(100% - 25px),
+    99.3% calc(100% - 12.5px), 99% calc(100% - 12.5px), 99% calc(100% - 18px), 99.3% calc(100% - 18px),
+    99.3% calc(100% - 25px),
+
+    /* Trait droit 2 */
+    97.5% calc(100% - 25px),
+    97.5% calc(100% - 12.5px), 97.2% calc(100% - 12.5px), 97.2% calc(100% - 18px), 97.5% calc(100% - 18px),
+    97.5% calc(100% - 25px),
+
+    /* Trait droit 1 (légèrement plus large mais affiné) */
+    94% calc(100% - 25px),
+    94% calc(100% - 12.5px), 93.2% calc(100% - 12.5px), 93.2% calc(100% - 18px), 94% calc(100% - 18px),
+    94% calc(100% - 25px),
+
+    /* Ligne droite jusqu'au sablier central */
+    50.8% calc(100% - 25px),
+
+    /* Sablier : Triangle inférieur (îlot flottant aminci) */
+    50.8% calc(100% - 12.5px), 49.2% calc(100% - 12.5px), 50% calc(100% - 18.5px), 50.8% calc(100% - 12.5px),
+    50.8% calc(100% - 25px),
+
+    /* Sablier : Triangle supérieur (découpe plus petite) */
+    50% calc(100% - 32.5px),
+    49.2% calc(100% - 25px),
+
+    /* Ligne droite jusqu'à la montagne gauche */
+    33% calc(100% - 25px),
+
+    /* Montée vers le sommet gauche (hauteur divisée par 2) */
+    28% calc(100% - 37.5px),
+
+    /* Découpes internes de la montagne (plus fines) */
+    /* Point 3 (droite) */
+    26.2% calc(100% - 37.5px),
+    26.2% calc(100% - 27.5px), 25.9% calc(100% - 27.5px), 25.9% calc(100% - 29.5px), 26.2% calc(100% - 29.5px),
+    26.2% calc(100% - 37.5px),
+
+    /* Point 2 (milieu, plus profond) */
+    24.7% calc(100% - 37.5px),
+    24.7% calc(100% - 22.5px), 24.4% calc(100% - 22.5px), 24.4% calc(100% - 29.5px), 24.7% calc(100% - 29.5px),
+    24.7% calc(100% - 37.5px),
+
+    /* Point 1 (gauche) */
+    23.2% calc(100% - 37.5px),
+    23.2% calc(100% - 25.5px), 22.9% calc(100% - 25.5px), 22.9% calc(100% - 27.5px), 23.2% calc(100% - 27.5px),
+    23.2% calc(100% - 37.5px),
+
+    /* Fin du sommet gauche */
+    21% calc(100% - 37.5px),
+
+    /* Descente vers la fosse de gauche (profondeur divisée par 2) */
+    17% calc(100% - 12.5px),
+
+    /* Fond de la fosse */
+    11% calc(100% - 12.5px),
+
+    /* Remontée vers la ligne médiane finale */
+    9% calc(100% - 25px),
+
+    /* Bordure extrême gauche */
+    0 calc(100% - 25px)
+  );
+}
+
+.h-top { font-size: 12px; font-weight: 700; opacity: 0.8; margin-bottom: 10px; letter-spacing: 1px; }
+
+/* Indicateur de synchro */
+.sync-status { position: absolute; top: 15px; right: 20px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 5px; letter-spacing: 1px; }
+.sync-dot { width: 6px; height: 6px; background: #000; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.sync-status.synching .sync-dot { background: #000; animation: blink 0.8s infinite; }
+.sync-status.synched .sync-dot { background: #000; }
+.sync-status.offline { color: var(--cp-red); }
+.sync-status.offline .sync-dot { background: var(--cp-red); }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.h1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+.h-name { font-size: 28px; font-weight: 700; line-height: 1; }
+.h-lv { font-size: 13px; font-weight: 600; opacity: 0.7; }
+.h-ip { font-size: 22px; font-weight: 700; }
+.xb { height: 4px; background: rgba(0,0,0,0.15); margin-bottom: 4px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+.xbf { height: 100%; background: #000; transition: width 0.4s; }
+.xl { font-size: 11px; font-weight: 700; text-align: right; opacity: 0.8; }
+
+/* Animations de Points (Haut Droite, dans le wrapper pour glisser sur l'ombre) */
+#gain-anim { position: absolute; top: 40px; right: 20px; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; z-index: 200; pointer-events: none; }
+.gain-pop { background: var(--cp-bg); border: 1px solid var(--cp-cyan); color: var(--cp-cyan); padding: 4px 12px; font-size: 14px; font-weight: 700; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); animation: dropFade 1.2s ease-out forwards; box-shadow: 0 0 10px rgba(0,240,255,0.2); text-shadow: 0 0 4px rgba(0,240,255,0.5); }
+@keyframes dropFade {
+  0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(15px); }
+}
+
+/* Contenu avec padding ajusté pour passer sous l'ombre du header */
+#content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 155px 16px 90px; }
 ::-webkit-scrollbar { width: 0px; }
 
 /* Nav */
@@ -56,26 +165,29 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .sec.on { display: block; animation: fade 0.2s ease-out; }
 @keyframes fade { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-/* Section Titles */
+/* Titres de Section */
 .cp-header-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 25px 0 15px; }
 .cp-stripe { height: 18px; width: 40px; background: repeating-linear-gradient(-45deg, var(--cp-yellow), var(--cp-yellow) 6px, transparent 6px, transparent 10px); transform: skew(-20deg); }
 .cp-htitle { background: var(--cp-yellow); color: #000; font-size: 16px; font-weight: 700; padding: 2px 15px; letter-spacing: 1px; }
 
-/* Quest item */
+/* Objets / Quêtes */
 .qi { display: flex; align-items: stretch; background: var(--cp-yellow); color: #000; margin-bottom: 12px; cursor: pointer; user-select: none; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: 0.1s; }
 .qi:active { transform: scale(0.98); }
 .qi.dn { background: var(--cp-panel); color: var(--cp-muted); border-left: 2px solid var(--cp-cyan); }
 .qi-content { padding: 14px 16px; flex: 1; }
 .qt { font-size: 18px; font-weight: 600; margin-bottom: 2px; line-height: 1.1; display: flex; justify-content: space-between; }
-.qt-arrow { font-weight: 700; opacity: 0.5; }
-.qr { font-size: 13px; font-weight: 600; opacity: 0.8; }
+.qt-arrow { font-weight: 900; opacity: 0.7; font-size: 20px; line-height: 0.8; }
+.qdesc { font-size: 11px; font-weight: 700; color: #555; text-transform: none; margin-bottom: 6px; letter-spacing: 0; }
+.qi.dn .qdesc { color: var(--cp-muted); opacity: 0.6; }
+.qr { font-size: 13px; font-weight: 700; opacity: 0.9; }
 .qi.dn .qt { text-decoration: line-through; opacity: 0.6; }
 
-/* Exploit (Campaigns) */
+/* Exploits (Campagnes) */
 .ex { background: var(--cp-panel); border: 1px solid var(--cp-border); padding: 16px; margin-bottom: 12px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
 .ex.dn { opacity: 0.4; }
 .ex.boss { border-color: var(--cp-yellow); border-left: 4px solid var(--cp-yellow); }
-.et { font-size: 16px; font-weight: 600; line-height: 1.2; margin-bottom: 12px; }
+.et { font-size: 16px; font-weight: 600; line-height: 1.2; margin-bottom: 4px; }
+.ex .qdesc { color: var(--cp-muted); opacity: 0.8; margin-bottom: 12px; }
 .er { display: flex; justify-content: space-between; align-items: flex-end; }
 .erw { font-size: 13px; color: var(--cp-cyan); font-weight: 600; }
 .ebtn { background: var(--cp-yellow); border: none; padding: 6px 16px; font-size: 14px; font-weight: 700; color: #000; cursor: pointer; font-family: inherit; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
@@ -85,7 +197,7 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .lk { opacity: 0.2; pointer-events: none; }
 
 /* Progress bar */
-.pb { height: 4px; background: var(--cp-panel); margin-bottom: 20px; position: relative; }
+.pb { height: 4px; background: rgba(20,29,38,0.8); margin-bottom: 20px; position: relative; }
 .pbf { height: 100%; background: var(--cp-yellow); transition: width 0.4s; }
 .ph { display: flex; justify-content: space-between; margin-bottom: 8px; }
 .ph span { font-size: 13px; font-weight: 600; color: var(--cp-text); }
@@ -93,7 +205,8 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 /* Shop */
 .shbal { font-size: 28px; font-weight: 700; color: var(--cp-yellow); margin-bottom: 20px; text-align: center; }
 .shi { display: flex; align-items: center; justify-content: space-between; background: var(--cp-panel); padding: 14px 16px; margin-bottom: 10px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
-.shn { font-size: 15px; font-weight: 600; flex: 1; margin-right: 15px; line-height: 1.2; }
+.shn { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.shi .qdesc { margin-bottom: 0; margin-top: 4px; color: var(--cp-muted); }
 .shc { font-size: 15px; color: var(--cp-yellow); font-weight: 700; margin-right: 15px; }
 .shbtn { background: var(--cp-bg); border: 1px solid var(--cp-border); padding: 8px 12px; font-size: 12px; font-weight: 700; color: var(--cp-text); cursor: pointer; font-family: inherit; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
 .shbtn.np { color: var(--cp-muted); border-color: transparent; cursor: default; }
@@ -114,7 +227,7 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 .scamp { background: var(--cp-panel); padding: 15px; margin-bottom: 12px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 .scr { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
 
-/* Toast */
+/* Toasts (Haut Centre) */
 #tc { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 400px; pointer-events: none; }
 .ts { padding: 15px 20px; font-size: 14px; font-weight: 700; background: var(--cp-bg); border-left: 4px solid var(--cp-cyan); color: var(--cp-text); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 .ts.gold { border-color: var(--cp-yellow); color: var(--cp-yellow); }
@@ -124,14 +237,22 @@ body { font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: upp
 <body>
 <div id="app">
 
-<div id="hdr">
-  <div class="h-top">&lt; <span>TERMINAL ACCES</span></div>
-  <div class="h1">
-    <div><span class="h-name">H</span><br><span class="h-lv" id="hlv">NETRUNNER / ARCHITECTE</span></div>
-    <div class="h-ip">E$ <span id="hip">0</span></div>
+<!-- Wrapper du Header pour l'ombre -->
+<div id="hdr-wrap">
+  <div id="hdr">
+    <div class="sync-status synched" id="sync-ui">
+      <span class="sync-dot"></span><span id="sync-txt">SYNCHED</span>
+    </div>
+    <div class="h-top">PLAYER PROFIL</div>
+    <div class="h1">
+      <div><span class="h-name">H</span><br><span class="h-lv" id="hlv">NETRUNNER / ARCHITECTE</span></div>
+      <div class="h-ip">E$ <span id="hip">0</span></div>
+    </div>
+    <div class="xb"><div class="xbf" id="hxb" style="width:0%"></div></div>
+    <div class="xl" id="hxl">0 / 100 REP</div>
   </div>
-  <div class="xb"><div class="xbf" id="hxb" style="width:0%"></div></div>
-  <div class="xl" id="hxl">0 / 100 REP</div>
+  <!-- Animation des points placée dans le wrapper -->
+  <div id="gain-anim"></div>
 </div>
 
 <div id="content">
@@ -186,95 +307,124 @@ const DS = {
   lastDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,
   practiceWeek:0,weightStart:null,weightCurrent:null,
   dailies:[
-    {id:'d1',t:'PURGE SYSTEME SANGUIN',done:false,xp:10,ip:1},
-    {id:'d2',t:'CHOC THERMIQUE',done:false,xp:10,ip:1},
-    {id:'d3',t:'DECONNEXION MATRICE',done:false,xp:10,ip:1},
-    {id:'d4',t:'REPAS OFFLINE',done:false,xp:10,ip:1},
-    {id:'d5',t:'CONSOMMATION ORGANIQUE',done:false,xp:10,ip:1},
-    {id:'d6',t:'RAVITAILLEMENT BIO-SYNTH',done:false,xp:10,ip:1},
-    {id:'d7',t:'PATROUILLE DE SECTEUR',done:false,xp:10,ip:1},
-    {id:'d8',t:'SIMULATEUR COMBAT 1H',done:false,xp:10,ip:2},
-    {id:'d9',t:'LECTURE ECLAT DONNEES',done:false,xp:10,ip:1},
-    {id:'d10',t:'BACKUP MEMOIRE LOCALE',done:false,xp:10,ip:1},
-    {id:'d11',t:'PROTOCOLE GLITCH SYSTEME',done:false,xp:10,ip:1},
-    {id:'d12',t:'ENTRAINEMENT NIBBLES',done:false,xp:10,ip:1},
+    {id:'d1',t:'PURGE SYSTEME SANGUIN', desc:'Boire une grande quantité d\'eau', done:false,xp:10,ip:1},
+    {id:'d2',t:'CHOC THERMIQUE', desc:'Douche chaud / froid', done:false,xp:10,ip:1},
+    {id:'d3',t:'DECONNEXION MATRICE', desc:'10 min de méditation', done:false,xp:10,ip:1},
+    {id:'d4',t:'REPAS OFFLINE', desc:'Prendre un repas sans aucun écran', done:false,xp:10,ip:1},
+    {id:'d5',t:'CONSOMMATION ORGANIQUE', desc:'Manger 1 fruit dans la journée', done:false,xp:10,ip:1},
+    {id:'d6',t:'RAVITAILLEMENT BIO-SYNTH', desc:'Avoir 50% de légumes aux repas', done:false,xp:10,ip:1},
+    {id:'d7',t:'PATROUILLE DE SECTEUR', desc:'30 minutes minimum de mouvement / marche', done:false,xp:10,ip:1},
+    {id:'d8',t:'SIMULATEUR COMBAT 1H', desc:'Séance de sport intense (1 heure)', done:false,xp:10,ip:2},
+    {id:'d9',t:'LECTURE ECLAT DONNEES', desc:'15 minutes de lecture', done:false,xp:10,ip:1},
+    {id:'d10',t:'BACKUP MEMOIRE LOCALE', desc:'Faire son journaling en fin de journée', done:false,xp:10,ip:1},
+    {id:'d11',t:'PROTOCOLE GLITCH SYSTEME', desc:'Faire 20 pompes à chaque éternuement', done:false,xp:10,ip:1},
+    {id:'d12',t:'ENTRAINEMENT NIBBLES', desc:'15 minutes de jeu au laser avec Jiji', done:false,xp:10,ip:1},
   ],
   weeklies:[
-    {id:'w1',t:'OVERCLOCKING METABOLIQUE',done:false,xp:50,ip:8},
-    {id:'w2',t:'PREPARATION RATIONS COMBAT',done:false,xp:50,ip:8},
-    {id:'w3',t:'INJECTION DONNEES AUDIO',done:false,xp:50,ip:8},
-    {id:'w4',t:'NETTOYAGE DE LA PLANQUE',done:false,xp:50,ip:8},
-    {id:'w5',t:'MISE A JOUR RESEAU',done:false,xp:50,ip:8},
-    {id:'w6',t:'MAINTENANCE QUARANTAINE',done:false,xp:50,ip:8},
+    {id:'w1',t:'OVERCLOCKING METABOLIQUE', desc:'Jeûner un jour complet', done:false,xp:50,ip:8},
+    {id:'w2',t:'PREPARATION RATIONS COMBAT', desc:'Faire du batch cooking ou des plats one-pot', done:false,xp:50,ip:8},
+    {id:'w3',t:'INJECTION DONNEES AUDIO', desc:'Écouter un livre audio ou un podcast', done:false,xp:50,ip:8},
+    {id:'w4',t:'NETTOYAGE DE LA PLANQUE', desc:'Faire l\'entretien complet de l\'appartement', done:false,xp:50,ip:8},
+    {id:'w5',t:'MISE A JOUR RESEAU', desc:'Prendre des nouvelles des proches par téléphone', done:false,xp:50,ip:8},
+    {id:'w6',t:'MAINTENANCE QUARANTAINE', desc:'Changement litière complète et brossage de Jiji', done:false,xp:50,ip:8},
   ],
   portfolio:[
-    {id:'pf1',t:'INITIALISATION CRYPTAGE',done:false,xp:100,ip:20},
-    {id:'pf2',t:'PIRATAGE ACADEMIE MILITECH',done:false,xp:200,ip:40},
-    {id:'pf3',t:'EXTRACTION URBANISME',done:false,xp:200,ip:45},
-    {id:'pf4',t:'INFILTRATION SECTEUR LOURD',done:false,xp:175,ip:35},
-    {id:'pf5',t:'DECRYPTAGE FICHIERS PRO',done:false,xp:200,ip:40},
-    {id:'pf6',t:'VOL DONNEES AGENCES',done:false,xp:250,ip:50},
-    {id:'pf7',t:'SYNTHESE HOLOGRAPHIQUE',done:false,xp:250,ip:50},
-    {id:'pf8',t:'COMPILATION DAEMON',done:false,xp:500,ip:120,boss:true},
+    {id:'pf1',t:'INITIALISATION CRYPTAGE', desc:'Setup InDesign et 3 fichiers Book validés', done:false,xp:100,ip:20},
+    {id:'pf2',t:'PIRATAGE ACADEMIE MILITECH', desc:'Finaliser Architecture école (Vol.1 Lot 1)', done:false,xp:200,ip:40},
+    {id:'pf3',t:'EXTRACTION URBANISME', desc:'Finaliser Workshops + Concours + Urbanisme', done:false,xp:200,ip:45},
+    {id:'pf4',t:'INFILTRATION SECTEUR LOURD', desc:'Finaliser ALSH Spechbach, Muespach et Sovia', done:false,xp:175,ip:35},
+    {id:'pf5',t:'DECRYPTAGE FICHIERS PRO', desc:'Finaliser Standards + Urbanisme pro (Vol.2)', done:false,xp:200,ip:40},
+    {id:'pf6',t:'VOL DONNEES AGENCES', desc:'Finaliser Concours Lycée Mermoz + ALSH Aspach', done:false,xp:250,ip:50},
+    {id:'pf7',t:'SYNTHESE HOLOGRAPHIQUE', desc:'Finaliser Graphisme, 3D et Photo (Vol.3)', done:false,xp:250,ip:50},
+    {id:'pf8',t:'COMPILATION DAEMON', desc:'Export PDF × 3 + Lancement de la commande Lulu', done:false,xp:500,ip:120,boss:true},
   ],
   memoire:[
-    {id:'m1',t:'ANCRAGE BIOGRAPHIQUE',done:false,xp:150,ip:30},
-    {id:'m2',t:'POSITION DISCIPLINAIRE',done:false,xp:175,ip:35},
-    {id:'m3',t:'INFILTRATION MUESPACH',done:false,xp:300,ip:60,boss:true},
-    {id:'m4',t:'FINALISATION PARTIE 3',done:false,xp:175,ip:35},
-    {id:'m5',t:'ASSEMBLAGE CODE SOURCE',done:false,xp:125,ip:25},
-    {id:'m6',t:'REVISION REGISTRE',done:false,xp:200,ip:40},
-    {id:'m7',t:'FORMATAGE FINAL',done:false,xp:150,ip:30},
-    {id:'m8',t:'CONNEXION ALT CUNNINGHAM',done:false,xp:750,ip:150,boss:true},
+    {id:'m1',t:'ANCRAGE BIOGRAPHIQUE', desc:'Rédiger Partie 1 : Ancrage biographique (4 sections)', done:false,xp:150,ip:30},
+    {id:'m2',t:'POSITION DISCIPLINAIRE', desc:'Rédiger Sections 2.1 et 2.2 : Position disciplinaire', done:false,xp:175,ip:35},
+    {id:'m3',t:'INFILTRATION MUESPACH', desc:'Rédiger Section 2.3 : Étude de cas ALSH Muespach', done:false,xp:300,ip:60,boss:true},
+    {id:'m4',t:'FINALISATION PARTIE 3', desc:'Rédiger Sections 2.4, la Partie 3 et l\'Introduction', done:false,xp:175,ip:35},
+    {id:'m5',t:'ASSEMBLAGE CODE SOURCE', desc:'Faire l\'assemblage global du mémoire et les corrections', done:false,xp:125,ip:25},
+    {id:'m6',t:'REVISION REGISTRE', desc:'Faire la révision V2 (registre praticien)', done:false,xp:200,ip:40},
+    {id:'m7',t:'FORMATAGE FINAL', desc:'Terminer la mise en page et la relecture finale', done:false,xp:150,ip:30},
+    {id:'m8',t:'CONNEXION ALT CUNNINGHAM', desc:'Validation et dépôt final du mémoire HMONP', done:false,xp:750,ip:150,boss:true},
   ],
   poids:[
-    {id:'kg1',kg:1,t:'REMPLACEMENT TISSUS LOURDS',done:false,xp:50,ip:20},
-    {id:'kg2',kg:2,t:'AMELIORATION STRUCTURELLE',done:false,xp:75,ip:25},
-    {id:'kg5',kg:5,t:'CHASSIS ALLEGE MOD KIROSHI',done:false,xp:150,ip:60},
-    {id:'kg10',kg:10,t:'OPTIMISATION COMBAT',done:false,xp:300,ip:150},
-    {id:'kg15',kg:15,t:'IMPLANTS AVANCES',done:false,xp:400,ip:200},
-    {id:'kg20',kg:20,t:'CORPS ELITE MAXTAC',done:false,xp:750,ip:500,boss:true},
+    {id:'kg1',kg:1,t:'REMPLACEMENT TISSUS LOURDS', desc:'Atteindre une perte de 1 kg', done:false,xp:50,ip:20},
+    {id:'kg2',kg:2,t:'AMELIORATION STRUCTURELLE', desc:'Atteindre une perte de 2 kg', done:false,xp:75,ip:25},
+    {id:'kg5',kg:5,t:'CHASSIS ALLEGE MOD KIROSHI', desc:'Atteindre une perte de 5 kg', done:false,xp:150,ip:60},
+    {id:'kg10',kg:10,t:'OPTIMISATION COMBAT', desc:'Atteindre une perte de 10 kg', done:false,xp:300,ip:150},
+    {id:'kg15',kg:15,t:'IMPLANTS AVANCES', desc:'Atteindre une perte de 15 kg', done:false,xp:400,ip:200},
+    {id:'kg20',kg:20,t:'CORPS ELITE MAXTAC', desc:'Objectif final : Atteindre une perte de 20 kg', done:false,xp:750,ip:500,boss:true},
   ],
   guitare:[
-    {id:'g1',t:'ACCORDS KERRY EURODYNE',done:false,xp:150,ip:30},
-    {id:'g2',t:'TRANSITIONS FLUIDES',done:false,xp:200,ip:35},
-    {id:'g3',t:'SESSION COMPLETE STUDIO',done:false,xp:300,ip:50},
-    {id:'g4',t:'PREMIER GIG AFTERLIFE',done:false,xp:500,ip:75},
+    {id:'g1',t:'ACCORDS KERRY EURODYNE', desc:'Palier 1 : Maîtriser 6 accords fondamentaux', done:false,xp:150,ip:30},
+    {id:'g2',t:'TRANSITIONS FLUIDES', desc:'Palier 2 : Maîtriser les transitions entre les accords', done:false,xp:200,ip:35},
+    {id:'g3',t:'SESSION COMPLETE STUDIO', desc:'Palier 3 : Jouer son premier morceau de bout en bout', done:false,xp:300,ip:50},
+    {id:'g4',t:'PREMIER GIG AFTERLIFE', desc:'Palier 4 : Avoir un répertoire de 5 morceaux ou plus', done:false,xp:500,ip:75},
   ],
   shop:[
-    {id:'s_mystery',t:'CACHE MILITECH INCONNUE',cost:15},
-    {id:'s1',t:'SESSION BRAINDANCE',cost:20},
-    {id:'s28',t:'RATION PREMIUM NIBBLES',cost:30},
-    {id:'s2',t:'LIVRAISON SYNTH-VIANDE',cost:40},
-    {id:'s12',t:'ARCHIVE PHYSIQUE STYLET',cost:60},
-    {id:'s13',t:'RECALIBRATION SQUELETTE',cost:80},
-    {id:'s14',t:'MODULE DIVERTISSEMENT',cost:80},
-    {id:'s3',t:'RESTAURANT CORPO',cost:100},
-    {id:'s15',t:'GIG UNDERGROUND',cost:100},
-    {id:'s16',t:'ARCHIVE PRE-GUERRE',cost:120},
-    {id:'s17',t:'MODULE COLLECTOR',cost:140},
-    {id:'s4',t:'MAINTENANCE MUSCULAIRE',cost:150},
-    {id:'s18',t:'IMPRESSION HOLO MAX',cost:180},
-    {id:'s19',t:'ARCHIVE PRE-GUERRE XL',cost:200},
-    {id:'s5',t:'CUVE BACTA SPA',cost:220},
-    {id:'s20',t:'AMORTISSEURS COURSE',cost:220},
-    {id:'s21',t:'FESTIVAL MAJEUR PARIS',cost:220},
-    {id:'s22',t:'ARCHIVE BLACKSAD',cost:220},
-    {id:'s6',t:'SYNTH-CUIR BLINDAGE',cost:280},
-    {id:'s7',t:'PACK NANOTECH MINEUR',cost:350},
-    {id:'s23',t:'AMORTISSEURS PREMIUM',cost:350},
-    {id:'s24',t:'OPTIQUE KIROSHI 85MM',cost:400},
-    {id:'s8',t:'PACK NANOTECH MOYEN',cost:600},
-    {id:'s25',t:'OPTIQUE GRAND ANGLE',cost:600},
-    {id:'s9',t:'PACK NANOTECH LOURD',cost:900},
-    {id:'s27',t:'OPTIQUE CORPO MAX',cost:1200},
-    {id:'s26',t:'KIROSHI LEGENDAIRE',cost:1200},
-    {id:'s10',t:'VOL LONDRES',cost:1800},
-    {id:'s11',t:'EXPEDITION IRLANDE',cost:2800},
+    {id:'s_mystery',t:'CACHE MILITECH INCONNUE', desc:'Coffre mystère (Récompenses aléatoires surprises)', cost:15},
+    {id:'s1',t:'SESSION BRAINDANCE', desc:'Une soirée gaming sans aucune culpabilité', cost:20},
+    {id:'s28',t:'RATION PREMIUM NIBBLES', desc:'Acheter un nouveau jouet ou une friandise pour Jiji', cost:30},
+    {id:'s2',t:'LIVRAISON SYNTH-VIANDE', desc:'Se commander un repas plaisir (sushi, pizza...)', cost:40},
+    {id:'s12',t:'ARCHIVE PHYSIQUE STYLET', desc:'Acheter un beau carnet Leuchtturm et un stylo Rotring', cost:60},
+    {id:'s13',t:'RECALIBRATION SQUELETTE', desc:'Se payer une séance de remise en place chez l\'ostéopathe', cost:80},
+    {id:'s14',t:'MODULE DIVERTISSEMENT', desc:'S\'acheter un jeu vidéo standard', cost:80},
+    {id:'s3',t:'RESTAURANT CORPO', desc:'S\'offrir un très bon restaurant', cost:100},
+    {id:'s15',t:'GIG UNDERGROUND', desc:'Place de concert à Strasbourg ou Basel', cost:100},
+    {id:'s16',t:'ARCHIVE PRE-GUERRE', desc:'S\'acheter un livre Taschen ou Phaidon standard', cost:120},
+    {id:'s17',t:'MODULE COLLECTOR', desc:'S\'acheter une édition collector de jeu vidéo', cost:140},
+    {id:'s4',t:'MAINTENANCE MUSCULAIRE', desc:'S\'offrir une session de massage d\'1 heure', cost:150},
+    {id:'s18',t:'IMPRESSION HOLO MAX', desc:'Faire une impression grand format d\'une de ses photos', cost:180},
+    {id:'s19',t:'ARCHIVE PRE-GUERRE XL', desc:'S\'acheter un grand livre Taschen XL ou une monographie', cost:200},
+    {id:'s5',t:'CUVE BACTA SPA', desc:'Passer une journée aux thermes ou au SPA', cost:220},
+    {id:'s20',t:'AMORTISSEURS COURSE', desc:'S\'acheter des chaussures de sport de haute qualité', cost:220},
+    {id:'s21',t:'FESTIVAL MAJEUR PARIS', desc:'Billet pour un concert ou festival à Paris', cost:220},
+    {id:'s22',t:'ARCHIVE BLACKSAD', desc:'S\'offrir l\'intégrale Blacksad en édition limitée', cost:220},
+    {id:'s6',t:'SYNTH-CUIR BLINDAGE', desc:'S\'acheter de beaux vêtements (budget ~80€)', cost:280},
+    {id:'s7',t:'PACK NANOTECH MINEUR', desc:'S\'acheter un petit kit LEGO (<50€)', cost:350},
+    {id:'s23',t:'AMORTISSEURS PREMIUM', desc:'S\'acheter des chaussures lifestyle haut de gamme', cost:350},
+    {id:'s24',t:'OPTIQUE KIROSHI 85MM', desc:'S\'acheter l\'objectif photo portrait 85mm f/1.8', cost:400},
+    {id:'s8',t:'PACK NANOTECH MOYEN', desc:'S\'acheter un kit LEGO moyen (50–120€)', cost:600},
+    {id:'s25',t:'OPTIQUE GRAND ANGLE', desc:'S\'acheter un objectif d\'architecture (entrée de gamme)', cost:600},
+    {id:'s9',t:'PACK NANOTECH LOURD', desc:'S\'acheter un gros kit LEGO (>150€)', cost:900},
+    {id:'s27',t:'OPTIQUE CORPO MAX', desc:'S\'acheter un objectif grand angle archi haut de gamme', cost:1200},
+    {id:'s26',t:'KIROSHI LEGENDAIRE', desc:'S\'acheter l\'objectif photo portrait 85mm f/1.4', cost:1200},
+    {id:'s10',t:'VOL LONDRES', desc:'S\'offrir un week-end à Londres', cost:1800},
+    {id:'s11',t:'EXPEDITION IRLANDE', desc:'S\'offrir un voyage en Irlande de 5 à 7 jours', cost:2800},
   ]
 };
 
-const KEY='cp_rlg_v3';
+const KEY='cp_rlg_v8';
+
+// Système Auto-Sync
+let syncTimer = null;
+
+function setSyncStatus(state) {
+  const ui = document.getElementById('sync-ui');
+  const txt = document.getElementById('sync-txt');
+  ui.className = 'sync-status ' + state.toLowerCase();
+  txt.textContent = state;
+}
+
+function triggerSync() {
+  setSyncStatus('SYNCHING');
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(doSync, 2500); 
+}
+
+function doSync() {
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(S),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+  })
+  .then(response => {
+    if (response.ok) setSyncStatus('SYNCHED');
+    else setSyncStatus('OFFLINE');
+  })
+  .catch(() => setSyncStatus('OFFLINE'));
+}
 
 function load(){
   try{const d=localStorage.getItem(KEY);S=d?JSON.parse(d):JSON.parse(JSON.stringify(DS));}
@@ -285,7 +435,11 @@ function load(){
   if(S.weightStart===undefined)S.weightStart=null;
   if(S.weightCurrent===undefined)S.weightCurrent=null;
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(S));}
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(S));
+  triggerSync(); 
+}
 
 function today(){const n=new Date();return `${n.getFullYear()}-${p2(n.getMonth()+1)}-${p2(n.getDate())}`;}
 function p2(n){return String(n).padStart(2,'0');}
@@ -302,6 +456,18 @@ function toast(msg,type=''){
   el.textContent=msg;
   document.getElementById('tc').appendChild(el);
   setTimeout(()=>el.remove(),3500);
+}
+
+// Animation de point flottante (Haut Droite)
+function showGain(rep, ed) {
+  const container = document.getElementById('gain-anim');
+  const el = document.createElement('div');
+  el.className = 'gain-pop';
+  let txt = `+${rep} REP`;
+  if (ed > 0) txt += ` // +${ed} E$`;
+  el.textContent = txt;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
 }
 
 function checkReset(){
@@ -341,7 +507,8 @@ function buildUI(arr, type) {
   return arr.map(d=>`
     <div class="qi${d.done?' dn':''}" onclick="tTask('${type}','${d.id}')">
       <div class="qi-content">
-        <div class="qt"><span>${d.t}</span><span class="qt-arrow">&gt;</span></div>
+        <div class="qt"><span>${d.t}</span><span class="qt-arrow">+</span></div>
+        <div class="qdesc">// ${d.desc}</div>
         <div class="qr">+${d.xp} REP${d.ip>0?` // +${d.ip} E$`:''}</div>
       </div>
     </div>`).join('');
@@ -361,8 +528,12 @@ function rHebdo(){
 
 function tTask(type, id){
   const it=S[type].find(d=>d.id===id);if(!it)return;
-  if(!it.done){it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;if(it.ip>0)toast('TRANSFERT RECU : +'+it.ip+' E$','gold');}
-  else{it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);S.totalDone=Math.max(0,(S.totalDone||0)-1);}
+  if(!it.done){
+    it.done=true; addXP(it.xp); S.player.ip+=it.ip; S.totalDone=(S.totalDone||0)+1;
+    showGain(it.xp, it.ip);
+  } else {
+    it.done=false; S.player.xp=Math.max(0,S.player.xp-it.xp); S.player.ip=Math.max(0,S.player.ip-it.ip); S.totalDone=Math.max(0,(S.totalDone||0)-1);
+  }
   save(); 
   if(type === 'dailies') rDailies(); else rHebdo();
   rHdr();
@@ -373,6 +544,7 @@ function exList(items,key){
     const locked=(key==='portfolio'||key==='memoire')&&i>0&&!items[i-1].done;
     return `<div class="ex${ex.done?' dn':''}${ex.boss?' boss':''}${locked?' lk':''}">
       <div class="et">${ex.t}</div>
+      <div class="qdesc">// ${ex.desc}</div>
       <div class="er">
         <div class="erw">+${ex.xp} REP // +${ex.ip} E$</div>
         ${ex.done?'<span class="ok-lbl">UPLOAD TERMINé</span>':`<button class="ebtn" onclick="valEx('${key}','${ex.id}')">EXECUTER</button>`}
@@ -385,7 +557,8 @@ function valEx(key,id){
   const it=S[key].find(e=>e.id===id);if(!it||it.done)return;
   if(!confirm('LANCER PROTOCOLE : "'+it.t.substring(0,25)+'..." ?'))return;
   it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
-  toast(it.boss?'CIBLE NEUTRALISEE : +'+it.ip+' E$':'DONNEES EXTRAITES : +'+it.ip+' E$','gold');
+  showGain(it.xp, it.ip);
+  toast(it.boss?'CIBLE NEUTRALISEE':'DONNEES EXTRAITES','gold');
   save();rCamps();rHdr();
 }
 
@@ -420,6 +593,7 @@ function rCamps(){
     ${S.poids.map(m=>`
     <div class="ex${m.done?' dn':''}${m.boss?' boss':''}">
       <div class="et">${m.t}</div>
+      <div class="qdesc">// ${m.desc}</div>
       <div class="er">
         <div class="erw">+${m.xp} REP // +${m.ip} E$</div>
         <span style="font-size:12px;font-weight:700;color:${m.done?'var(--cp-cyan)':'var(--cp-muted)'}">${m.done?'ACTIF':'OFFLINE'}</span>
@@ -431,8 +605,8 @@ function rCamps(){
     <div class="ph"><span>${gDone}/${S.guitare.length} SEQUENCES</span><span>${gPct}% COMPILé</span></div>
     <div class="pb"><div class="pbf" style="width:${gPct}%"></div></div>
     <div class="ex">
-      <div style="font-size:13px;color:var(--cp-text);font-weight:600;margin-bottom:10px">SEQUENCE : ${gActive?gActive.t:'MAITRISE TOTALE'}</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <div style="font-size:14px;color:var(--cp-text);font-weight:700;margin-bottom:10px">SEQUENCE : ${gActive?gActive.t:'MAITRISE TOTALE'}</div>
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
         <button class="wsave" style="flex:1;padding:8px" onclick="logG(15)">15M</button>
         <button class="wsave" style="flex:1;padding:8px" onclick="logG(30)">30M</button>
         <button class="wsave" style="flex:1;padding:8px;background:var(--cp-cyan)" onclick="logG(60)">1H+</button>
@@ -453,7 +627,7 @@ function logW(){
   S.poids.forEach(m=>{
     if(!m.done&&loss>=m.kg){
       m.done=true;addXP(m.xp);S.player.ip+=m.ip;
-      toast('UPGRADE DEBLOQUE : +'+m.ip+' E$','gold');
+      showGain(m.xp, m.ip);
     }
   });
   save();rCamps();rHdr();
@@ -464,7 +638,7 @@ function logG(min){
   const xp=min>=60?15:min>=30?10:5,ip=min>=60?1:0;
   addXP(xp);S.player.ip+=ip;S.practiceWeek=(S.practiceWeek||0)+1;
   save();rCamps();rHdr();
-  toast('SYNCHRO MUSICALE : +'+xp+' REP');
+  showGain(xp, ip);
 }
 
 function rShop(){
@@ -472,10 +646,13 @@ function rShop(){
   document.getElementById('sl').innerHTML=S.shop.map(s=>{
     const can=S.player.ip>=s.cost;
     return `<div class="shi">
-      <span class="shn">${s.t}</span>
+      <div style="flex:1; margin-right:15px;">
+        <div class="shn">${s.t}</div>
+        <div class="qdesc">// ${s.desc}</div>
+      </div>
       <span class="shc">${s.cost} E$</span>
       <button class="shbtn${can?'':' np'}" onclick="${can?`buyIt('${s.id}')`:''}">
-        ${can?'ACQUERIR':'FUNDS REQUIS'}
+        ${can?'ACQUERIR':'FONDS REQUIS'}
       </button>
     </div>`;
   }).join('');
@@ -505,26 +682,6 @@ function buyIt(id){
   save();rShop();rHdr();
 }
 
-function uploadData() {
-  toast('CONNEXION AU SERVEUR H PROJECT...');
-  
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(S),
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8',
-    }
-  })
-  .then(response => response.text())
-  .then(text => {
-    toast('UPLOAD REUSSI : DONNEES SAUVEGARDEES', 'gold');
-  })
-  .catch(error => {
-    toast('ERREUR SYSTEME : CONNEXION ECHOUEE', 'err');
-    console.error(error);
-  });
-}
-
 function rStats(){
   document.getElementById('stg').innerHTML=`
     <div class="sc"><div class="sv">${S.player.level}</div><div class="sl">STREET CRED</div></div>
@@ -538,19 +695,13 @@ function rStats(){
     {n:'ROCKERBOY',items:S.guitare},
   ];
   
-  let html = cs.map(c=>{
+  document.getElementById('stc').innerHTML = cs.map(c=>{
     const done=c.items.filter(e=>e.done).length,pct=Math.round(done/c.items.length*100);
     return `<div class="scamp">
       <div class="scr"><span style="color:var(--cp-yellow)">${c.n}</span><span style="color:var(--cp-text)">${done}/${c.items.length}</span></div>
       <div class="pb"><div class="pbf" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
-
-  html += `<div style="margin-top: 20px;">
-    <button class="wsave" style="width: 100%; padding: 15px; font-size: 16px; background: var(--cp-cyan);" onclick="uploadData()">UPLOAD SUR SERVEUR H PROJECT</button>
-  </div>`;
-
-  document.getElementById('stc').innerHTML = html;
 }
 
 function go(tab){
