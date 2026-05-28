@@ -23,20 +23,18 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .auth-box {
   width: 90%; max-width: 360px;
   background: rgba(11,17,24,0.95);
-  border: 1px solid rgba(255,0,60,.3); border-left: 4px solid var(--rd);
+  border: none;
   padding: 30px 20px; text-align: center;
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-  box-shadow: 0 0 25px rgba(255,0,60,.15);
+  box-shadow: none;
   position: relative;
 }
 .auth-box::before {
   content:''; position:absolute; inset:0; pointer-events:none;
-  background-image: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,0,60,.03) 3px,rgba(255,0,60,.03) 4px);
+  background-image: none;
 }
 .auth-title { color: var(--rd); font-size: 24px; font-weight: 900; letter-spacing: 4px; margin-bottom: 2px; text-shadow: 0 0 12px rgba(255,0,60,.6); }
 .auth-sub { color: var(--mu); font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
-
-/* Display Area */
 .auth-display {
   width: 100%; height: 54px; background: rgba(0,0,0,.4);
   border: 1px solid rgba(255,0,60,.2); border-bottom: 2px solid var(--rd);
@@ -44,8 +42,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   font-size: 32px; font-weight: 700; color: var(--y); letter-spacing: 6px;
   text-shadow: 0 0 10px rgba(252,238,10,.4); transition: opacity 0.15s ease;
 }
-
-/* Keypad Grid Matrix */
 .keypad {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 5px;
 }
@@ -56,15 +52,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   user-select: none;
 }
-.key:html-active, .key:active {
+.key:active {
   background: var(--rd); color: #000; border-color: var(--rd);
   box-shadow: 0 0 12px var(--rd); transform: scale(0.97);
 }
 .key-action { font-size: 13px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; }
-.key.btn-clear:html-active, .key.btn-clear:active { background: var(--rd); color: #fff; box-shadow: 0 0 12px var(--rd); }
-.key.btn-enter:html-active, .key.btn-enter:active { background: var(--gn); color: #000; border-color: var(--gn); box-shadow: 0 0 12px var(--gn); }
-
-/* Loading Animation */
+.key.btn-clear:active { background: var(--rd); color: #fff; box-shadow: 0 0 12px var(--rd); }
+.key.btn-enter:active { background: var(--gn); color: #000; border-color: var(--gn); box-shadow: 0 0 12px var(--gn); }
 .auth-loading { display: none; flex-direction: column; align-items: center; gap: 15px; padding: 40px 0 20px; position: relative; z-index: 2; }
 .auth-spinner {
   width: 40px; height: 40px;
@@ -74,8 +68,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .auth-status { color: var(--rd); font-size: 12px; font-weight: 800; letter-spacing: 3px; animation: authBlink 1.2s infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes authBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-/* Error Shake Animation */
 .shake { animation: authShake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--rd); box-shadow: 0 0 30px rgba(255,0,60,.4); }
 @keyframes authShake {
   10%, 90% { transform: translate3d(-3px, 0, 0); }
@@ -84,7 +76,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   40%, 60% { transform: translate3d(6px, 0, 0); }
 }
 
-/* ─── MAIN APP STYLES (Conservés à l'identique) ──────────────────────── */
+/* ─── MAIN APP ──────────────────────────────────────────────────────── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
 #hw{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;filter:drop-shadow(0 8px 12px rgba(0,0,0,.85))}
 #hd{
@@ -305,50 +297,30 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .cg-c.bl{bottom:112px;left:20px;border-width:0 0 2px 2px}
 .cg-c.br{bottom:112px;right:20px;border-width:0 2px 2px 0}
 @keyframes cgCorner{0%,10%{opacity:0}18%{opacity:.8}75%{opacity:.8}100%{opacity:0}}
-.lvl-ov{
-  position:fixed;inset:0;z-index:9500;pointer-events:none;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
-  background:rgba(11,17,24,.92);
-  animation:lvOv 4.5s ease-out forwards;
-}
+.lvl-ov{position:fixed;inset:0;z-index:9500;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(11,17,24,.92);animation:lvOv 4.5s ease-out forwards}
 @keyframes lvOv{0%{opacity:0}7%{opacity:1}82%{opacity:1}100%{opacity:0}}
 .lvl-top-text{text-align:center;animation:lvTxt 4.5s ease-out forwards}
 @keyframes lvTxt{0%{opacity:0;transform:translateY(-10px)}10%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
-.lvl-congrats-big{
-  font-size:34px;font-weight:900;color:#de2a3a;letter-spacing:1px;
-  text-shadow:0 0 22px #de2a3a,0 0 45px rgba(222,42,58,.4);
-  margin-bottom:2px;line-height:1;
-}
+.lvl-congrats-big{font-size:34px;font-weight:900;color:#de2a3a;letter-spacing:1px;text-shadow:0 0 22px #de2a3a,0 0 45px rgba(222,42,58,.4);margin-bottom:2px;line-height:1}
 .lvl-reached-small{font-size:11px;font-weight:700;letter-spacing:5px;color:rgba(222,42,58,.5)}
 .lvl-svg-wrap{animation:lvBadge 4.5s ease-out forwards}
 @keyframes lvBadge{
-  0%  {opacity:0;transform:scale(.82);filter:drop-shadow(0 0 4px rgba(222,42,58,.1))}
-  10% {opacity:1;transform:scale(1.03);filter:drop-shadow(0 0 12px rgba(222,42,58,.3))}
-  18% {transform:scale(1);filter:drop-shadow(0 0 14px rgba(222,42,58,.3))}
-  62% {filter:drop-shadow(0 0 16px rgba(222,42,58,.35))}
-  78% {filter:drop-shadow(0 0 45px rgba(222,42,58,.8))}
-  88% {filter:drop-shadow(0 0 80px rgba(222,42,58,1)) drop-shadow(0 0 130px rgba(222,42,58,.9))}
-  96% {opacity:1;filter:drop-shadow(0 0 55px rgba(222,42,58,.8))}
+  0%{opacity:0;transform:scale(.82);filter:drop-shadow(0 0 4px rgba(222,42,58,.1))}
+  10%{opacity:1;transform:scale(1.03);filter:drop-shadow(0 0 12px rgba(222,42,58,.3))}
+  18%{transform:scale(1);filter:drop-shadow(0 0 14px rgba(222,42,58,.3))}
+  62%{filter:drop-shadow(0 0 16px rgba(222,42,58,.35))}
+  78%{filter:drop-shadow(0 0 45px rgba(222,42,58,.8))}
+  88%{filter:drop-shadow(0 0 80px rgba(222,42,58,1)) drop-shadow(0 0 130px rgba(222,42,58,.9))}
+  96%{opacity:1;filter:drop-shadow(0 0 55px rgba(222,42,58,.8))}
   100%{opacity:0;transform:scale(1.05) translateY(-12px);filter:drop-shadow(0 0 15px rgba(222,42,58,.2))}
 }
-.badge-container { position: relative; width: 320px; height: 250px; }
-.bg-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-.top-notch-text {
-  position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 2;
-  font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: lowercase;
-  text-shadow: 0 0 4px rgba(93, 242, 242, 0.3); opacity: 0.9; color: var(--cy);
-}
-.inner-content {
-  position: absolute; top: 35px; left: 0; width: 100%; height: calc(100% - 35px); z-index: 2;
-  display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 15px; box-sizing: border-box;
-}
-.number-lvl { font-size: 140px; font-weight: 500; line-height: 0.75; text-shadow: 0 0 8px rgba(93, 242, 242, 0.4); margin-bottom: 12px; color: var(--cy); }
-.small-text-lvl { font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 4px rgba(93, 242, 242, 0.3); color: var(--cy); }
-.lvl-bottom-text{
-  font-size:22px;font-weight:900;color:var(--cy);letter-spacing:7px;
-  text-shadow:0 0 15px var(--cy),0 0 30px rgba(0,240,255,.4);
-  animation:lvTxt 4.5s ease-out forwards; text-align:center;line-height:1.3;
-}
+.badge-container{position:relative;width:320px;height:250px}
+.bg-svg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+.top-notch-text{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:2;font-size:16px;font-weight:600;letter-spacing:2px;text-transform:lowercase;text-shadow:0 0 4px rgba(93,242,242,0.3);opacity:0.9;color:var(--cy)}
+.inner-content{position:absolute;top:35px;left:0;width:100%;height:calc(100% - 35px);z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-bottom:15px;box-sizing:border-box}
+.number-lvl{font-size:140px;font-weight:500;line-height:0.75;text-shadow:0 0 8px rgba(93,242,242,0.4);margin-bottom:12px;color:var(--cy)}
+.small-text-lvl{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 4px rgba(93,242,242,0.3);color:var(--cy)}
+.lvl-bottom-text{font-size:22px;font-weight:900;color:var(--cy);letter-spacing:7px;text-shadow:0 0 15px var(--cy),0 0 30px rgba(0,240,255,.4);animation:lvTxt 4.5s ease-out forwards;text-align:center;line-height:1.3}
 </style>
 </head>
 <body>
@@ -357,9 +329,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <div class="auth-box" id="auth-box">
     <div class="auth-title">SECURITY TERMINAL</div>
     <div class="auth-sub">// IDENTITY VERIFICATION REQUIRED //</div>
-    
     <div class="auth-display" id="auth-display">---</div>
-    
     <div class="keypad" id="auth-keypad">
       <button class="key" onclick="pressKey('1')">1</button>
       <button class="key" onclick="pressKey('2')">2</button>
@@ -374,7 +344,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
       <button class="key" onclick="pressKey('0')">0</button>
       <button class="key key-action btn-enter" style="color:var(--gn)" onclick="pressKey('E')">ENTER</button>
     </div>
-    
     <div id="auth-loading" class="auth-loading">
       <div class="auth-spinner"></div>
       <div id="auth-status" class="auth-status">CONNECTING TO NETWATCH...</div>
@@ -397,17 +366,12 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
       </div>
     </div>
     <div class="xp-block">
-      <div class="xp-rep-row">
-        <div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div>
-      </div>
+      <div class="xp-rep-row"><div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div></div>
       <div class="xb"><div class="xbf" id="xbf" style="width:0%"></div></div>
-      <div class="xp-streak-row">
-        <div class="streak-badge"><span class="streak-num" id="hsk-val">0</span><span>DAY STREAK</span></div>
-      </div>
+      <div class="xp-streak-row"><div class="streak-badge"><span class="streak-num" id="hsk-val">0</span><span>DAY STREAK</span></div></div>
     </div>
   </div>
 </div>
-
 <div id="ga"></div>
 <div id="content">
   <div id="s-d" class="sec on"><div class="cph" id="dtt">MISSIONS</div><div id="dl"></div></div>
@@ -440,101 +404,77 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 const SURL='https://script.google.com/macros/s/AKfycbyeldCrtLO2oU7_ng1uvfivUa1pZI6MAzxABoP4i1TnFhfU4lFmkUyb-ckR1A5-FFyM6A/exec';
 const KEY='cp_rlg_v9';
 
-// ─── AUTHENTICATION KEYPAD LOGIC ────────────────────────────────────
-let enteredPin = '';
+// ─── AUTH ────────────────────────────────────────────────────────────
+let enteredPin='';
 
-document.addEventListener('DOMContentLoaded', () => {
-   if(sessionStorage.getItem('cp_auth') === 'true') {
-       document.getElementById('auth-screen').style.display = 'none';
-   }
-   updateAuthDisplay();
+document.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem('cp_auth')==='true'){
+    document.getElementById('auth-screen').style.display='none';
+  }
+  updateAuthDisplay();
 });
 
-function updateAuthDisplay() {
-  const display = document.getElementById('auth-display');
-  if (enteredPin.length === 0) {
-    display.textContent = '---';
-    display.style.opacity = '0.25';
-  } else {
-    // Affiche des ronds cybernétiques pour masquer le code
-    display.textContent = '•'.repeat(enteredPin.length);
-    display.style.opacity = '1';
-  }
+function updateAuthDisplay(){
+  const d=document.getElementById('auth-display');
+  if(enteredPin.length===0){d.textContent='---';d.style.opacity='0.25';}
+  else{d.textContent='•'.repeat(enteredPin.length);d.style.opacity='1';}
 }
 
-function pressKey(k) {
-  if (k === 'C') {
-    enteredPin = '';
-    updateAuthDisplay();
-  } else if (k === 'E') {
-    if (enteredPin.length > 0) checkAuth();
-  } else {
-    if (enteredPin.length < 8) { // Limite technique à 8 chiffres max
-      enteredPin += k;
-      updateAuthDisplay();
-    }
-  }
+function pressKey(k){
+  if(k==='C'){enteredPin='';updateAuthDisplay();}
+  else if(k==='E'){if(enteredPin.length>0)checkAuth();}
+  else{if(enteredPin.length<8){enteredPin+=k;updateAuthDisplay();}}
 }
 
-function checkAuth() {
-  const keypad = document.getElementById('auth-keypad');
-  const display = document.getElementById('auth-display');
-  const loader = document.getElementById('auth-loading');
-  const status = document.getElementById('auth-status');
-  const box = document.getElementById('auth-box');
-  
-  // Bascule vers l'état chargement / Masquage du keypad
-  keypad.style.display = 'none';
-  display.style.display = 'none';
-  loader.style.display = 'flex';
-  status.textContent = 'CONNECTING TO NETWATCH...';
-  status.style.color = 'var(--rd)';
-  status.style.textShadow = 'none';
-  
-  // Envoi asynchrone au Google Apps Script
-  fetch(SURL, {
-    method: 'POST',
-    body: JSON.stringify({action: 'auth', pin: enteredPin}),
-    headers: {'Content-Type': 'text/plain;charset=utf-8'}
-  })
-  .then(r => r.text())
-  .then(text => {
-    if(text === 'AUTH_SUCCESS') {
-      status.textContent = 'ACCESS GRANTED';
-      status.style.color = 'var(--gn)';
-      status.style.textShadow = '0 0 10px var(--gn)';
-      sessionStorage.setItem('cp_auth', 'true');
-      
-      setTimeout(() => {
-        document.getElementById('auth-screen').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('auth-screen').style.display = 'none';
-        }, 400);
-      }, 800);
-    } else {
-      status.textContent = 'ACCESS DENIED';
-      box.classList.add('shake');
-      setTimeout(() => box.classList.remove('shake'), 400);
-      
-      setTimeout(() => {
-        loader.style.display = 'none';
-        keypad.style.display = 'grid';
-        display.style.display = 'flex';
-        enteredPin = '';
+function checkAuth(){
+  const keypad=document.getElementById('auth-keypad');
+  const display=document.getElementById('auth-display');
+  const loader=document.getElementById('auth-loading');
+  const status=document.getElementById('auth-status');
+  const box=document.getElementById('auth-box');
+  keypad.style.display='none';
+  display.style.display='none';
+  loader.style.display='flex';
+  status.textContent='CONNECTING TO NETWATCH...';
+  status.style.color='var(--rd)';
+  status.style.textShadow='none';
+  fetch(SURL,{method:'POST',body:JSON.stringify({action:'auth',pin:enteredPin}),headers:{'Content-Type':'text/plain;charset=utf-8'}})
+    .then(r=>r.text())
+    .then(text=>{
+      if(text==='AUTH_SUCCESS'){
+        status.textContent='ACCESS GRANTED';
+        status.style.color='var(--gn)';
+        status.style.textShadow='0 0 10px var(--gn)';
+        sessionStorage.setItem('cp_auth','true');
+        setTimeout(()=>{
+          document.getElementById('auth-screen').style.opacity='0';
+          setTimeout(()=>document.getElementById('auth-screen').style.display='none',400);
+        },800);
+      }else{
+        status.textContent='ACCESS DENIED';
+        box.classList.add('shake');
+        setTimeout(()=>box.classList.remove('shake'),400);
+        setTimeout(()=>{
+          loader.style.display='none';
+          keypad.style.display='grid';
+          display.style.display='flex';
+          enteredPin='';
+          updateAuthDisplay();
+        },1500);
+      }
+    })
+    .catch(()=>{
+      status.textContent='CONNECTION FAILED';
+      setTimeout(()=>{
+        loader.style.display='none';
+        keypad.style.display='grid';
+        display.style.display='flex';
+        enteredPin='';
         updateAuthDisplay();
-      }, 1500);
-    }
-  })
-  .catch(e => {
-    status.textContent = 'CONNECTION FAILED';
-    setTimeout(() => {
-      loader.style.display = 'none';
-      keypad.style.display = 'grid';
-      display.style.display = 'flex';
-    }, 1500);
-  });
+      },1500);
+    });
 }
-// ───────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
 
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
@@ -614,7 +554,7 @@ const DS={
     {id:'s5',t:'BACTA TANK SPA',desc:'Day at the thermal baths or SPA',cost:1100,cat:'xp'},
     {id:'s20',t:'RACING SHOCK ABSORBERS',desc:'High-quality sports shoes',cost:1100,cat:'gear'},
     {id:'s21',t:'MAJOR PARIS FESTIVAL',desc:'Ticket for a concert or festival in Paris',cost:1100,cat:'fun'},
-    {id:'s22',t:'BLACKSAD ARCHIVE',desc:'Blacksad complete collection limited edition',cost:1100,cat(--gear)},
+    {id:'s22',t:'BLACKSAD ARCHIVE',desc:'Blacksad complete collection limited edition',cost:1100,cat:'gear'},
     {id:'s6',t:'SYNTH-LEATHER ARMOR',desc:'Nice clothes (~80 EUR budget)',cost:1400,cat:'gear'},
     {id:'s7',t:'MINOR NANOTECH PACK',desc:'Small LEGO kit (under 50 EUR)',cost:1750,cat:'fun'},
     {id:'s23',t:'PREMIUM SHOCK ABSORBERS',desc:'High-end lifestyle shoes',cost:1750,cat:'gear'},
@@ -646,6 +586,7 @@ function migrate(){
     return out;
   }catch(e){return null;}
 }
+
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -665,6 +606,7 @@ function load(){
   if(!S.shop||S.shop.length<DS.shop.length)S.shop=DS.shop.map(def=>{const sv=(S.shop||[]).find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:{...def};});
   if(!S.weightLog)S.weightLog=[];
 }
+
 function save(){localStorage.setItem(KEY,JSON.stringify(S));triggerSync();}
 
 function setSy(st){document.getElementById('syu').className='sync '+st;document.getElementById('sytx').textContent=st.toUpperCase();}
@@ -720,59 +662,54 @@ function showGain(rep,ed,e){
 }
 
 function showLevelUp(lvl){
-  const sz = lvl >= 100 ? 100 : 140; 
-  const ov = document.createElement('div');
-  ov.className = 'lvl-ov';
-  ov.innerHTML = `
+  const sz=lvl>=100?100:140;
+  const ov=document.createElement('div');
+  ov.className='lvl-ov';
+  ov.innerHTML=`
     <div class="lvl-top-text">
       <div class="lvl-congrats-big">CONGRATULATIONS</div>
       <div class="lvl-reached-small">— YOU'VE REACHED —</div>
     </div>
     <div class="lvl-svg-wrap badge-container">
-        <svg class="bg-svg" viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
-            <path d="
-                M 18,85 Q 15,85 17,82 L 83,22 Q 85,20 88,20 L 97,20 Q 100,20 102,23 L 108,32
-                Q 110,35 113,35 L 207,35 Q 210,35 212,32 L 218,23 Q 220,20 223,20 L 232,20
-                Q 235,20 237,22 L 303,82 Q 305,85 305,88 L 305,162 Q 305,165 303,168 L 237,228
-                Q 235,230 232,230 L 203,230 Q 200,230 198,233 L 192,242 Q 190,245 187,245 L 133,245
-                Q 130,245 128,242 L 122,233 Q 120,230 117,230 L 88,230 Q 85,230 83,228 L 17,168
-                Q 15,165 15,162 L 15,88 Q 15,85 18,85 Z"
-                fill="rgba(56, 25, 30, 0.85)" stroke="#e83a43" stroke-width="1.5" />
-            <rect x="135" y="237" width="50" height="2" rx="1" ry="1" fill="#e83a43"/>
-            <rect x="130" y="242" width="60" height="0.5" rx="0.25" ry="0.25" fill="#e83a43" opacity="0.5"/>
-        </svg>
-        <div class="top-notch-text">level</div>
-        <div class="inner-content">
-            <div class="number-lvl" style="font-size: ${sz}px;">${lvl}</div>
-            <div class="small-text-lvl">CORPO</div>
-        </div>
+      <svg class="bg-svg" viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 18,85 Q 15,85 17,82 L 83,22 Q 85,20 88,20 L 97,20 Q 100,20 102,23 L 108,32
+          Q 110,35 113,35 L 207,35 Q 210,35 212,32 L 218,23 Q 220,20 223,20 L 232,20
+          Q 235,20 237,22 L 303,82 Q 305,85 305,88 L 305,162 Q 305,165 303,168 L 237,228
+          Q 235,230 232,230 L 203,230 Q 200,230 198,233 L 192,242 Q 190,245 187,245 L 133,245
+          Q 130,245 128,242 L 122,233 Q 120,230 117,230 L 88,230 Q 85,230 83,228 L 17,168
+          Q 15,165 15,162 L 15,88 Q 15,85 18,85 Z"
+          fill="rgba(56,25,30,0.85)" stroke="#e83a43" stroke-width="1.5"/>
+        <rect x="135" y="237" width="50" height="2" rx="1" fill="#e83a43"/>
+        <rect x="130" y="242" width="60" height="0.5" rx="0.25" fill="#e83a43" opacity="0.5"/>
+      </svg>
+      <div class="top-notch-text">level</div>
+      <div class="inner-content">
+        <div class="number-lvl" style="font-size:${sz}px">${lvl}</div>
+        <div class="small-text-lvl">CORPO</div>
+      </div>
     </div>
-    <div class="lvl-bottom-text">KEEP UP<br>CHOOM !</div>
-  `;
+    <div class="lvl-bottom-text">KEEP UP<br>CHOOM !</div>`;
   document.body.appendChild(ov);
-  setTimeout(() => ov.remove(), 4800);
+  setTimeout(()=>ov.remove(),4800);
 }
 
 function showCongrats(desc){
   const ov=document.createElement('div');ov.className='congrats-ov';
-  ov.innerHTML=
-    '<div class="cg-scan"></div><div class="cg-c tl"></div><div class="cg-c tr"></div><div class="cg-c bl"></div><div class="cg-c br"></div>'+
+  ov.innerHTML='<div class="cg-scan"></div><div class="cg-c tl"></div><div class="cg-c tr"></div><div class="cg-c bl"></div><div class="cg-c br"></div>'+
     '<div class="cg-content"><div class="cg-eyebrow">// TRANSACTION COMPLETE</div><div class="cg-main">CONGRATULATIONS</div><div class="cg-sub">YOU EARNED</div><div class="cg-item">'+desc+'</div></div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),5000);
 }
 
 function showUsedOverlay(desc){
   const ov=document.createElement('div');ov.className='used-ov';
-  ov.innerHTML=
-    '<div class="used-scan"></div><div class="used-c tl"></div><div class="used-c tr"></div><div class="used-c bl"></div><div class="used-c br"></div>'+
+  ov.innerHTML='<div class="used-scan"></div><div class="used-c tl"></div><div class="used-c tr"></div><div class="used-c bl"></div><div class="used-c br"></div>'+
     '<div class="used-lbl">USED</div><div class="used-nm">'+desc+'</div><div class="used-sub">and it was well deserved !</div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),6500);
 }
 
 function showBadLuckOverlay(){
   const ov=document.createElement('div');ov.className='badluck-ov';
-  ov.innerHTML=
-    '<div class="bl-scan"></div><div class="bl-c tl"></div><div class="bl-c tr"></div><div class="bl-c bl2"></div><div class="bl-c br"></div>'+
+  ov.innerHTML='<div class="bl-scan"></div><div class="bl-c tl"></div><div class="bl-c tr"></div><div class="bl-c bl2"></div><div class="bl-c br"></div>'+
     '<div class="bl-main">TOO BAD CHOOM !</div><div class="bl-next">NEXT TIME...</div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),5500);
 }
@@ -816,8 +753,8 @@ function tTask(type,id,e){
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
     showGain(it.xp,it.ip,e);save();rHdr();
-    if(el)el.classList.add('dn'); 
-    updateCount(type); 
+    if(el)el.classList.add('dn');
+    updateCount(type);
   }else{
     it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
     S.totalDone=Math.max(0,(S.totalDone||0)-1);save();rHdr();
@@ -878,6 +815,7 @@ function rCamps(){
     '<div style="font-size:11px;font-weight:800;color:var(--y)">SESSIONS THIS WEEK : '+(S.practiceWeek||0)+'</div></div>'+exList(S.guitare,'guitare'));
   document.getElementById('cl').innerHTML=h;
 }
+
 function logW(e){
   const v=parseFloat(document.getElementById('winp').value);
   if(isNaN(v)||v<30||v>300){toast('INVALID MASS','err');return;}
@@ -904,9 +842,8 @@ function saveShopItem(){
   S.shop.push({id:'cu_'+Date.now(),t:'CUSTOM',desc:desc,cost:cost,cat:cat,custom:true});
   showAddForm=false;save();rShop();toast('ITEM ADDED TO BLACK MARKET','gold');
 }
-function removeCustomItem(id){
-  S.shop=S.shop.filter(s=>s.id!==id);save();rShop();toast('ITEM REMOVED','err');
-}
+function removeCustomItem(id){S.shop=S.shop.filter(s=>s.id!==id);save();rShop();toast('ITEM REMOVED','err');}
+
 function rShop(){
   const bought=S.shop.filter(s=>s.bought),mp=S.mysteryPending||[];let h='';
   if(bought.length>0||mp.length>0){
@@ -934,8 +871,7 @@ function rShop(){
       '<button class="shbtn'+(can?' ok':' np')+'" onclick="'+(can?'buyIt(\''+s.id+'\')':'')+'">'+(can?'BUY':'NEED FUNDS')+'</button>'+
       (s.custom?'<button style="background:none;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="removeCustomItem(\''+s.id+'\')">✕</button>':'')+'</div>';
   }).join('');
-  h+='<div style="margin-top:18px"><button onclick="toggleAddShop()" style="width:100%;background:'+(showAddForm?'rgba(252,238,10,.1)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+
-    (showAddForm?'✕ CANCEL':'+ ADD ITEM TO BLACK MARKET')+'</button>';
+  h+='<div style="margin-top:18px"><button onclick="toggleAddShop()" style="width:100%;background:'+(showAddForm?'rgba(252,238,10,.1)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+(showAddForm?'✕ CANCEL':'+ ADD ITEM TO BLACK MARKET')+'</button>';
   if(showAddForm){
     h+='<div style="margin-top:10px;padding:14px;background:var(--pan);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)">'+
       '<input id="asi-desc" class="winp" placeholder="ITEM DESCRIPTION" style="width:100%;margin-bottom:8px;text-transform:none">'+
@@ -947,6 +883,7 @@ function rShop(){
   h+='</div>';
   document.getElementById('sl').innerHTML=h;
 }
+
 function cancelPurchase(id){const it=S.shop.find(s=>s.id===id);if(!it)return;it.bought=false;S.player.ip+=it.cost;save();rShop();rHdr();toast('PURCHASE CANCELED','err');}
 
 function buyIt(id){
@@ -960,8 +897,7 @@ function buyIt(id){
       S.mysteryPending.push({uid:'m_'+Date.now()+'_'+Math.random().toString(36).slice(2),type:l.type,desc:l.desc,ip:l.ip,xp:l.xp});
       toast('MYSTERY STASH OBTAINED — tap USE to reveal','gold');
     }else{
-      it.bought=true;
-      showCongrats(it.desc);
+      it.bought=true;showCongrats(it.desc);
     }
     save();rShop();rHdr();
   },'BUY');
@@ -1014,19 +950,14 @@ function rStats(){
 }
 
 function resetAll(){
-  showConfirm(
-    '⚠ SYSTEM PURGE',
-    'This will permanently erase:\n\nLevel · XP · E$ · Streak\nAll missions · All campaigns\nWeight log · Shop items\n\nThis cannot be undone.',
-    ()=>{
-      const customItems=S.shop.filter(s=>s.custom);
-      S=JSON.parse(JSON.stringify(DS));
-      S.lastDate=today();S.lastWeekId=weekId();
-      customItems.forEach(it=>S.shop.push(it));
-      save();prevIp=0;prevXp=0;
-      rHdr();go('st');toast('ALL DATA PURGED','err');
-    },
-    '⚠ CONFIRM PURGE'
-  );
+  showConfirm('⚠ SYSTEM PURGE','This will permanently erase:\n\nLevel · XP · E$ · Streak\nAll missions · All campaigns\nWeight log · Shop items\n\nThis cannot be undone.',()=>{
+    const customItems=S.shop.filter(s=>s.custom);
+    S=JSON.parse(JSON.stringify(DS));
+    S.lastDate=today();S.lastWeekId=weekId();
+    customItems.forEach(it=>S.shop.push(it));
+    save();prevIp=0;prevXp=0;
+    rHdr();go('st');toast('ALL DATA PURGED','err');
+  },'⚠ CONFIRM PURGE');
 }
 
 function go(tab){
