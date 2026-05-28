@@ -3,50 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>H PROJECT</title>
+<title>H PROJECT - TERMINAL LOCKED</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);background-image:radial-gradient(rgba(252,238,10,.15) 1px,transparent 1px);background-size:24px 24px;color:var(--tx)}
 body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;letter-spacing:.5px}
-#app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
 
-/* ─── HEADER ─────────────────────────────────────────────────────────── */
+/* ─── AUTHENTICATION SCREEN & KEYPAD ─────────────────────────────────── */
+#auth-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--bg);
+  background-image: radial-gradient(rgba(255,0,60,.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.4s ease;
+}
+.auth-box {
+  width: 90%; max-width: 360px;
+  background: rgba(11,17,24,0.95);
+  border: 1px solid rgba(255,0,60,.3); border-left: 4px solid var(--rd);
+  padding: 30px 20px; text-align: center;
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+  box-shadow: 0 0 25px rgba(255,0,60,.15);
+  position: relative;
+}
+.auth-box::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,0,60,.03) 3px,rgba(255,0,60,.03) 4px);
+}
+.auth-title { color: var(--rd); font-size: 24px; font-weight: 900; letter-spacing: 4px; margin-bottom: 2px; text-shadow: 0 0 12px rgba(255,0,60,.6); }
+.auth-sub { color: var(--mu); font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
+
+/* Display Area */
+.auth-display {
+  width: 100%; height: 54px; background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,0,60,.2); border-bottom: 2px solid var(--rd);
+  margin-bottom: 18px; display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 700; color: var(--y); letter-spacing: 6px;
+  text-shadow: 0 0 10px rgba(252,238,10,.4); transition: opacity 0.15s ease;
+}
+
+/* Keypad Grid Matrix */
+.keypad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 5px;
+}
+.key {
+  background: rgba(20,29,38,.7); border: 1px solid var(--brd);
+  color: var(--tx); font-size: 24px; font-weight: 700; font-family: inherit;
+  padding: 14px 0; cursor: pointer; transition: all 0.05s ease;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  user-select: none;
+}
+.key:html-active, .key:active {
+  background: var(--rd); color: #000; border-color: var(--rd);
+  box-shadow: 0 0 12px var(--rd); transform: scale(0.97);
+}
+.key-action { font-size: 13px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; }
+.key.btn-clear:html-active, .key.btn-clear:active { background: var(--rd); color: #fff; box-shadow: 0 0 12px var(--rd); }
+.key.btn-enter:html-active, .key.btn-enter:active { background: var(--gn); color: #000; border-color: var(--gn); box-shadow: 0 0 12px var(--gn); }
+
+/* Loading Animation */
+.auth-loading { display: none; flex-direction: column; align-items: center; gap: 15px; padding: 40px 0 20px; position: relative; z-index: 2; }
+.auth-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,0,60,.1); border-top-color: var(--rd); border-right-color: var(--rd);
+  border-radius: 50%; animation: spin .8s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
+}
+.auth-status { color: var(--rd); font-size: 12px; font-weight: 800; letter-spacing: 3px; animation: authBlink 1.2s infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes authBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Error Shake Animation */
+.shake { animation: authShake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--rd); box-shadow: 0 0 30px rgba(255,0,60,.4); }
+@keyframes authShake {
+  10%, 90% { transform: translate3d(-3px, 0, 0); }
+  20%, 80% { transform: translate3d(5px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* ─── MAIN APP STYLES (Conservés à l'identique) ──────────────────────── */
+#app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
 #hw{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;filter:drop-shadow(0 8px 12px rgba(0,0,0,.85))}
 #hd{
-  background:var(--y);color:#000;
-  padding:15px 20px 36px;
+  background:var(--y);color:#000; padding:15px 20px 36px;
   clip-path:polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 18px),
-    /* 2 encoches bord droit */
-    calc(100% - 20px) calc(100% - 18px),
-    calc(100% - 20px) calc(100% - 25px),
-    calc(100% - 24px) calc(100% - 25px),
-    calc(100% - 24px) calc(100% - 18px),
-    calc(100% - 36px) calc(100% - 18px),
-    calc(100% - 36px) calc(100% - 25px),
-    calc(100% - 41px) calc(100% - 25px),
-    calc(100% - 41px) calc(100% - 18px),
-    /* triangle centre-droit (fixe en px pour stabilité) */
-    calc(50% + 60px) calc(100% - 18px),
-    calc(50% + 52px) calc(100% - 27px),
-    calc(50% + 44px) calc(100% - 18px),
-    /* grand onglet gauche */
-    115px calc(100% - 18px),
-    97px 100%,
-    /* détail droit de l'onglet */
-    80px 100%,80px calc(100% - 8px),83px calc(100% - 8px),83px calc(100% - 12px),80px calc(100% - 12px),80px calc(100% - 8px),80px 100%,
-    /* détail central de l'onglet (barre verticale) */
+    0% 0%, 100% 0%, 100% calc(100% - 18px), calc(100% - 20px) calc(100% - 18px),
+    calc(100% - 20px) calc(100% - 25px), calc(100% - 24px) calc(100% - 25px), calc(100% - 24px) calc(100% - 18px),
+    calc(100% - 36px) calc(100% - 18px), calc(100% - 36px) calc(100% - 25px), calc(100% - 41px) calc(100% - 25px),
+    calc(100% - 41px) calc(100% - 18px), calc(50% + 60px) calc(100% - 18px), calc(50% + 52px) calc(100% - 27px),
+    calc(50% + 44px) calc(100% - 18px), 115px calc(100% - 18px), 97px 100%, 80px 100%,80px calc(100% - 8px),
+    83px calc(100% - 8px),83px calc(100% - 12px),80px calc(100% - 12px),80px calc(100% - 8px),80px 100%,
     68px 100%,68px calc(100% - 5px),70px calc(100% - 5px),70px calc(100% - 16px),68px calc(100% - 16px),68px calc(100% - 5px),68px 100%,
-    /* détail gauche de l'onglet */
     56px 100%,56px calc(100% - 8px),59px calc(100% - 8px),59px calc(100% - 12px),56px calc(100% - 12px),56px calc(100% - 8px),56px 100%,
-    /* fermeture onglet et retour bord gauche */
-    35px 100%,
-    17px calc(100% - 18px),
-    0% calc(100% - 18px)
+    35px 100%, 17px calc(100% - 18px), 0% calc(100% - 18px)
   )
 }
 .htop{font-size:12px;font-weight:700;opacity:.7;margin-bottom:10px;letter-spacing:1px}
@@ -63,8 +115,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .hip-container{display:flex;justify-content:flex-end;align-items:baseline;gap:4px;margin-bottom:2px}
 .hip-val{font-size:24px;font-weight:900;line-height:1;color:#000}
 .hip-cur{font-size:16px;font-weight:300;color:#000;opacity:.8}
-
-/* XP block — REP above bar on RIGHT, streak below bar on RIGHT */
 .xp-block{margin-top:2px}
 .xp-rep-row{display:flex;justify-content:flex-end;margin-bottom:3px}
 .xp-rep-val{font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
@@ -73,15 +123,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .xp-streak-row{display:flex;justify-content:flex-end}
 .streak-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:#000;opacity:.65;letter-spacing:.5px}
 .streak-num{font-size:12px;font-weight:900}
-
-/* FLOATING GAINS */
 .gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:2500;left:50%;transform:translateX(-50%)}
 .gf-item{font-size:16px;font-weight:800;padding:4px 10px;background:rgba(11,17,24,.95);border:1px solid currentColor;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);animation:gfPop 1s ease-out forwards}
 .gf-rep{color:var(--cy);box-shadow:0 0 8px rgba(0,240,255,.3)}
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
 @keyframes gfPop{0%{opacity:0;transform:translateY(5px) scale(.8)}15%{opacity:1;transform:translateY(0) scale(1.1)}30%{transform:scale(1)}80%{opacity:1;transform:translateY(-10px)}100%{opacity:0;transform:translateY(-20px)}}
-
-/* CONTENT + NAV */
 #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:158px 16px 110px}
 ::-webkit-scrollbar{width:0}
 #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg);display:flex;z-index:1000;padding:10px 10px 18px;gap:5px;border-top:1px solid var(--brd)}
@@ -91,8 +137,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .sec.on{display:block;animation:fadeIn .2s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .cph{display:flex;align-items:center;background:var(--y);color:#000;padding:11px 16px;margin:18px 0 15px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);font-size:14px;font-weight:800;letter-spacing:1px}
-
-/* TASKS */
 .qi,.ex{display:flex;position:relative;overflow:hidden;background:rgba(252,238,10,.05);border:1px solid var(--y);margin-bottom:12px;cursor:pointer;padding:0;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);transition:border-color .67s ease}
 .qi:active,.ex:active{transform:scale(.98)}
 .qi.dn,.ex.dn{border-color:var(--gn);pointer-events:none}
@@ -112,8 +156,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .ex.boss.dn{border-left:4px solid var(--gn)}
 .lk{opacity:.25;pointer-events:none;filter:grayscale(100%)}
 .qi-btn{width:95px;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#000;letter-spacing:1px}
-
-/* ACCORDIONS */
 .ach{display:flex;align-items:center;justify-content:space-between;background:var(--y);color:#000;padding:11px 16px;margin:18px 0 0;cursor:pointer;user-select:none;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);font-size:14px;font-weight:800;letter-spacing:1px;transition:opacity .1s}
 .ach:active{opacity:.85}
 .achl{display:flex;align-items:center;gap:10px}
@@ -124,8 +166,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .pbf{height:100%;background:var(--y);transition:width .5s}
 .ph{display:flex;justify-content:space-between;margin-bottom:8px}
 .ph span{font-size:13px;font-weight:600}
-
-/* SHOP */
 .shop-filters{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px}
 .shop-filters::-webkit-scrollbar{display:none}
 .sfb{background:var(--pan);border:1px solid var(--brd);color:var(--mu);padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);transition:.15s}
@@ -154,8 +194,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .winp{flex:1;background:var(--bg);border:1px solid var(--brd);padding:10px 15px;color:var(--tx);font-size:16px;font-family:inherit;font-weight:600;outline:none;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 .winp:focus{border-color:var(--y)}
 .wsave{background:var(--y);border:none;padding:10px 20px;color:#000;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-
-/* STATS */
 #s-st{padding-top:4px}
 .st-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(110deg,rgba(252,238,10,.12) 0%,rgba(252,238,10,.04) 100%);border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);padding:10px 14px;margin-bottom:8px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);position:relative;overflow:hidden}
 .st-hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(252,238,10,.03) 3px,rgba(252,238,10,.03) 4px);pointer-events:none}
@@ -210,15 +248,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .wt-chart-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--mu);margin-bottom:6px}
 .wt-chart{width:100%;height:55px}
 .wt-chart svg{width:100%;height:100%}
-
-/* TOAST */
 #tc{position:fixed;bottom:112px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:10px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
 .ts{padding:14px 18px;font-size:13px;font-weight:800;background:var(--bg);border-left:4px solid var(--cy);color:var(--tx);clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);box-shadow:0 5px 15px rgba(0,0,0,.8);animation:tsSlideUp .3s ease-out forwards}
 .ts.gold{border-color:var(--y);color:var(--y)}
 .ts.err{border-color:var(--rd);color:var(--rd)}
 @keyframes tsSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-/* MODAL */
 #mo{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,17,24,.9);z-index:3000;display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(3px)}
 #mo.on{display:flex;animation:fadeIn .2s ease-out}
 .mbox{background:var(--pan);border:2px solid var(--y);width:100%;max-width:350px;padding:20px;clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);box-shadow:0 10px 30px rgba(0,0,0,.8)}
@@ -229,8 +263,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .bca{flex:1;background:transparent;color:var(--y);border:1px solid var(--y);padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 .bok:active{background:#fff}
 .bca:active{background:rgba(252,238,10,.12)}
-
-/* ─── USED OVERLAY ───────────────────────────────────────────────────── */
 .used-ov{position:fixed;inset:0;z-index:9000;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;animation:uOvFade 6s ease-out forwards}
 @keyframes uOvFade{0%{background:rgba(11,17,24,0)}8%{background:rgba(11,17,24,.92)}67%{background:rgba(11,17,24,.92);opacity:1}100%{background:rgba(11,17,24,0);opacity:0}}
 .used-scan{position:fixed;left:0;right:0;height:3px;background:var(--y);box-shadow:0 0 18px 6px var(--y),0 0 40px 10px rgba(252,238,10,.4);animation:uScan .3s cubic-bezier(.4,0,1,1) forwards}
@@ -246,8 +278,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .used-c.bl{bottom:112px;left:20px;border-width:0 0 2px 2px}
 .used-c.br{bottom:112px;right:20px;border-width:0 2px 2px 0}
 @keyframes uCo{0%,8%{opacity:0}15%{opacity:.7}80%{opacity:.7}100%{opacity:0}}
-
-/* ─── BAD LUCK OVERLAY (mystery error) ───────────────────────────────── */
 .badluck-ov{position:fixed;inset:0;z-index:9000;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;animation:blFade 5s ease-out forwards}
 @keyframes blFade{0%{background:rgba(11,17,24,0)}8%{background:rgba(11,17,24,.95)}67%{background:rgba(11,17,24,.95);opacity:1}100%{background:rgba(11,17,24,0);opacity:0}}
 .bl-scan{position:fixed;left:0;right:0;height:3px;background:var(--rd);box-shadow:0 0 18px 6px var(--rd),0 0 40px 10px rgba(255,0,60,.4);animation:uScan .3s cubic-bezier(.4,0,1,1) forwards}
@@ -259,8 +289,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .bl-c.tr{top:20px;right:20px;border-width:2px 2px 0 0}
 .bl-c.bl2{bottom:112px;left:20px;border-width:0 0 2px 2px}
 .bl-c.br{bottom:112px;right:20px;border-width:0 2px 2px 0}
-
-/* ─── CONGRATULATIONS OVERLAY ────────────────────────────────────────── */
 .congrats-ov{position:fixed;inset:0;z-index:9000;pointer-events:none;display:flex;align-items:center;justify-content:center;animation:cgFade 5s ease-out forwards}
 @keyframes cgFade{0%{background:rgba(11,17,24,0)}10%{background:rgba(11,17,24,.93)}75%{background:rgba(11,17,24,.93);opacity:1}100%{background:rgba(11,17,24,0);opacity:0}}
 .cg-scan{position:fixed;left:0;right:0;height:3px;background:var(--y);box-shadow:0 0 18px 6px var(--y),0 0 40px 10px rgba(252,238,10,.5);animation:cgScan .4s cubic-bezier(.4,0,1,1) forwards}
@@ -277,8 +305,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .cg-c.bl{bottom:112px;left:20px;border-width:0 0 2px 2px}
 .cg-c.br{bottom:112px;right:20px;border-width:0 2px 2px 0}
 @keyframes cgCorner{0%,10%{opacity:0}18%{opacity:.8}75%{opacity:.8}100%{opacity:0}}
-
-/* ─── LEVEL UP OVERLAY (NEW BADGE STYLE) ───────────────────────── */
 .lvl-ov{
   position:fixed;inset:0;z-index:9500;pointer-events:none;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
@@ -294,7 +320,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   margin-bottom:2px;line-height:1;
 }
 .lvl-reached-small{font-size:11px;font-weight:700;letter-spacing:5px;color:rgba(222,42,58,.5)}
-
 .lvl-svg-wrap{animation:lvBadge 4.5s ease-out forwards}
 @keyframes lvBadge{
   0%  {opacity:0;transform:scale(.82);filter:drop-shadow(0 0 4px rgba(222,42,58,.1))}
@@ -306,72 +331,57 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   96% {opacity:1;filter:drop-shadow(0 0 55px rgba(222,42,58,.8))}
   100%{opacity:0;transform:scale(1.05) translateY(-12px);filter:drop-shadow(0 0 15px rgba(222,42,58,.2))}
 }
-
-/* Nouveaux styles du badge */
-.badge-container {
-    position: relative;
-    width: 320px;
-    height: 250px;
-}
-.bg-svg {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1;
-}
+.badge-container { position: relative; width: 320px; height: 250px; }
+.bg-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 .top-notch-text {
-    position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: lowercase;
-    text-shadow: 0 0 4px rgba(93, 242, 242, 0.3);
-    opacity: 0.9;
-    color: var(--cy); /* Reprend le cyan du jeu */
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 2;
+  font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: lowercase;
+  text-shadow: 0 0 4px rgba(93, 242, 242, 0.3); opacity: 0.9; color: var(--cy);
 }
 .inner-content {
-    position: absolute;
-    top: 35px;
-    left: 0; 
-    width: 100%; 
-    height: calc(100% - 35px);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 15px;
-    box-sizing: border-box;
+  position: absolute; top: 35px; left: 0; width: 100%; height: calc(100% - 35px); z-index: 2;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 15px; box-sizing: border-box;
 }
-.number-lvl {
-    font-size: 140px;
-    font-weight: 500;
-    line-height: 0.75;
-    text-shadow: 0 0 8px rgba(93, 242, 242, 0.4);
-    margin-bottom: 12px;
-    color: var(--cy);
-}
-.small-text-lvl {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-shadow: 0 0 4px rgba(93, 242, 242, 0.3);
-    color: var(--cy);
-}
-
+.number-lvl { font-size: 140px; font-weight: 500; line-height: 0.75; text-shadow: 0 0 8px rgba(93, 242, 242, 0.4); margin-bottom: 12px; color: var(--cy); }
+.small-text-lvl { font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 4px rgba(93, 242, 242, 0.3); color: var(--cy); }
 .lvl-bottom-text{
   font-size:22px;font-weight:900;color:var(--cy);letter-spacing:7px;
   text-shadow:0 0 15px var(--cy),0 0 30px rgba(0,240,255,.4);
-  animation:lvTxt 4.5s ease-out forwards;
-  text-align:center;line-height:1.3;
+  animation:lvTxt 4.5s ease-out forwards; text-align:center;line-height:1.3;
 }
 </style>
 </head>
 <body>
+
+<div id="auth-screen">
+  <div class="auth-box" id="auth-box">
+    <div class="auth-title">SECURITY TERMINAL</div>
+    <div class="auth-sub">// IDENTITY VERIFICATION REQUIRED //</div>
+    
+    <div class="auth-display" id="auth-display">---</div>
+    
+    <div class="keypad" id="auth-keypad">
+      <button class="key" onclick="pressKey('1')">1</button>
+      <button class="key" onclick="pressKey('2')">2</button>
+      <button class="key" onclick="pressKey('3')">3</button>
+      <button class="key" onclick="pressKey('4')">4</button>
+      <button class="key" onclick="pressKey('5')">5</button>
+      <button class="key" onclick="pressKey('6')">6</button>
+      <button class="key" onclick="pressKey('7')">7</button>
+      <button class="key" onclick="pressKey('8')">8</button>
+      <button class="key" onclick="pressKey('9')">9</button>
+      <button class="key key-action btn-clear" style="color:var(--rd)" onclick="pressKey('C')">CLEAR</button>
+      <button class="key" onclick="pressKey('0')">0</button>
+      <button class="key key-action btn-enter" style="color:var(--gn)" onclick="pressKey('E')">ENTER</button>
+    </div>
+    
+    <div id="auth-loading" class="auth-loading">
+      <div class="auth-spinner"></div>
+      <div id="auth-status" class="auth-status">CONNECTING TO NETWATCH...</div>
+    </div>
+  </div>
+</div>
+
 <div id="app">
 <div id="hw">
   <div id="hd">
@@ -429,6 +439,102 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 <script>
 const SURL='https://script.google.com/macros/s/AKfycbyeldCrtLO2oU7_ng1uvfivUa1pZI6MAzxABoP4i1TnFhfU4lFmkUyb-ckR1A5-FFyM6A/exec';
 const KEY='cp_rlg_v9';
+
+// ─── AUTHENTICATION KEYPAD LOGIC ────────────────────────────────────
+let enteredPin = '';
+
+document.addEventListener('DOMContentLoaded', () => {
+   if(sessionStorage.getItem('cp_auth') === 'true') {
+       document.getElementById('auth-screen').style.display = 'none';
+   }
+   updateAuthDisplay();
+});
+
+function updateAuthDisplay() {
+  const display = document.getElementById('auth-display');
+  if (enteredPin.length === 0) {
+    display.textContent = '---';
+    display.style.opacity = '0.25';
+  } else {
+    // Affiche des ronds cybernétiques pour masquer le code
+    display.textContent = '•'.repeat(enteredPin.length);
+    display.style.opacity = '1';
+  }
+}
+
+function pressKey(k) {
+  if (k === 'C') {
+    enteredPin = '';
+    updateAuthDisplay();
+  } else if (k === 'E') {
+    if (enteredPin.length > 0) checkAuth();
+  } else {
+    if (enteredPin.length < 8) { // Limite technique à 8 chiffres max
+      enteredPin += k;
+      updateAuthDisplay();
+    }
+  }
+}
+
+function checkAuth() {
+  const keypad = document.getElementById('auth-keypad');
+  const display = document.getElementById('auth-display');
+  const loader = document.getElementById('auth-loading');
+  const status = document.getElementById('auth-status');
+  const box = document.getElementById('auth-box');
+  
+  // Bascule vers l'état chargement / Masquage du keypad
+  keypad.style.display = 'none';
+  display.style.display = 'none';
+  loader.style.display = 'flex';
+  status.textContent = 'CONNECTING TO NETWATCH...';
+  status.style.color = 'var(--rd)';
+  status.style.textShadow = 'none';
+  
+  // Envoi asynchrone au Google Apps Script
+  fetch(SURL, {
+    method: 'POST',
+    body: JSON.stringify({action: 'auth', pin: enteredPin}),
+    headers: {'Content-Type': 'text/plain;charset=utf-8'}
+  })
+  .then(r => r.text())
+  .then(text => {
+    if(text === 'AUTH_SUCCESS') {
+      status.textContent = 'ACCESS GRANTED';
+      status.style.color = 'var(--gn)';
+      status.style.textShadow = '0 0 10px var(--gn)';
+      sessionStorage.setItem('cp_auth', 'true');
+      
+      setTimeout(() => {
+        document.getElementById('auth-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('auth-screen').style.display = 'none';
+        }, 400);
+      }, 800);
+    } else {
+      status.textContent = 'ACCESS DENIED';
+      box.classList.add('shake');
+      setTimeout(() => box.classList.remove('shake'), 400);
+      
+      setTimeout(() => {
+        loader.style.display = 'none';
+        keypad.style.display = 'grid';
+        display.style.display = 'flex';
+        enteredPin = '';
+        updateAuthDisplay();
+      }, 1500);
+    }
+  })
+  .catch(e => {
+    status.textContent = 'CONNECTION FAILED';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      keypad.style.display = 'grid';
+      display.style.display = 'flex';
+    }, 1500);
+  });
+}
+// ───────────────────────────────────────────────────────────────────
 
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
@@ -508,7 +614,7 @@ const DS={
     {id:'s5',t:'BACTA TANK SPA',desc:'Day at the thermal baths or SPA',cost:1100,cat:'xp'},
     {id:'s20',t:'RACING SHOCK ABSORBERS',desc:'High-quality sports shoes',cost:1100,cat:'gear'},
     {id:'s21',t:'MAJOR PARIS FESTIVAL',desc:'Ticket for a concert or festival in Paris',cost:1100,cat:'fun'},
-    {id:'s22',t:'BLACKSAD ARCHIVE',desc:'Blacksad complete collection limited edition',cost:1100,cat:'gear'},
+    {id:'s22',t:'BLACKSAD ARCHIVE',desc:'Blacksad complete collection limited edition',cost:1100,cat(--gear)},
     {id:'s6',t:'SYNTH-LEATHER ARMOR',desc:'Nice clothes (~80 EUR budget)',cost:1400,cat:'gear'},
     {id:'s7',t:'MINOR NANOTECH PACK',desc:'Small LEGO kit (under 50 EUR)',cost:1750,cat:'fun'},
     {id:'s23',t:'PREMIUM SHOCK ABSORBERS',desc:'High-end lifestyle shoes',cost:1750,cat:'gear'},
@@ -613,9 +719,8 @@ function showGain(rep,ed,e){
   document.body.appendChild(c);setTimeout(()=>c.remove(),1000);
 }
 
-/* ─── LEVEL UP — INTÉGRATION DU NOUVEAU BADGE ─────────────────── */
 function showLevelUp(lvl){
-  const sz = lvl >= 100 ? 100 : 140; // Ajustement de la taille de police si > 100
+  const sz = lvl >= 100 ? 100 : 140; 
   const ov = document.createElement('div');
   ov.className = 'lvl-ov';
   ov.innerHTML = `
@@ -623,88 +728,52 @@ function showLevelUp(lvl){
       <div class="lvl-congrats-big">CONGRATULATIONS</div>
       <div class="lvl-reached-small">— YOU'VE REACHED —</div>
     </div>
-    
     <div class="lvl-svg-wrap badge-container">
         <svg class="bg-svg" viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
             <path d="
-                M 18,85
-                Q 15,85 17,82 L 83,22
-                Q 85,20 88,20 L 97,20
-                Q 100,20 102,23 L 108,32
-                Q 110,35 113,35 L 207,35
-                Q 210,35 212,32 L 218,23
-                Q 220,20 223,20 L 232,20
-                Q 235,20 237,22 L 303,82
-                Q 305,85 305,88 L 305,162
-                Q 305,165 303,168 L 237,228
-                Q 235,230 232,230 L 203,230
-                Q 200,230 198,233 L 192,242
-                Q 190,245 187,245 L 133,245
-                Q 130,245 128,242 L 122,233
-                Q 120,230 117,230 L 88,230
-                Q 85,230 83,228 L 17,168
-                Q 15,165 15,162 L 15,88
-                Q 15,85 18,85 Z"
-                fill="rgba(56, 25, 30, 0.85)"
-                stroke="#e83a43"
-                stroke-width="1.5"
-            />
+                M 18,85 Q 15,85 17,82 L 83,22 Q 85,20 88,20 L 97,20 Q 100,20 102,23 L 108,32
+                Q 110,35 113,35 L 207,35 Q 210,35 212,32 L 218,23 Q 220,20 223,20 L 232,20
+                Q 235,20 237,22 L 303,82 Q 305,85 305,88 L 305,162 Q 305,165 303,168 L 237,228
+                Q 235,230 232,230 L 203,230 Q 200,230 198,233 L 192,242 Q 190,245 187,245 L 133,245
+                Q 130,245 128,242 L 122,233 Q 120,230 117,230 L 88,230 Q 85,230 83,228 L 17,168
+                Q 15,165 15,162 L 15,88 Q 15,85 18,85 Z"
+                fill="rgba(56, 25, 30, 0.85)" stroke="#e83a43" stroke-width="1.5" />
             <rect x="135" y="237" width="50" height="2" rx="1" ry="1" fill="#e83a43"/>
             <rect x="130" y="242" width="60" height="0.5" rx="0.25" ry="0.25" fill="#e83a43" opacity="0.5"/>
         </svg>
-
         <div class="top-notch-text">level</div>
-
         <div class="inner-content">
             <div class="number-lvl" style="font-size: ${sz}px;">${lvl}</div>
             <div class="small-text-lvl">CORPO</div>
         </div>
     </div>
-
     <div class="lvl-bottom-text">KEEP UP<br>CHOOM !</div>
   `;
   document.body.appendChild(ov);
   setTimeout(() => ov.remove(), 4800);
 }
 
-/* ─── CONGRATULATIONS (purchase) — clean, big text ──────────────────── */
 function showCongrats(desc){
   const ov=document.createElement('div');ov.className='congrats-ov';
   ov.innerHTML=
-    '<div class="cg-scan"></div>'+
-    '<div class="cg-c tl"></div><div class="cg-c tr"></div>'+
-    '<div class="cg-c bl"></div><div class="cg-c br"></div>'+
-    '<div class="cg-content">'+
-      '<div class="cg-eyebrow">// TRANSACTION COMPLETE</div>'+
-      '<div class="cg-main">CONGRATULATIONS</div>'+
-      '<div class="cg-sub">YOU EARNED</div>'+
-      '<div class="cg-item">'+desc+'</div>'+
-    '</div>';
+    '<div class="cg-scan"></div><div class="cg-c tl"></div><div class="cg-c tr"></div><div class="cg-c bl"></div><div class="cg-c br"></div>'+
+    '<div class="cg-content"><div class="cg-eyebrow">// TRANSACTION COMPLETE</div><div class="cg-main">CONGRATULATIONS</div><div class="cg-sub">YOU EARNED</div><div class="cg-item">'+desc+'</div></div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),5000);
 }
 
-/* ─── USED overlay — USED → item name big → subtitle ─────────────────── */
 function showUsedOverlay(desc){
   const ov=document.createElement('div');ov.className='used-ov';
   ov.innerHTML=
-    '<div class="used-scan"></div>'+
-    '<div class="used-c tl"></div><div class="used-c tr"></div>'+
-    '<div class="used-c bl"></div><div class="used-c br"></div>'+
-    '<div class="used-lbl">USED</div>'+
-    '<div class="used-nm">'+desc+'</div>'+
-    '<div class="used-sub">and it was well deserved !</div>';
+    '<div class="used-scan"></div><div class="used-c tl"></div><div class="used-c tr"></div><div class="used-c bl"></div><div class="used-c br"></div>'+
+    '<div class="used-lbl">USED</div><div class="used-nm">'+desc+'</div><div class="used-sub">and it was well deserved !</div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),6500);
 }
 
-/* ─── BAD LUCK overlay (mystery error) ───────────────────────────────── */
 function showBadLuckOverlay(){
   const ov=document.createElement('div');ov.className='badluck-ov';
   ov.innerHTML=
-    '<div class="bl-scan"></div>'+
-    '<div class="bl-c tl"></div><div class="bl-c tr"></div>'+
-    '<div class="bl-c bl2"></div><div class="bl-c br"></div>'+
-    '<div class="bl-main">TOO BAD CHOOM !</div>'+
-    '<div class="bl-next">NEXT TIME...</div>';
+    '<div class="bl-scan"></div><div class="bl-c tl"></div><div class="bl-c tr"></div><div class="bl-c bl2"></div><div class="bl-c br"></div>'+
+    '<div class="bl-main">TOO BAD CHOOM !</div><div class="bl-next">NEXT TIME...</div>';
   document.body.appendChild(ov);setTimeout(()=>ov.remove(),5500);
 }
 
@@ -726,7 +795,6 @@ function rHdr(){
   prevIp=p.ip;prevXp=p.xp;
 }
 
-/* ─── Task counter — no DOM rebuild during slide animation ───────────── */
 function updateCount(type){
   if(type==='dailies'){const dn=S.dailies.filter(d=>d.done).length;const el=document.getElementById('dtt');if(el)el.textContent='MISSIONS '+dn+'/'+S.dailies.length;}
   else{const dn=S.weeklies.filter(w=>w.done).length;const el=document.getElementById('wtt');if(el)el.textContent='GIGS '+dn+'/'+S.weeklies.length;}
@@ -736,8 +804,7 @@ function buildUI(arr,type){
   return arr.map(d=>
     '<div class="qi'+(d.done?' dn':'')+'" id="task-'+d.id+'" onclick="tTask(\''+type+'\',\''+d.id+'\',event)">'+
       '<div class="qic"><div class="qt"><span>'+d.t+'</span></div><div class="qd">'+d.desc+'</div><div class="qr">+'+d.xp+' REP'+(d.ip>0?' / +'+d.ip+' E$':'')+'</div></div>'+
-      '<div class="qi-btn">EXECUTED</div>'+
-    '</div>'
+      '<div class="qi-btn">EXECUTED</div></div>'
   ).join('');
 }
 function rDailies(){const dn=S.dailies.filter(d=>d.done).length;document.getElementById('dtt').textContent='MISSIONS '+dn+'/'+S.dailies.length;document.getElementById('dl').innerHTML=buildUI(S.dailies,'dailies');}
@@ -749,8 +816,8 @@ function tTask(type,id,e){
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
     showGain(it.xp,it.ip,e);save();rHdr();
-    if(el)el.classList.add('dn'); // pointer-events:none via CSS
-    updateCount(type); // counter only — no DOM rebuild
+    if(el)el.classList.add('dn'); 
+    updateCount(type); 
   }else{
     it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
     S.totalDone=Math.max(0,(S.totalDone||0)-1);save();rHdr();
@@ -847,11 +914,9 @@ function rShop(){
     mp.forEach(r=>{
       const isErr=r.type==='error';
       if(isErr){
-        // ERROR card — fully red
         h+='<div style="display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;cursor:pointer;background:linear-gradient(110deg,rgba(255,0,60,.22) 0%,rgba(255,0,60,.08) 100%);border:1px solid var(--rd);border-left:4px solid var(--rd);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);position:relative;overflow:hidden" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')">'+
           '<div style="flex:1;min-width:0"><div class="shin" style="color:var(--rd);text-shadow:0 0 8px rgba(255,0,60,.4)">'+r.desc+'</div><div class="shic" style="color:rgba(255,60,60,.5)">MYSTERY STASH — TAP TO REVEAL</div></div>'+
-          '<button style="background:var(--rd);border:none;color:#fff;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);letter-spacing:.5px;flex-shrink:0;box-shadow:0 0 10px rgba(255,0,60,.4)">USE</button>'+
-        '</div>';
+          '<button style="background:var(--rd);border:none;color:#fff;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);letter-spacing:.5px;flex-shrink:0;box-shadow:0 0 10px rgba(255,0,60,.4)">USE</button></div>';
       }else{
         h+='<div class="shi-b" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')"><div class="shi-info"><div class="shin">'+r.desc+'</div><div class="shic">MYSTERY STASH — TAP TO REVEAL</div></div><button class="ubtn">USE</button></div>';
       }
@@ -867,24 +932,17 @@ function rShop(){
     return '<div class="shi"><div class="shi-info"><div class="shin">'+s.desc+'</div><div class="shic">'+s.t+'</div></div>'+
       '<span class="shp">'+s.cost+' E$</span>'+
       '<button class="shbtn'+(can?' ok':' np')+'" onclick="'+(can?'buyIt(\''+s.id+'\')':'')+'">'+(can?'BUY':'NEED FUNDS')+'</button>'+
-      (s.custom?'<button style="background:none;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="removeCustomItem(\''+s.id+'\')">✕</button>':'')+
-    '</div>';
+      (s.custom?'<button style="background:none;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="removeCustomItem(\''+s.id+'\')">✕</button>':'')+'</div>';
   }).join('');
-  /* ── ADD ITEM BUTTON + FORM ── */
-  h+='<div style="margin-top:18px">'+
-    '<button onclick="toggleAddShop()" style="width:100%;background:'+(showAddForm?'rgba(252,238,10,.1)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+
+  h+='<div style="margin-top:18px"><button onclick="toggleAddShop()" style="width:100%;background:'+(showAddForm?'rgba(252,238,10,.1)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+
     (showAddForm?'✕ CANCEL':'+ ADD ITEM TO BLACK MARKET')+'</button>';
   if(showAddForm){
     h+='<div style="margin-top:10px;padding:14px;background:var(--pan);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)">'+
       '<input id="asi-desc" class="winp" placeholder="ITEM DESCRIPTION" style="width:100%;margin-bottom:8px;text-transform:none">'+
-      '<div style="display:flex;gap:8px;margin-bottom:10px">'+
-        '<input id="asi-cost" class="winp" type="number" placeholder="COST E$" min="1" style="flex:1">'+
-        '<select id="asi-cat" style="flex:0 0 90px;background:var(--bg);border:1px solid var(--brd);color:var(--tx);padding:10px 8px;font-size:14px;font-family:inherit;font-weight:700;outline:none;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">'+
-          '<option value="fun">FUN</option><option value="gear">GEAR</option><option value="xp">EXP</option>'+
-        '</select>'+
-      '</div>'+
-      '<button class="wsave" style="width:100%" onclick="saveShopItem()">SAVE TO MARKET</button>'+
-    '</div>';
+      '<div style="display:flex;gap:8px;margin-bottom:10px"><input id="asi-cost" class="winp" type="number" placeholder="COST E$" min="1" style="flex:1">'+
+      '<select id="asi-cat" style="flex:0 0 90px;background:var(--bg);border:1px solid var(--brd);color:var(--tx);padding:10px 8px;font-size:14px;font-family:inherit;font-weight:700;outline:none;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">'+
+      '<option value="fun">FUN</option><option value="gear">GEAR</option><option value="xp">EXP</option></select></div>'+
+      '<button class="wsave" style="width:100%" onclick="saveShopItem()">SAVE TO MARKET</button></div>';
   }
   h+='</div>';
   document.getElementById('sl').innerHTML=h;
@@ -897,14 +955,8 @@ function buyIt(id){
     S.player.ip-=it.cost;
     if(id==='sm'){
       if(!S.mysteryPending)S.mysteryPending=[];
-      const lo=[
-        {type:'hack', desc:'HACK +150 E$',         ip:150,xp:0},
-        {type:'eclat',desc:'ECLAT +200 REP',         ip:0,  xp:200},
-        {type:'pass', desc:'VIP ENTERTAINMENT PASS', ip:0,  xp:0},
-        {type:'error',desc:'ERROR -50 E$',            ip:-50,xp:0}
-      ];
+      const lo=[{type:'hack',desc:'HACK +150 E$',ip:150,xp:0},{type:'eclat',desc:'ECLAT +200 REP',ip:0,xp:200},{type:'pass',desc:'VIP ENTERTAINMENT PASS',ip:0,xp:0},{type:'error',desc:'ERROR -50 E$',ip:-50,xp:0}];
       const l=lo[Math.floor(Math.random()*lo.length)];
-      // ⚠️ Reward NOT applied yet — deferred until USE is pressed
       S.mysteryPending.push({uid:'m_'+Date.now()+'_'+Math.random().toString(36).slice(2),type:l.type,desc:l.desc,ip:l.ip,xp:l.xp});
       toast('MYSTERY STASH OBTAINED — tap USE to reveal','gold');
     }else{
@@ -927,18 +979,12 @@ function useMystery(uid){
   if(idx===-1)return;
   const r=S.mysteryPending[idx];
   if(el)el.classList.add('using');
-  // ✅ Apply reward NOW on USE
   if(r.ip>0)S.player.ip+=r.ip;
   if(r.ip<0)S.player.ip=Math.max(0,S.player.ip+r.ip);
   if(r.xp)addXP(r.xp);
   S.mysteryPending.splice(idx,1);
   save();rShop();rHdr();
-  // Show appropriate overlay
-  if(r.type==='error'){
-    showBadLuckOverlay();
-  }else{
-    showUsedOverlay(r.desc);
-  }
+  if(r.type==='error'){showBadLuckOverlay();}else{showUsedOverlay(r.desc);}
 }
 
 function buildSegs(done,total){
@@ -963,11 +1009,7 @@ function rStats(){
     const catXp=done.reduce((s,e)=>s+(e.xp||0),0),catIp=done.reduce((s,e)=>s+(e.ip||0),0);
     return '<div class="scamp '+c.cls+'"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-pct">'+pct+'%</div></div>'+buildSegs(d,t)+'<div class="scamp-bot"><div class="scamp-stat"><div class="scamp-stat-lbl">PROGRESS</div><div class="scamp-stat-val">'+d+'/'+t+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">REP</div><div class="scamp-stat-val rep">+'+catXp+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">FUNDS</div><div class="scamp-stat-val funds">+'+catIp+'</div></div></div></div>';
   }).join('');
-  /* ── SYSTEM PURGE BUTTON ── */
-  h+='<div style="margin-top:20px;padding-bottom:4px">'+
-    '<button onclick="resetAll()" style="width:100%;background:transparent;border:1px solid var(--rd);color:var(--rd);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);opacity:.7">'+
-    '⚠ SYSTEM PURGE — RESET ALL DATA</button>'+
-  '</div>';
+  h+='<div style="margin-top:20px;padding-bottom:4px"><button onclick="resetAll()" style="width:100%;background:transparent;border:1px solid var(--rd);color:var(--rd);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);opacity:.7">⚠ SYSTEM PURGE — RESET ALL DATA</button></div>';
   document.getElementById('st-all').innerHTML=h;
 }
 
@@ -979,7 +1021,6 @@ function resetAll(){
       const customItems=S.shop.filter(s=>s.custom);
       S=JSON.parse(JSON.stringify(DS));
       S.lastDate=today();S.lastWeekId=weekId();
-      // keep custom shop items
       customItems.forEach(it=>S.shop.push(it));
       save();prevIp=0;prevXp=0;
       rHdr();go('st');toast('ALL DATA PURGED','err');
