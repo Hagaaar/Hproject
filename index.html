@@ -401,7 +401,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 </div>
 
 <script>
-const SURL='https://script.google.com/macros/s/AKfycbyeldCrtLO2oU7_ng1uvfivUa1pZI6MAzxABoP4i1TnFhfU4lFmkUyb-ckR1A5-FFyM6A/exec';
+const SURL='https://script.google.com/macros/s/AKfycbwY-J0tBjTpT6f4GqhmFiZre9KONYL7j1hrNBeYAOnXR2Rfhzzjb19tOsxpTTOltsHDjw/exec';
 const KEY='cp_rlg_v9';
 
 // ─── AUTH ────────────────────────────────────────────────────────────
@@ -441,7 +441,7 @@ function checkAuth(){
   fetch(SURL,{method:'POST',body:JSON.stringify({action:'auth',pin:enteredPin}),headers:{'Content-Type':'text/plain;charset=utf-8'}})
     .then(r=>r.text())
     .then(text=>{
-      if(text==='AUTH_SUCCESS'){
+      if(text.trim()==='AUTH_SUCCESS'){
         status.textContent='ACCESS GRANTED';
         status.style.color='var(--gn)';
         status.style.textShadow='0 0 10px var(--gn)';
