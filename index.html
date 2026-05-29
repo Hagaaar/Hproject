@@ -163,7 +163,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .xb{height:8px;background:rgba(0,0,0,.18);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .xbf{height:100%;background:#000;transition:width .5s}
 .streak-badge{display:flex;align-items:baseline;gap:4px;font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
-.gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:2500;left:50%;transform:translateX(-50%)}
+.gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:2500;left:50%;transform:translateX(-50%);top:8px}
 .gf-item{font-size:16px;font-weight:800;padding:4px 10px;background:rgba(11,17,24,.95);border:1px solid currentColor;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);animation:gfPop 1s ease-out forwards}
 .gf-rep{color:var(--cy);box-shadow:0 0 8px rgba(0,240,255,.3)}
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
@@ -744,7 +744,7 @@ function toast(msg,type){
   document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),3500);
 }
 function showGain(rep,ed,e){
-  const c=document.createElement('div');c.className='gain-float';c.style.top='165px';
+  const c=document.createElement('div');c.className='gain-float';
   if(rep>0)c.innerHTML+='<div class="gf-item gf-rep">+'+rep+' REP</div>';
   if(ed>0)c.innerHTML+='<div class="gf-item gf-ed">+'+ed+' E$</div>';
   document.body.appendChild(c);setTimeout(()=>c.remove(),1000);
