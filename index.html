@@ -483,54 +483,23 @@ function pressKey(k) {
 }
 
 function submitPin() {
+  // Lance l'animation ET le fetch en parallèle
+  let fetchResult = null;      // null = en attente, true = succès, false = erreur
+  let animDone = false;        // true quand l'animation a fini de taper
+
+  // Fetch en arrière-plan
   fetch(SURL, {
     method: 'POST',
     body: JSON.stringify({ action: 'auth', pin: pinBuffer }),
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
   })
   .then(r => r.text())
-  .then(text => {
-    if (text.trim() === 'AUTH_SUCCESS') {
-      runHackerAnimation(true);
-    } else {
-      runHackerAnimation(false);
-    }
-  })
-  .catch(() => {
-    runHackerAnimation(false);
-  });
-}
+  .then(text => { fetchResult = (text.trim() === 'AUTH_SUCCESS'); checkBothDone(); })
+  .catch(() => { fetchResult = false; checkBothDone(); });
 
-function runHackerAnimation(success) {
-  if (!success) {
-    // ── ERREUR : losanges passent en rouge puis disparaissent ──
-    const display = document.getElementById('auth-pin-display');
-    const keypad = document.getElementById('auth-keypad');
-
-    // Tous les losanges → rouge + fade out
-    display.querySelectorAll('.pin-dot').forEach(d => d.classList.add('err'));
-
-    // Flash rouge keypad
-    keypad.querySelectorAll('.key').forEach(k => {
-      k.classList.remove('err-flash');
-      void k.offsetWidth;
-      k.classList.add('err-flash');
-    });
-
-    setTimeout(() => {
-      keypad.querySelectorAll('.key').forEach(k => k.classList.remove('err-flash'));
-      display.innerHTML = '';
-      pinBuffer = '';
-      isAuthChecking = false;
-    }, 400);
-
-    return;
-  }
-
-  // ── SUCCÈS : animation hacker terminale ──
+  // Lance l'animation immédiatement
   const terminal = document.getElementById('hacker-load');
   const keypad = document.getElementById('auth-keypad');
-
   keypad.style.display = 'none';
   terminal.style.display = 'block';
 
@@ -551,18 +520,60 @@ function runHackerAnimation(success) {
         setTimeout(typeWriter, 70);
       }
     } else {
-      terminal.innerHTML = printedHTML + `<span style="color:var(--gn);text-shadow:0 0 8px var(--gn),0 0 15px var(--gn);">> ACCESS GRANTED</span>`;
+      // Animation terminée — on attend le fetch si pas encore répondu
+      animDone = true;
+      animPrintedHTML = printedHTML;
+      checkBothDone();
+    }
+  }
+
+  let animPrintedHTML = '';
+
+  function checkBothDone() {
+    if (!animDone || fetchResult === null) return; // attend que les deux soient prêts
+
+    if (fetchResult === true) {
+      // Succès
+      terminal.innerHTML = animPrintedHTML + `<span style="color:var(--gn);text-shadow:0 0 8px var(--gn),0 0 15px var(--gn);">> ACCESS GRANTED</span>`;
       sessionStorage.setItem('cp_auth', 'true');
       setTimeout(() => {
         const screen = document.getElementById('auth-screen');
         screen.style.opacity = '0';
         setTimeout(() => { screen.style.display = 'none'; }, 450);
       }, 900);
+    } else {
+      // Erreur — retour au keypad avec losanges rouges
+      terminal.style.display = 'none';
+      terminal.innerHTML = '';
+      keypad.style.display = 'grid';
+
+      // Reconstitue les 5 losanges puis les passe en rouge
+      const display = document.getElementById('auth-pin-display');
+      display.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const d = document.createElement('div');
+        d.className = 'pin-dot';
+        display.appendChild(d);
+      }
+      // Petit délai pour que le pop d'apparition soit visible avant le rouge
+      setTimeout(() => {
+        display.querySelectorAll('.pin-dot').forEach(d => d.classList.add('err'));
+        keypad.querySelectorAll('.key').forEach(k => {
+          k.classList.remove('err-flash'); void k.offsetWidth; k.classList.add('err-flash');
+        });
+        setTimeout(() => {
+          keypad.querySelectorAll('.key').forEach(k => k.classList.remove('err-flash'));
+          display.innerHTML = '';
+          pinBuffer = '';
+          isAuthChecking = false;
+        }, 400);
+      }, 80);
     }
   }
 
   typeWriter();
 }
+
 // ─────────────────────────────────────────────────────────────────────
 
 const DS={
