@@ -47,7 +47,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   100% {opacity:1;transform:rotate(45deg)}
 }
 .qi.dn .btn-plus,.ex.dn .btn-plus{
-  animation: plusToX 2.2s ease-out forwards;
+  animation: plusToX 2.2s ease-out 2s forwards;
 }
 .qi.dn .qi-btn:hover .btn-plus,.ex.dn .qi-btn:hover .btn-plus{color:#000}
 .qi.dn .qi-btn,.ex.dn .qi-btn{pointer-events:none;cursor:default}
@@ -884,8 +884,7 @@ function showLevelUp(lvl){
       const t = now - startTime;
       if (t >= CLEAR_START) return 0;
       const p = t / CLEAR_START;
-      const q = 0.5 + p * 0.5;
-      const eased = q < 0.5 ? 2*q*q : -1+(4-2*q)*q;
+      const eased = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
       return 1 - eased;
     }
 
@@ -1102,7 +1101,7 @@ function valEx(key,id,e,it){
   it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
   showGain(it.xp,it.ip,e);toast(it.boss?'OBJECTIVE REACHED':'MILESTONE VALIDATED','gold');
   save();rHdr();
-  if(card){card.classList.add('dn');setTimeout(()=>rCamps(),2100);}else rCamps();
+  if(card){card.classList.add('dn');setTimeout(()=>rCamps(),4500);}else rCamps();
 }
 function cancelEx(key,id,e,it){
   it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
