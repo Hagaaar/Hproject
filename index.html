@@ -33,7 +33,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .qi.dn .btn-lbl,.ex.dn .btn-lbl{opacity:0;transform:scale(0.4);transition:opacity 0.12s ease 0s,transform 0.12s ease 0s}
 .btn-plus{
   position:absolute;
-  font-size:44px;font-weight:300;color:#000;
+  font-size:58px;font-weight:300;color:#000;
   opacity:0;
   line-height:1;
   font-family:'Rajdhani',sans-serif;
@@ -50,7 +50,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   animation: plusToX 2.2s ease-out forwards;
 }
 .qi.dn .qi-btn:hover .btn-plus,.ex.dn .qi-btn:hover .btn-plus{color:#000}
-.qi.dn .qi-btn,.ex.dn .qi-btn{pointer-events:auto;cursor:pointer}
+.qi.dn .qi-btn,.ex.dn .qi-btn{pointer-events:none;cursor:default}
 .ex.inactive-w{border-color:var(--brd);filter:grayscale(100%);opacity:0.6}
 .ex.inactive-w::before{background:var(--pan)}
 .ex.inactive-w .qi-btn{color:var(--mu);display:flex;justify-content:center;align-items:center}
@@ -862,7 +862,7 @@ function showLevelUp(lvl){
     const FONT_SZ = 240;
     const FONT = '900 ' + FONT_SZ + 'px "Rajdhani", Arial Black, sans-serif';
 
-    // Offscreen bitmap du chiffre avec glow
+    // Offscreen bitmap avec neon glow
     const ofc  = document.createElement('canvas');
     ofc.width  = GW; ofc.height = GH;
     const oCtx = ofc.getContext('2d');
@@ -876,8 +876,6 @@ function showLevelUp(lvl){
 
     glitchCanvas.style.opacity = '1';
 
-    // Timeline
-    const CALM_START  = 0;
     const CLEAR_START = 4000;
     const CLEAR_END   = 5000;
     let startTime = null;
@@ -894,7 +892,7 @@ function showLevelUp(lvl){
     let slices = [];
     function buildSlices(brokenness) {
       slices = [];
-      const numCuts = 3 + Math.floor(brokenness * 12);
+      const numCuts = 4 + Math.floor(brokenness * 16);
       const cuts = [0];
       for (let i = 0; i < numCuts; i++) cuts.push(Math.random() * GH);
       cuts.push(GH);
@@ -903,23 +901,23 @@ function showLevelUp(lvl){
         const y0 = cuts[i], y1 = cuts[i+1];
         if (y1-y0 < 1) continue;
         const big = Math.random() < brokenness * 0.5;
-        const dx = big ? (Math.random()-.5)*brokenness*GW*0.18 : (Math.random()-.5)*brokenness*18;
-        const dy = big ? (Math.random()-.5)*brokenness*GH*0.18 : (Math.random()-.5)*brokenness*3;
-        const alpha = big ? Math.max(0, 1-Math.random()*brokenness*1.3) : 1;
-        const chroma = Math.random() < brokenness * 0.85;
+        const dx = big ? (Math.random()-.5)*brokenness*GW*0.10 : (Math.random()-.5)*brokenness*14;
+        const dy = big ? (Math.random()-.5)*brokenness*GH*0.22 : (Math.random()-.5)*brokenness*2;
+        const alpha = big ? Math.max(0, 1-Math.random()*brokenness*1.4) : 1;
+        const chroma = Math.random() < brokenness * 0.9;
         if (chroma && big) {
-          slices.push({y0,y1,dx:dx+(Math.random()-.5)*16,dy:dy+(Math.random()-.5)*5,alpha:alpha*.85,r:255,g:0,b:0});
-          slices.push({y0,y1,dx:dx-(Math.random()-.5)*16,dy:dy+(Math.random()-.5)*5,alpha:alpha*.85,r:0,g:255,b:255});
+          slices.push({y0,y1,dx:dx+(Math.random()-.5)*14,dy:dy+(Math.random()-.5)*4,alpha:alpha*.85,r:255,g:0,b:0});
+          slices.push({y0,y1,dx:dx-(Math.random()-.5)*14,dy:dy+(Math.random()-.5)*4,alpha:alpha*.85,r:0,g:255,b:255});
+          if (Math.random()<0.4) slices.push({y0,y1,dx:dx+(Math.random()-.5)*22,dy,alpha:.7,r:220,g:255,b:0});
         } else {
-          slices.push({y0,y1,dx,dy,alpha,r:0,g:240,b:255});
+          slices.push({y0,y1,dx,dy,alpha,r:255,g:255,b:255});
         }
       }
     }
 
     function drawFrame(intensity) {
       gc.clearRect(0,0,GW,GH);
-      // Base text — apparaît au fur et à mesure que chaos diminue
-      const baseAlpha = Math.max(0, 1 - intensity * 1.1);
+      const baseAlpha = Math.max(0, 1 - intensity * 1.15);
       gc.globalAlpha = baseAlpha;
       gc.drawImage(ofc, 0, 0);
       gc.globalAlpha = 1;
@@ -933,7 +931,7 @@ function showLevelUp(lvl){
           tmp.width = GW; tmp.height = sh;
           const tc = tmp.getContext('2d');
           tc.drawImage(ofc, 0, -sy);
-          if (s.r !== 0 || s.g !== 240 || s.b !== 255) {
+          if (s.r !== 255 || s.g !== 255 || s.b !== 255) {
             tc.globalCompositeOperation = 'source-atop';
             tc.fillStyle = 'rgb('+s.r+','+s.g+','+s.b+')';
             tc.fillRect(0,0,GW,sh);
@@ -943,14 +941,18 @@ function showLevelUp(lvl){
         }
         gc.globalCompositeOperation = 'source-over';
         gc.globalAlpha = 1;
+        if (intensity > 0.2) {
+          const nLines = Math.floor(intensity * 10);
+          gc.fillStyle = 'rgba(0,240,255,0.03)';
+          for (let i = 0; i < nLines; i++) gc.fillRect(0, Math.random()*GH, GW, 1+Math.random()*2);
+        }
       }
     }
 
-    // State machine
     const PH = {IDLE:0,BREAKING:1,HOLD:2,REASSEMBLE:3};
     let phase=PH.IDLE, phaseStart=0, intensity=0, idleDuration=0;
     let microTimer=0, microIntensity=0;
-    function computeIdle(env){ return (80+Math.random()*200)+(1-env)*(500+Math.random()*1500); }
+    function computeIdle(env){ return (100+Math.random()*300)+(1-env)*(700+Math.random()*2700); }
 
     let lastNow = null;
     let rafId = null;
@@ -963,7 +965,6 @@ function showLevelUp(lvl){
 
       if (now-startTime > CLEAR_END) {
         cancelAnimationFrame(rafId);
-        // Affiche le chiffre propre final avec glow
         gc.clearRect(0,0,GW,GH);
         gc.shadowColor = '#00f0ff';
         gc.shadowBlur  = 30;
@@ -979,10 +980,10 @@ function showLevelUp(lvl){
         case PH.IDLE:
           microTimer -= dt;
           if (microTimer <= 0) {
-            microIntensity = env*(0.05+Math.random()*0.15);
+            microIntensity = env*(0.04+Math.random()*0.12);
             if (env<0.1) microIntensity*=0.3;
-            microTimer = 40+Math.random()*120;
-          } else { microIntensity *= 0.78; }
+            microTimer = 50+Math.random()*150;
+          } else { microIntensity *= 0.80; }
           intensity = microIntensity;
           if (now-phaseStart > idleDuration) {
             if (env>0.05) { phase=PH.BREAKING; phaseStart=now; }
@@ -990,18 +991,18 @@ function showLevelUp(lvl){
           }
           break;
         case PH.BREAKING:
-          const breakDur=60+Math.random()*100;
+          const breakDur=80+Math.random()*120;
           const raw=(now-phaseStart)/breakDur;
           intensity=Math.min(1,raw)*env;
           if (raw>=1){ phase=PH.HOLD; phaseStart=now; }
           break;
         case PH.HOLD:
           intensity=env;
-          const holdDur=40+Math.random()*160*env;
+          const holdDur=50+Math.random()*200*env;
           if (now-phaseStart>holdDur){ phase=PH.REASSEMBLE; phaseStart=now; }
           break;
         case PH.REASSEMBLE:
-          const dur=120+Math.random()*200;
+          const dur=150+Math.random()*250;
           intensity=Math.max(0,env-(now-phaseStart)/dur*env);
           if (now-phaseStart>=dur){ phase=PH.IDLE; phaseStart=now; idleDuration=computeIdle(env); intensity=0; }
           break;
