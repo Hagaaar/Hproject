@@ -854,7 +854,7 @@ function showLevelUp(lvl){
   ov.appendChild(tChoom);
   document.body.appendChild(ov);
 
-  // ── Glitch engine (adapté du code glitch) ────────────────────────
+  // ── Glitch engine ────────────────────────
   setTimeout(()=>{
     const gc  = glitchCanvas.getContext('2d');
     const GW  = glitchCanvas.width;
@@ -863,10 +863,12 @@ function showLevelUp(lvl){
     const FONT_SZ = 240;
     const FONT = '900 ' + FONT_SZ + 'px "Rajdhani", Arial Black, sans-serif';
 
-    // Offscreen bitmap du chiffre
+    // Offscreen bitmap du chiffre avec glow
     const ofc  = document.createElement('canvas');
     ofc.width  = GW; ofc.height = GH;
     const oCtx = ofc.getContext('2d');
+    oCtx.shadowColor = '#00f0ff';
+    oCtx.shadowBlur  = 28;
     oCtx.font         = FONT;
     oCtx.textBaseline = 'middle';
     oCtx.textAlign    = 'center';
@@ -947,7 +949,7 @@ function showLevelUp(lvl){
 
     // State machine
     const PH = {IDLE:0,BREAKING:1,HOLD:2,REASSEMBLE:3};
-    let phase=PH.IDLE, phaseStart=0, intensity=0, idleDuration=0;
+    let phase=PH.BREAKING, phaseStart=0, intensity=1.0, idleDuration=0;
     let microTimer=0, microIntensity=0;
     function computeIdle(env){ return (80+Math.random()*200)+(1-env)*(500+Math.random()*1500); }
 
@@ -1014,7 +1016,7 @@ function showLevelUp(lvl){
     }
 
     rafId = requestAnimationFrame(update);
-  }, 1500); // démarre 1.5s après apparition du badge
+  }, 0);
 
   setTimeout(()=>{ ov.remove(); }, 8000);
 }
@@ -1107,10 +1109,18 @@ function cancelEx(key,id,e,it){
   S.totalDone=Math.max(0,(S.totalDone||0)-1);toast('REVOKED','err');save();rHdr();rCamps();
 }
 function toggleAcc(k){accSt[k]=accSt[k]===true?false:true;rCamps();}
+function buildSegBadge(done,total){
+  let s='<div style="display:flex;gap:2px;align-items:center;margin-right:6px">';
+  for(let i=0;i<total;i++){
+    const lit=i<done;
+    s+='<div style="width:9px;height:14px;border-radius:1px;background:'+(lit?'#00f0ff':'rgba(0,0,0,0.3)')+(lit?';box-shadow:0 0 5px #00f0ff,0 0 10px rgba(0,240,255,0.55)':'')+'">'+'</div>';
+  }
+  return s+'</div>';
+}
 function buildAcc(k,title,badge,content,pct){
   const open=accSt[k]===true;
   const bar=pct!==undefined?'<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(0,0,0,0.18)"><div style="height:100%;width:'+pct+'%;background:rgba(0,0,0,0.45);transition:width .5s"></div></div>':'';
-  return '<div class="ach" style="position:relative;overflow:hidden" onclick="toggleAcc(\''+k+'\')"><div class="achl"><span>'+title+'</span></div><div class="ach-right">'+(badge?'<span class="acb">'+badge+'</span>':'')+'<span class="ach-arrow">'+(open?'&#9650;':'&#9660;')+'</span></div>'+bar+'</div><div class="acbd'+(open?'':' closed')+'">'+content+'</div>';
+  return '<div class="ach" style="position:relative;overflow:hidden" onclick="toggleAcc(\''+k+'\')"><div class="achl"><span>'+title+'</span></div><div class="ach-right">'+(badge||'')+'<span class="ach-arrow">'+(open?'&#9650;':'&#9660;')+'</span></div>'+bar+'</div><div class="acbd'+(open?'':' closed')+'">'+content+'</div>';
 }
 
 function buildBioRoadmap(pLoss){
@@ -1234,7 +1244,7 @@ function rCamps(){
       '</svg></div>';
   }
   
-  h+=buildAcc('biometrie','BIOMETRICS',pLoss.toFixed(1)+' KG',
+  h+=buildAcc('biometrie','BIOMETRICS','<span class="acb">'+pLoss.toFixed(1)+' KG</span>',
     '<div style="background:var(--pan);padding:12px 12px 0">'+
     '<div class="wrow" style="align-items:stretch;gap:8px;">'+
     '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
@@ -1245,11 +1255,11 @@ function rCamps(){
     (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
 
   const pfD=S.portfolio.filter(e=>e.done).length,pfT=S.portfolio.length,pfP=Math.round(pfD/pfT*100);
-  h+=buildAcc('portfolio','PORTFOLIO',pfD+'/'+pfT,exList(S.portfolio,'portfolio'),pfP);
+  h+=buildAcc('portfolio','PORTFOLIO',buildSegBadge(pfD,pfT),exList(S.portfolio,'portfolio'),pfP);
   const mD=S.memoire.filter(e=>e.done).length,mT=S.memoire.length,mP=Math.round(mD/mT*100);
-  h+=buildAcc('memoire','HMONP THESIS',mD+'/'+mT,exList(S.memoire,'memoire'),mP);
+  h+=buildAcc('memoire','HMONP THESIS',buildSegBadge(mD,mT),exList(S.memoire,'memoire'),mP);
   const gD=S.guitare.filter(g=>g.done).length,gP=Math.round(gD/S.guitare.length*100);
-  h+=buildAcc('silverhand','SILVERHAND',gD+'/'+S.guitare.length,
+  h+=buildAcc('silverhand','SILVERHAND','<span class="acb">'+gD+'/'+S.guitare.length+'</span>',
     '<div style="padding:12px 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">SESSIONS THIS WEEK : '+(S.practiceWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px">'+
