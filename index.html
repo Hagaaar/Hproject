@@ -179,7 +179,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   font-variant-numeric:tabular-nums;
 }
 .ach-arrow{font-size:9px;opacity:.55;flex-shrink:0}
-.acbd{padding-top:12px}
+.acbd{padding-top:0}
 .acbd.closed{display:none}
 .pb{height:4px;background:rgba(20,29,38,.8);margin-bottom:20px}
 .pbf{height:100%;background:var(--y);transition:width .5s}
@@ -1116,12 +1116,17 @@ function buildBioRoadmap(pLoss){
   const start = S.weightStart || null;
   const goal  = start ? (start - 10) : null;
 
-  const icons   = ['🔥','⚡','💀','🔩','🌐','🧬','👁','⚙️','🖤','🏆'];
+  // CP2077 style icons — SVG inline pour rendu cohérent
+  function cpIcon(sym, col){
+    return '<svg width="18" height="18" viewBox="0 0 18 18" style="display:block"><text x="9" y="14" font-size="13" font-weight="900" fill="'+col+'" font-family="Rajdhani,monospace" text-anchor="middle" style="filter:drop-shadow(0 0 3px '+col+')">'+sym+'</text></svg>';
+  }
+  const iconSyms = ['▲','⚡','☠','⬡','◈','⬢','◉','⚙','■','★'];
+  const icons = iconSyms.map((s,i) => cpIcon(s, i===9?'#fcee0a':'#00ff66'));
   const rewards = [200,200,200,200,400,200,200,200,200,1500];
 
   // Simple grid: START box + 10 rect tiles, no gaps, full width
   // Use CSS grid for pixel-perfect fit
-  let html = '<div class="bio-roadmap">';
+  let html = '<div class="bio-roadmap" style="background:var(--pan);padding:0 12px 12px">';
 
   // Container: flex row, no gap, border around all
   html += '<div style="display:flex;width:100%;border:1.5px solid #233242;overflow:hidden;border-radius:2px">';
@@ -1154,7 +1159,7 @@ function buildBioRoadmap(pLoss){
     // Top: reward
     html += '<div style="font-size:7px;font-weight:900;color:'+txtC+';letter-spacing:0.3px;text-align:center;line-height:1.1">'+rew+'</div>';
     // Middle: emoji or dot
-    html += '<div style="font-size:'+(done?'16':'10')+'px;line-height:1">'+(done ? icons[i] : '·')+'</div>';
+    html += '<div style="line-height:1;display:flex;align-items:center;justify-content:center">'+(done ? icons[i] : '<svg width="18" height="18" viewBox="0 0 18 18"><text x="9" y="13" font-size="10" fill="#253545" font-family="Rajdhani,monospace" text-anchor="middle">·</text></svg>')+'</div>';
     // Bottom: kg label
     html += '<div style="font-size:9px;font-weight:900;color:'+txtC+';text-align:center">-'+m.kg+'KG</div>';
     html += '</div>';
@@ -1218,8 +1223,8 @@ function rCamps(){
       }
     }
 
-    chartSvg='<div style="background:rgba(0,0,0,.4);border:1px solid rgba(0,255,102,.2);padding:10px 4px 8px;margin-bottom:0;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+
-      '<div style="font-size:9px;font-weight:800;letter-spacing:2px;color:var(--mu);margin-bottom:6px;padding:0 6px">MASS EVOLUTION — LAST '+wLog.length+' ENTRIES</div>'+
+    chartSvg='<div style="background:var(--pan);padding:10px 4px 8px">'+
+
       '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:'+H+'px;display:block;overflow:visible;padding:0 8px">'+
       '<defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ff66" stop-opacity=".3"/><stop offset="100%" stop-color="#00ff66" stop-opacity="0"/></linearGradient></defs>'+
       '<polyline points="'+fillPts+'" fill="url(#wg)" stroke="none"/>'+
@@ -1233,13 +1238,13 @@ function rCamps(){
   }
   
   h+=buildAcc('biometrie','BIOMETRICS',pLoss.toFixed(1)+' KG',
-    '<div class="ex no-btn" style="cursor:default;flex-direction:column;padding:16px 16px 0">'+
+    '<div style="background:var(--pan);padding:12px 12px 0">'+
     '<div class="wrow" style="align-items:stretch;gap:8px;">'+
-    '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:var(--pan);border:1px solid var(--brd);color:var(--tx);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
-    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none">'+
-    '<button onclick="adjustW(0.5)" ontouchstart="" style="background:var(--pan);border:1px solid var(--brd);color:var(--tx);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
+    '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
+    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
+    '<button onclick="adjustW(0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
     '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:70px;">ADD</button></div>'+
-    (S.weightStart?'<div style="font-size:11px;font-weight:700;color:var(--mu);margin-top:8px;letter-spacing:0.5px">INIT: '+S.weightStart.toFixed(1)+' KG &nbsp;|&nbsp; CURRENT: '+S.weightCurrent.toFixed(1)+' KG &nbsp;|&nbsp; DIFF: -'+pLoss.toFixed(1)+' KG</div>':'<div style="font-size:11px;color:var(--mu);margin-top:8px">ENTER INITIAL MASS</div>')+
+
     '</div>'+
     chartSvg+
     buildBioRoadmap(pLoss));
