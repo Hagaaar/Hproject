@@ -178,7 +178,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .ph{display:flex;justify-content:space-between;margin-bottom:8px}
 .ph span{font-size:13px;font-weight:600}
 
-/* BIOMETRICS GRID - Modifié pour 6 colonnes */
+/* BIOMETRICS GRID */
 .bio-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
 .bio-card { background: var(--pan); border: 1px solid var(--brd); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 2px; text-align: center; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); position: relative; aspect-ratio: 1; transition: 0.2s; }
 .bio-card.dn { background: linear-gradient(135deg, rgba(0,255,102,.12) 0%, rgba(0,255,102,.03) 100%); border-color: var(--gn); }
@@ -288,13 +288,18 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #mo{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,17,24,.9);z-index:3000;display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(3px)}
 #mo.on{display:flex;animation:fadeIn .2s ease-out}
 .mbox{background:var(--pan);border:2px solid var(--y);width:100%;max-width:350px;padding:20px;clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);box-shadow:0 10px 30px rgba(0,0,0,.8)}
-.mt{color:var(--y);font-size:18px;font-weight:800;margin-bottom:10px;letter-spacing:1px}
+.mt{color:var(--y);font-size:18px;font-weight:800;margin-bottom:10px;letter-spacing:1px;text-align:center;} /* MODIFICATION : Titre centré */
 .mx{color:var(--tx);font-size:14px;margin-bottom:25px;font-weight:600;white-space:pre-line;text-transform:none;text-align:center}
 .mb{display:flex;gap:10px}
 .bok{flex:1;background:var(--y);color:#000;border:none;padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 .bca{flex:1;background:transparent;color:var(--y);border:1px solid var(--y);padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 .bok:active{background:#fff}
 .bca:active{background:rgba(252,238,10,.12)}
+
+/* MODIFICATION : Mode Danger pour la Purge */
+#mo.danger .mbox { border-color: var(--rd); }
+#mo.danger .mt { color: var(--rd); }
+#mo.danger .bok { background: var(--rd); color: #fff; }
 
 /* OVERLAYS */
 .used-ov{position:fixed;inset:0;z-index:9000;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;animation:uOvFade 6s ease-out forwards}
@@ -770,14 +775,22 @@ function checkReset(){
   save();
 }
 
-function showConfirm(title,text,action,lbl){
+function showConfirm(title,text,action,lbl,isDanger){
   document.getElementById('mo-t').textContent=title;
   document.getElementById('mo-x').innerHTML=text;
   document.getElementById('mo-ok').textContent=lbl||'EXECUTE';
   cfmAction=action;
-  document.getElementById('mo').classList.add('on');
+  const mo = document.getElementById('mo');
+  if(isDanger) mo.classList.add('danger');
+  else mo.classList.remove('danger');
+  mo.classList.add('on');
 }
-function closeModal(){document.getElementById('mo').classList.remove('on');cfmAction=null;}
+function closeModal(){
+  const mo = document.getElementById('mo');
+  mo.classList.remove('on');
+  mo.classList.remove('danger');
+  cfmAction=null;
+}
 function execConfirm(){if(cfmAction)cfmAction();closeModal();}
 
 function animVal(id,from,to){
