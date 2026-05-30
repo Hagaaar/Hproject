@@ -33,7 +33,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .qi.dn .btn-lbl,.ex.dn .btn-lbl{opacity:0;transform:scale(0.4);transition:opacity 0.12s ease 0s,transform 0.12s ease 0s}
 .btn-plus{
   position:absolute;
-  font-size:44px;font-weight:700;color:#000;
+  font-size:44px;font-weight:300;color:#000;
   opacity:0;
   line-height:1;
   font-family:'Rajdhani',sans-serif;
@@ -42,9 +42,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .btn-x{display:none}
 @keyframes plusToX{
   0%   {opacity:0;transform:rotate(0deg)}
-  4%   {opacity:1;transform:rotate(0deg)}
-  75%  {opacity:1;transform:rotate(0deg)}
-  85%  {opacity:1;transform:rotate(45deg)}
+  6%   {opacity:1;transform:rotate(0deg)}
+  28%  {opacity:1;transform:rotate(45deg)}
   100% {opacity:1;transform:rotate(45deg)}
 }
 .qi.dn .btn-plus,.ex.dn .btn-plus{
@@ -179,7 +178,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   font-variant-numeric:tabular-nums;
 }
 .ach-arrow{font-size:9px;opacity:.55;flex-shrink:0}
-.acbd{padding-top:0}
+.acbd{padding-top:12px}
 .acbd.closed{display:none}
 .pb{height:4px;background:rgba(20,29,38,.8);margin-bottom:20px}
 .pbf{height:100%;background:var(--y);transition:width .5s}
@@ -949,7 +948,7 @@ function showLevelUp(lvl){
 
     // State machine
     const PH = {IDLE:0,BREAKING:1,HOLD:2,REASSEMBLE:3};
-    let phase=PH.BREAKING, phaseStart=0, intensity=1.0, idleDuration=0;
+    let phase=PH.IDLE, phaseStart=0, intensity=0, idleDuration=0;
     let microTimer=0, microIntensity=0;
     function computeIdle(env){ return (80+Math.random()*200)+(1-env)*(500+Math.random()*1500); }
 
@@ -1109,11 +1108,12 @@ function cancelEx(key,id,e,it){
   S.totalDone=Math.max(0,(S.totalDone||0)-1);toast('REVOKED','err');save();rHdr();rCamps();
 }
 function toggleAcc(k){accSt[k]=accSt[k]===true?false:true;rCamps();}
-function buildSegBadge(done,total){
+function buildSegBadge(done,total,col,rgb){
+  const c=col||'#00d8ec', g=rgb||'0,216,236';
   let s='<div style="display:flex;gap:2px;align-items:center;margin-right:6px">';
   for(let i=0;i<total;i++){
     const lit=i<done;
-    s+='<div style="width:9px;height:14px;border-radius:1px;background:'+(lit?'#00f0ff':'rgba(0,0,0,0.3)')+(lit?';box-shadow:0 0 5px #00f0ff,0 0 10px rgba(0,240,255,0.55)':'')+'">'+'</div>';
+    s+='<div style="width:9px;height:14px;border-radius:1px;background:'+(lit?c:'rgba(0,0,0,0.3)')+(lit?';box-shadow:0 0 3px rgba('+g+',0.6),0 0 6px rgba('+g+',0.25)':'')+'">'+'</div>';
   }
   return s+'</div>';
 }
@@ -1244,7 +1244,8 @@ function rCamps(){
       '</svg></div>';
   }
   
-  h+=buildAcc('biometrie','BIOMETRICS','<span class="acb">'+pLoss.toFixed(1)+' KG</span>',
+  const bioD=S.poids.filter(m=>m.done).length;
+  h+=buildAcc('biometrie','BIOMETRICS',buildSegBadge(bioD,10,'#00cc55','0,204,85'),
     '<div style="background:var(--pan);padding:12px 12px 0">'+
     '<div class="wrow" style="align-items:stretch;gap:8px;">'+
     '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
@@ -1259,8 +1260,8 @@ function rCamps(){
   const mD=S.memoire.filter(e=>e.done).length,mT=S.memoire.length,mP=Math.round(mD/mT*100);
   h+=buildAcc('memoire','HMONP THESIS',buildSegBadge(mD,mT),exList(S.memoire,'memoire'),mP);
   const gD=S.guitare.filter(g=>g.done).length,gP=Math.round(gD/S.guitare.length*100);
-  h+=buildAcc('silverhand','SILVERHAND','<span class="acb">'+gD+'/'+S.guitare.length+'</span>',
-    '<div style="padding:12px 12px 8px">'+
+  h+=buildAcc('silverhand','SILVERHAND',buildSegBadge(gD,4,'#a870d8','168,112,216'),
+    '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">SESSIONS THIS WEEK : '+(S.practiceWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px">'+
     '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(10,event)">10 MIN</button>'+
