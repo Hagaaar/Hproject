@@ -41,13 +41,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 .btn-x{display:none}
 @keyframes plusToX{
-  0%   {opacity:0;transform:rotate(0deg)}
-  6%   {opacity:1;transform:rotate(0deg)}
-  28%  {opacity:1;transform:rotate(45deg)}
-  100% {opacity:1;transform:rotate(45deg)}
+  0%    {opacity:0;transform:rotate(0deg)}
+  2%    {opacity:1;transform:rotate(0deg)}
+  80%   {opacity:1;transform:rotate(0deg);animation-timing-function:ease-out}
+  100%  {opacity:1;transform:rotate(45deg)}
 }
 .qi.dn .btn-plus,.ex.dn .btn-plus{
-  animation: plusToX 2.2s ease-out 2s forwards;
+  animation: plusToX 2.5s linear forwards;
 }
 .qi.dn .qi-btn:hover .btn-plus,.ex.dn .qi-btn:hover .btn-plus{color:#000}
 .qi.dn .qi-btn,.ex.dn .qi-btn{pointer-events:none;cursor:default}
