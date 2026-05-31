@@ -72,8 +72,14 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px;background:var(--cy)!important;color:#000!important;border-top:2px solid var(--cy);text-shadow:none;transition:.1s}
-#nb-s:active,#nb-s.on{box-shadow:0 -5px 22px rgba(0,240,255,.95),0 0 40px rgba(0,240,255,.5),inset 0 0 12px rgba(0,240,255,.25)}
+#nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px;background:rgba(0,240,255,0.07)!important;color:rgba(0,240,255,0.55)!important;border-top:2px solid rgba(0,240,255,0.3);text-shadow:0 0 8px rgba(0,240,255,0.25);transition:background .2s,color .2s,box-shadow .2s,text-shadow .2s,border-color .2s}
+#nb-s.on{background:var(--cy)!important;color:#000!important;border-top:2px solid var(--cy);text-shadow:none;animation:neonOn .2s ease-out forwards}
+#nb-s:active{background:var(--cy)!important;color:#000!important}
+@keyframes neonOn{
+  0%{box-shadow:0 -4px 10px rgba(0,240,255,.4),inset 0 0 6px rgba(0,240,255,.2)}
+  60%{box-shadow:0 -8px 35px rgba(0,240,255,1),0 0 60px rgba(0,240,255,.7),0 0 90px rgba(0,240,255,.35),inset 0 0 18px rgba(0,240,255,.45)}
+  100%{box-shadow:0 -6px 26px rgba(0,240,255,.95),0 0 45px rgba(0,240,255,.55),0 0 70px rgba(0,240,255,.25),inset 0 0 14px rgba(0,240,255,.3)}
+}
 
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
