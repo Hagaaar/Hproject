@@ -71,7 +71,9 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s:not(.on){background:rgba(0,240,255,.07);color:var(--cy);border-top:1px solid rgba(0,240,255,.25);text-shadow:0 0 10px rgba(0,240,255,.35)}
+#nb-s{font-weight:900;letter-spacing:1.2px}
+#nb-s:not(.on){background:rgba(0,240,255,.1);color:var(--cy);border-top:2px solid rgba(0,240,255,.55);text-shadow:0 0 14px rgba(0,240,255,.8),0 0 28px rgba(0,240,255,.35)}
+#nb-s.on{box-shadow:0 -2px 12px rgba(252,238,10,.4)}
 
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
@@ -449,6 +451,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <div id="s-h" class="sec"><div id="wl" style="margin-top:8px"></div></div>
   <div id="s-c" class="sec"><div id="cl"></div></div>
   <div id="s-s" class="sec">
+    <div id="sp"></div>
     <div class="cph cph-search">
       <div class="cph-title">BLACK MARKET</div>
       <div class="header-search">
@@ -466,7 +469,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <button class="nb on" onclick="go('d')" id="nb-d">MISSIONS</button>
   <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
-  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">◈ SHOP</button>
+  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">SHOP</button>
 </nav>
 </div>
 <div id="stats-drawer"><div id="st-all"></div></div>
@@ -1151,12 +1154,6 @@ function buildBioRoadmap(pLoss){
   const start = S.weightStart || null;
   const goal  = start ? (start - 10) : null;
 
-  // CP2077 style icons — SVG inline pour rendu cohérent
-  function cpIcon(sym, col){
-    return '<svg width="18" height="18" viewBox="0 0 18 18" style="display:block"><text x="9" y="14" font-size="13" font-weight="900" fill="'+col+'" font-family="Rajdhani,monospace" text-anchor="middle" style="filter:drop-shadow(0 0 3px '+col+')">'+sym+'</text></svg>';
-  }
-  const iconSyms = ['▲','⚡','☠','⬡','◈','⬢','◉','⚙','■','★'];
-  const icons = iconSyms.map(s => cpIcon(s, '#00ff66'));
   const rewards = [200,200,200,200,400,200,200,200,200,1500];
 
   // Simple grid: START box + 10 rect tiles, no gaps, full width
@@ -1169,7 +1166,7 @@ function buildBioRoadmap(pLoss){
   // START box
   const startBg = '#111d28';
   const startBd = '#3d5570';
-  html += '<div style="flex:0 0 56px;background:'+startBg+';border-right:1.5px solid '+startBd+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px;min-height:80px">';
+  html += '<div style="flex:0 0 56px;background:'+startBg+';border-right:1.5px solid '+startBd+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;min-height:58px">';
   html += '<div style="font-size:8px;font-weight:900;color:#8899aa;letter-spacing:2px;margin-bottom:4px">START</div>';
   if(start){
     html += '<div style="font-size:18px;font-weight:900;color:#fcee0a;line-height:1">'+start.toFixed(1)+'</div>';
@@ -1185,18 +1182,14 @@ function buildBioRoadmap(pLoss){
     const boss  = !!m.boss;
     const isLast = i === milestones.length - 1;
 
-    const bg     = done ? (boss ? '#1a1500' : '#0a2218') : '#0e1820';
+    const bg     = done ? (boss ? 'rgba(252,238,10,0.14)' : 'rgba(0,255,102,0.16)') : '#0e1820';
     const border = done ? (boss ? '#fcee0a' : '#00ff66') : '#1a2a38';
     const txtC   = done ? (boss ? '#fcee0a' : '#00ff66') : '#253545';
     const rew    = boss ? '+1500 E$' : '+'+rewards[i]+' E$';
 
-    html += '<div style="flex:1;background:'+bg+';border-left:1.5px solid '+border+';display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 2px;min-height:80px;position:relative">';
-    // Top: reward
-    html += '<div style="font-size:7px;font-weight:900;color:'+txtC+';letter-spacing:0.3px;text-align:center;line-height:1.1">'+rew+'</div>';
-    // Middle: emoji or dot
-    html += '<div style="line-height:1;display:flex;align-items:center;justify-content:center">'+(done ? icons[i] : '<svg width="18" height="18" viewBox="0 0 18 18"><text x="9" y="13" font-size="10" fill="#253545" font-family="Rajdhani,monospace" text-anchor="middle">·</text></svg>')+'</div>';
-    // Bottom: kg label
-    html += '<div style="font-size:9px;font-weight:900;color:'+txtC+';text-align:center">-'+m.kg+'KG</div>';
+    html += '<div style="flex:1;background:'+bg+';border-left:1.5px solid '+border+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 1px;min-height:58px;gap:3px">';
+    html += '<div style="font-size:6.5px;font-weight:900;color:'+txtC+';text-align:center;line-height:1.1">'+rew+'</div>';
+    html += '<div style="font-size:10px;font-weight:900;color:'+txtC+';text-align:center;line-height:1">-'+m.kg+'KG</div>';
     html += '</div>';
   });
 
@@ -1269,7 +1262,7 @@ function rCamps(){
   
   const bioD=S.poids.filter(m=>m.done).length;
   h+=buildAcc('biometrie','BIOMETRICS',buildSegBadge(bioD,10,'#00cc55','0,204,85'),
-    '<div style="background:var(--pan);padding:12px 12px 0">'+
+    '<div style="background:var(--pan);padding:6px 12px 0">'+
     '<div class="wrow" style="align-items:stretch;gap:8px;">'+
     '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
     '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
@@ -1361,24 +1354,25 @@ function rShop(){
   const searchQ=searchInput?searchInput.value.toLowerCase().trim():'';
   const isNumSearch=/^\d+$/.test(searchQ);
   const searchNum=parseInt(searchQ,10);
-  const bought=S.shop.filter(s=>s.bought),mp=S.mysteryPending||[];let h='';
-  
+  const bought=S.shop.filter(s=>s.bought),mp=S.mysteryPending||[];
+  let ph='',h='';
+
   if(bought.length>0||mp.length>0){
-    h+='<div class="sh-sect">PURCHASED</div>';
+    ph+='<div class="sh-sect">PURCHASED</div>';
     mp.forEach(r=>{
       const isErr=r.type==='error';
       if(isErr){
-        h+='<div style="display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;cursor:pointer;background:linear-gradient(110deg,rgba(255,0,60,.22) 0%,rgba(255,0,60,.08) 100%);border:1px solid var(--rd);border-left:4px solid var(--rd);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);position:relative;overflow:hidden" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')">'+
+        ph+='<div style="display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;cursor:pointer;background:linear-gradient(110deg,rgba(255,0,60,.22) 0%,rgba(255,0,60,.08) 100%);border:1px solid var(--rd);border-left:4px solid var(--rd);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);position:relative;overflow:hidden" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')">'+
           '<div style="flex:1;min-width:0"><div class="shin" style="color:var(--rd);text-shadow:0 0 8px rgba(255,0,60,.4)">'+r.desc+'</div><div class="shic" style="color:rgba(255,60,60,.5)">MYSTERY STASH — TAP TO REVEAL</div></div>'+
           '<button style="background:var(--rd);border:none;color:#fff;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);letter-spacing:.5px;flex-shrink:0;box-shadow:0 0 10px rgba(255,0,60,.4)">USE</button></div>';
       }else{
-        h+='<div class="shi-b" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')"><div class="shi-info"><div class="shin">'+r.desc+'</div><div class="shic">MYSTERY STASH — TAP TO REVEAL</div></div><button class="ubtn">USE</button></div>';
+        ph+='<div class="shi-b" data-mid="'+r.uid+'" onclick="useMystery(\''+r.uid+'\')"><div class="shi-info"><div class="shin">'+r.desc+'</div><div class="shic">MYSTERY STASH — TAP TO REVEAL</div></div><button class="ubtn">USE</button></div>';
       }
     });
-    h+=bought.map(s=>'<div class="shi-b" data-sid="'+s.id+'" onclick="useItem(\''+s.id+'\')"><div class="shi-info"><div class="shin">'+s.desc+'</div><div class="shic">'+s.t+'</div></div><button class="ubtn">USE</button><button style="background:none;border:none;color:var(--rd);font-size:18px;font-weight:800;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="event.stopPropagation();cancelPurchase(\''+s.id+'\')">✕</button></div>').join('');
-    h+='<div style="height:8px"></div>';
+    ph+=bought.map(s=>'<div class="shi-b" data-sid="'+s.id+'" onclick="useItem(\''+s.id+'\')"><div class="shi-info"><div class="shin">'+s.desc+'</div><div class="shic">'+s.t+'</div></div><button class="ubtn">USE</button><button style="background:none;border:none;color:var(--rd);font-size:18px;font-weight:800;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="event.stopPropagation();cancelPurchase(\''+s.id+'\')">✕</button></div>').join('');
   }
-  
+  document.getElementById('sp').innerHTML=ph;
+
   // NOUVELLES CATÉGORIES ICI
   const cats=[{id:'all',l:'ALL'},{id:'fun',l:'FUN'},{id:'gear',l:'GEAR'},{id:'body',l:'BODY'},{id:'out',l:'OUT'},{id:'travel',l:'TRAVEL'}];
   h+='<div class="shop-filters">'+cats.map(c=>'<button class="sfb'+(shopFilter===c.id?' on':'')+'" onclick="setShopFilter(\''+c.id+'\')">'+c.l+'</button>').join('')+'</div>';
@@ -1474,7 +1468,7 @@ function rStats(){
     {key:'poids',name:'BIOMETRICS',cls:'cat-bio',items:S.poids},
   ];
   let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+pct+'%"></div></div></div></div>';
-  h+='<div class="st-camp-label">CAMPAIGN STATUS</div>';
+  h+='<div class="st-camp-label">MAIN CAMPAIGN STATUS</div>';
   h+=cats.map(c=>{
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
     const pct=t>0?Math.round((d/t)*100):0;
