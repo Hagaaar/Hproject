@@ -397,7 +397,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 </head>
 <body>
 
-<div id="auth-screen" style="display:none">
+<div id="auth-screen">
   <div class="auth-box" id="auth-box">
     <div class="auth-title">SECURITY TERMINAL</div>
     <div class="auth-sub" id="auth-sub">IDENTITY VERIFICATION REQUIRED</div>
@@ -422,7 +422,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   </div>
 </div>
 
-<div id="app">
+<div id="app" style="pointer-events:none">
 <div id="hw">
   <div id="hd">
     <div class="sync synched" id="syu"><span class="sdot"></span><span id="sytx">SYNCHED</span></div>
@@ -590,6 +590,7 @@ function submitPin(){
     if(fetchResult===true){
       terminal.innerHTML=animPrintedHTML+`<span style="color:#c0c0c0;font-family:'Courier New',Courier,monospace;text-shadow:none;">> ACCESS GRANTED</span>`;
       sessionStorage.setItem('cp_auth','true');
+      document.getElementById('app').style.pointerEvents='all';
       setTimeout(()=>{
         const screen=document.getElementById('auth-screen');
         screen.style.opacity='0';
