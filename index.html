@@ -67,7 +67,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   z-index:999;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   transition:transform 0.45s cubic-bezier(0.25,1,.5,1);
-  padding:158px 16px 120px;
+  padding:158px 16px 150px;
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
@@ -265,13 +265,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-memoire{border-left-color:var(--y)}
 .scamp.cat-guitar{border-left-color:#c084fc}
 .scamp.cat-bio{border-left-color:var(--gn)}
-.scamp-top{display:flex;align-items:center;gap:8px;padding:8px 10px 4px;position:relative;z-index:2}
-.scamp-name{font-size:11px;font-weight:800;letter-spacing:1px;flex:1}
+.scamp-top{display:flex;align-items:center;gap:8px;padding:13px 12px 6px;position:relative;z-index:2}
+.scamp-name{font-size:16px;font-weight:800;letter-spacing:1.5px;flex:1}
 .scamp.cat-portfolio .scamp-name{color:var(--cy)}
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{font-size:18px;font-weight:900;line-height:1}
+.scamp-pct{font-size:20px;font-weight:900;line-height:1}
 .scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 8px rgba(0,240,255,.4)}
 .scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 8px rgba(252,238,10,.4)}
 .scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 8px rgba(192,132,252,.4)}
@@ -1290,7 +1290,7 @@ function rCamps(){
     '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(15,event)">15 MIN</button>'+
     '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(20,event)">20 MIN</button>'+
     '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logG(30,event)">30+ MIN</button>'+
-    '<button onclick="undoG()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 10px;font-size:18px;font-weight:300;cursor:pointer;flex-shrink:0;font-family:inherit;line-height:1;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)">↩</button>'+
+    '<button onclick="undoG()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.guitare,'guitare'),gP);
   document.getElementById('cl').innerHTML=h;
@@ -1473,7 +1473,6 @@ function rStats(){
     {key:'poids',name:'BIOMETRICS',cls:'cat-bio',items:S.poids},
   ];
   let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+pct+'%"></div></div></div></div>';
-  h+='<div class="st-kpi-row"><div class="st-kpi"><div class="st-kpi-val">'+p.ip+'</div><div class="st-kpi-lbl">FUNDS E$</div></div><div class="st-kpi gold"><div class="st-kpi-val">'+(p.streak||0)+'</div><div class="st-kpi-lbl">DAY STREAK</div></div><div class="st-kpi"><div class="st-kpi-val">'+(S.totalDone||0)+'</div><div class="st-kpi-lbl">CONTRACTS</div></div></div>';
   h+='<div class="st-camp-label">CAMPAIGN STATUS</div>';
   h+=cats.map(c=>{
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
