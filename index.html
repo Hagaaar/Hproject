@@ -263,7 +263,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .st-kpi-lbl{font-size:8px;font-weight:800;letter-spacing:1px;color:var(--mu);border-left:2px solid var(--cy);padding-left:4px}
 .st-kpi.gold .st-kpi-lbl{border-left-color:var(--y)}
 .st-camp-label{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;margin-bottom:6px}
-.scamp{position:relative;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
+.scamp{position:relative;display:flex;align-items:stretch;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
+.scamp-left{flex:1;min-width:0}
 .scamp::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.012) 3px,rgba(0,240,255,.012) 4px)}
 .scamp.cat-portfolio{border-left-color:var(--cy)}
 .scamp.cat-memoire{border-left-color:var(--y)}
@@ -275,11 +276,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{font-size:54px;font-weight:900;line-height:1;flex-shrink:0;padding-left:8px}
-.scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 8px rgba(0,240,255,.4)}
-.scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 8px rgba(252,238,10,.4)}
-.scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 8px rgba(192,132,252,.4)}
-.scamp.cat-bio .scamp-pct{color:var(--gn);text-shadow:0 0 8px rgba(0,255,102,.4)}
+.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;line-height:1;flex-shrink:0;padding:0 16px;border-left:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.18);position:relative;z-index:2;min-width:88px}
+.scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.5);border-left-color:rgba(0,240,255,.15)}
+.scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.5);border-left-color:rgba(252,238,10,.15)}
+.scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5);border-left-color:rgba(192,132,252,.15)}
+.scamp.cat-bio .scamp-pct{color:var(--gn);text-shadow:0 0 12px rgba(0,255,102,.5);border-left-color:rgba(0,255,102,.15)}
 .scamp-segs{display:flex;gap:2px;padding:0 10px 6px;position:relative;z-index:2}
 .seg{flex:1;height:3px;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);transition:background .4s}
 .seg.done-seg{background:var(--cy)}
@@ -1469,12 +1470,11 @@ function rStats(){
     {key:'poids',name:'BIOMETRICS',cls:'cat-bio',items:S.poids},
   ];
   let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+pct+'%"></div></div></div></div>';
-  h+='<div class="st-camp-label">MAIN CAMPAIGN STATUS</div>';
   h+=cats.map(c=>{
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
     const pct=t>0?Math.round((d/t)*100):0;
     const catXp=done.reduce((s,e)=>s+(e.xp||0),0),catIp=done.reduce((s,e)=>s+(e.ip||0),0);
-    return '<div class="scamp '+c.cls+'"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-pct">'+pct+'%</div></div>'+buildSegs(d,t)+'<div class="scamp-bot"><div class="scamp-stat"><div class="scamp-stat-lbl">PROGRESS</div><div class="scamp-stat-val">'+d+'/'+t+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">REP</div><div class="scamp-stat-val rep">+'+catXp+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">FUNDS</div><div class="scamp-stat-val funds">+'+catIp+'</div></div></div></div>';
+    return '<div class="scamp '+c.cls+'"><div class="scamp-left"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div></div>'+buildSegs(d,t)+'<div class="scamp-bot"><div class="scamp-stat"><div class="scamp-stat-lbl">PROGRESS</div><div class="scamp-stat-val">'+d+'/'+t+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">REP</div><div class="scamp-stat-val rep">+'+catXp+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">FUNDS</div><div class="scamp-stat-val funds">+'+catIp+'</div></div></div></div><div class="scamp-pct">'+pct+'%</div></div>';
   }).join('');
   h+='<div style="margin-top:20px;padding-bottom:4px"><button onclick="resetAll()" style="width:100%;background:rgba(160,0,28,0.45);border:1px solid rgba(255,0,60,0.3);color:rgba(255,140,140,0.85);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">SYSTEM PURGE — RESET ALL DATA</button></div>';
   document.getElementById('st-all').innerHTML=h;
