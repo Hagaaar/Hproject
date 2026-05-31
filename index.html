@@ -68,12 +68,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   z-index:1001;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   transition:transform 0.45s cubic-bezier(0.25,1,.5,1);
-  padding:130px 16px 16px;
+  padding:135px 16px 16px;
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px;background:var(--cy)!important;color:#000!important;border-top:2px solid var(--cy);text-shadow:none;transition:.1s}
-#nb-s:active,#nb-s.on{box-shadow:0 -5px 22px rgba(0,240,255,.95),0 0 40px rgba(0,240,255,.5),inset 0 0 12px rgba(0,240,255,.25)}
+#nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px;background:var(--cy)!important;color:#000!important;border-top:2px solid var(--cy);text-shadow:none;transition:filter .15s}
+#nb-s.on{clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+#nb-s:active,#nb-s.on{filter:drop-shadow(0 -6px 14px rgba(0,240,255,1)) drop-shadow(0 0 28px rgba(0,240,255,.75)) drop-shadow(0 0 55px rgba(0,240,255,.4));box-shadow:inset 0 0 18px rgba(0,240,255,.4)}
 
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
@@ -81,7 +82,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #hd{
   background:var(--y);
   color:#000;
-  padding:4px 20px 13px;
+  padding:4px 20px 18px;
   -webkit-clip-path:polygon(0% 0%, 100% 0%, 100% 100%, calc(100% - 15px) 100%, calc(100% - 15px) calc(100% - 8px), calc(100% - 18px) calc(100% - 8px), calc(100% - 18px) 100%, calc(100% - 26px) 100%, calc(100% - 26px) calc(100% - 8px), calc(100% - 28px) calc(100% - 8px), calc(100% - 28px) 100%, calc(100% - 33px) 100%, calc(100% - 33px) calc(100% - 8px), calc(100% - 38px) calc(100% - 8px), calc(100% - 38px) 100%, calc(100% - 47px) 100%, calc(100% - 47px) calc(100% - 8px), calc(100% - 49px) calc(100% - 8px), calc(100% - 49px) 100%, calc(66.6% + 15px) 100%, 66.6% calc(100% - 10px), calc(66.6% - 15px) 100%, 185px 100%, 170px calc(100% - 12px), 35px calc(100% - 12px), 20px 100%, 0% 100%);
   clip-path:polygon(0% 0%, 100% 0%, 100% 100%, calc(100% - 15px) 100%, calc(100% - 15px) calc(100% - 8px), calc(100% - 18px) calc(100% - 8px), calc(100% - 18px) 100%, calc(100% - 26px) 100%, calc(100% - 26px) calc(100% - 8px), calc(100% - 28px) calc(100% - 8px), calc(100% - 28px) 100%, calc(100% - 33px) 100%, calc(100% - 33px) calc(100% - 8px), calc(100% - 38px) calc(100% - 8px), calc(100% - 38px) 100%, calc(100% - 47px) 100%, calc(100% - 47px) calc(100% - 8px), calc(100% - 49px) calc(100% - 8px), calc(100% - 49px) 100%, calc(66.6% + 15px) 100%, 66.6% calc(100% - 10px), calc(66.6% - 15px) 100%, 185px 100%, 170px calc(100% - 12px), 35px calc(100% - 12px), 20px 100%, 0% 100%);
 }
@@ -112,7 +113,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
 @keyframes gfPop{0%{opacity:0;transform:translateY(10px) scale(0.8)}15%{opacity:1;transform:translateY(0) scale(1.1)}30%{opacity:1;transform:translateY(-2px) scale(1)}65%{opacity:1;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-12px)}}
 
-#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:122px 16px 120px}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:127px 16px 120px}
 ::-webkit-scrollbar{width:0}
 
 /* ─── NAV ─── */
@@ -242,7 +243,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 
 /* STATS */
 #s-st{padding-top:0px}
-.st-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(110deg,rgba(252,238,10,.12) 0%,rgba(252,238,10,.04) 100%);border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);padding:10px 14px;margin-bottom:8px;margin-top:-8px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);position:relative;overflow:hidden}
+.st-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(110deg,rgba(252,238,10,.12) 0%,rgba(252,238,10,.04) 100%);border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);padding:52px 14px 10px;margin-bottom:8px;margin-top:-50px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);position:relative;overflow:hidden}
 .st-hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(252,238,10,.03) 3px,rgba(252,238,10,.03) 4px);pointer-events:none}
 .st-hero-label{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--y);opacity:.7}
 .st-hero-lv{font-size:56px;font-weight:900;color:var(--y);line-height:.9;text-shadow:0 0 20px rgba(252,238,10,.5),0 0 50px rgba(252,238,10,.2)}
@@ -273,7 +274,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;line-height:1;flex-shrink:0;padding:0 16px;border-left:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.18);position:relative;z-index:2;min-width:88px}
+.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;line-height:1;flex-shrink:0;padding:0;border-left:none;background:none;position:relative;z-index:2;width:88px;min-width:88px}
 .scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.5);border-left-color:rgba(0,240,255,.15)}
 .scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.5);border-left-color:rgba(252,238,10,.15)}
 .scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5);border-left-color:rgba(192,132,252,.15)}
@@ -1263,17 +1264,6 @@ function rCamps(){
       '</svg></div>';
   }
   
-  const bioD=S.poids.filter(m=>m.done).length;
-  h+=buildAcc('biometrie','BIOMETRICS',buildSegBadge(bioD,10,'#00cc55','0,204,85'),
-    '<div style="background:var(--pan);padding:6px 12px 0">'+
-    '<div class="wrow" style="align-items:stretch;gap:8px;">'+
-    '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
-    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
-    '<button onclick="adjustW(0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
-    '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:70px;">ADD</button></div>'+
-    '</div>'+
-    (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
-
   const pfD=S.portfolio.filter(e=>e.done).length,pfT=S.portfolio.length,pfP=Math.round(pfD/pfT*100);
   h+=buildAcc('portfolio','PORTFOLIO',buildSegBadge(pfD,pfT),exList(S.portfolio,'portfolio'),pfP);
   const mD=S.memoire.filter(e=>e.done).length,mT=S.memoire.length,mP=Math.round(mD/mT*100);
@@ -1290,6 +1280,17 @@ function rCamps(){
     '<button onclick="undoG()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.guitare,'guitare'),gP);
+
+  const bioD=S.poids.filter(m=>m.done).length;
+  h+=buildAcc('biometrie','BIOMETRICS',buildSegBadge(bioD,10,'#00cc55','0,204,85'),
+    '<div style="background:var(--pan);padding:6px 12px 0">'+
+    '<div class="wrow" style="align-items:stretch;gap:8px;">'+
+    '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
+    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
+    '<button onclick="adjustW(0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
+    '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:70px;">ADD</button></div>'+
+    '</div>'+
+    (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
   document.getElementById('cl').innerHTML=h;
 }
 
