@@ -56,6 +56,22 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .ex.inactive-w::before{background:var(--pan)}
 .ex.inactive-w .qi-btn{color:var(--mu);display:flex;justify-content:center;align-items:center}
 
+/* ─── STATS DRAWER ─── */
+#stats-drawer{
+  position:fixed;top:0;left:50%;
+  transform:translateX(-50%) translateY(-100%);
+  width:100%;max-width:430px;height:100%;
+  background:var(--bg);
+  background-image:radial-gradient(rgba(252,238,10,.15) 1px,transparent 1px);
+  background-size:24px 24px;
+  z-index:999;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transition:transform 0.45s cubic-bezier(0.25,1,.5,1);
+  padding:158px 16px 120px;
+}
+#stats-drawer.open{transform:translateX(-50%) translateY(0)}
+#hd{cursor:pointer;-webkit-user-select:none;user-select:none}
+
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
 #hw{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;min-width:350px;max-width:430px;z-index:9001;filter:drop-shadow(0 8px 12px rgba(0,0,0,.85))}
@@ -444,16 +460,15 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
     </div>
     <div id="sl"></div>
   </div>
-  <div id="s-st" class="sec"><div id="st-all"></div></div>
 </div>
 <nav id="nav">
   <button class="nb on" onclick="go('d')" id="nb-d">MISSIONS</button>
   <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
-  <button class="nb" onclick="go('s')" id="nb-s">SHOP</button>
-  <button class="nb" onclick="go('st')" id="nb-st">STATS</button>
+  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">SHOP</button>
 </nav>
 </div>
+<div id="stats-drawer"><div id="st-all"></div></div>
 <div id="tc"></div>
 <div id="mo">
   <div class="mbox">
@@ -1478,7 +1493,7 @@ function resetAll(){
     S.lastDate=today();S.lastWeekId=weekId();
     customItems.forEach(it=>S.shop.push(it));
     save();prevIp=0;prevXp=0;
-    rHdr();go('st');toast('ALL DATA PURGED','err');
+    rHdr();go('d');toast('ALL DATA PURGED','err');
   },'CONFIRM PURGE',true);
 }
 
@@ -1489,7 +1504,7 @@ function go(tab){
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
   document.getElementById('content').scrollTop=0;
-  if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();else if(tab==='st')rStats();
+  if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();
 }
 
 load();prevIp=S.player.ip;prevXp=S.player.xp;
@@ -1517,7 +1532,16 @@ function pullFromCloud(){
 }
 
 // données chargées pendant auth
-document.getElementById('syu').addEventListener('click',pullFromCloud);
+document.getElementById('syu').addEventListener('click',function(e){e.stopPropagation();pullFromCloud();});
+document.getElementById('hd').addEventListener('click',toggleStats);
+
+let statsOpen=false;
+function toggleStats(){
+  statsOpen=!statsOpen;
+  const d=document.getElementById('stats-drawer');
+  if(statsOpen){rStats();d.classList.add('open');}
+  else d.classList.remove('open');
+}
 </script>
 </body>
 </html>
