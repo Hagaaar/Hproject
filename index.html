@@ -226,7 +226,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .shbtn.np{color:rgba(255,255,255,0.25);background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);cursor:not-allowed;pointer-events:none}
 .shbtn.ok{background:var(--cy);color:#000;border:none}
 .shbtn.ok:active{background:#fff;color:#000}
-.sh-sect{font-size:22px;font-weight:900;color:var(--y);letter-spacing:2px;margin-bottom:12px;margin-left:-20px;padding-bottom:8px;border-bottom:1px solid rgba(252,238,10,.3)}
+.sh-sect{font-size:22px;font-weight:900;color:var(--y);letter-spacing:2px;margin-bottom:12px;margin-left:30px;padding-bottom:8px;border-bottom:1px solid rgba(252,238,10,.3)}
 #sp:not(:empty){margin-bottom:24px}
 .shi-b{display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;cursor:pointer;background:linear-gradient(110deg,rgba(252,238,10,.14) 0%,rgba(252,238,10,.05) 100%);border:1px solid var(--y);border-left:4px solid var(--y);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);animation:bPulse 2.8s ease-in-out infinite;position:relative;overflow:hidden}
 .shi-b::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(252,238,10,.1),transparent);animation:bShimmer 2.8s ease-in-out infinite}
@@ -1042,7 +1042,9 @@ function showLevelUp(lvl){
     rafId = requestAnimationFrame(update);
   }, 0);
 
-  setTimeout(()=>{ ov.remove(); }, 4000);
+  ov.style.cursor='pointer';
+  ov.onclick=()=>{ov.remove();};
+  setTimeout(()=>{ if(ov.parentNode)ov.remove(); }, 4000);
 }
 
 function showCongrats(desc){
