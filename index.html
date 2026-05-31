@@ -73,7 +73,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
 #nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px}
-#nb-s:not(.on){background:rgba(0,240,255,.45);color:#000;border-top:2px solid rgba(0,240,255,.8);text-shadow:none}
+#nb-s:not(.on){background:var(--cy);color:#000;border-top:2px solid var(--cy);text-shadow:none}
 #nb-s.on{box-shadow:0 -2px 12px rgba(252,238,10,.4)}
 
 /* ─── MAIN APP ─── */
@@ -376,7 +376,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 @keyframes uCo{0%{opacity:0}15%{opacity:1}85%{opacity:1}100%{opacity:0}}
 
 /* LEVEL UP */
-.lvl-ov{position:fixed;inset:0;z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(11,17,24,0.96);opacity:0;animation:seqOverlayFade 4s ease-in-out forwards;padding:0 16px}
+.lvl-ov{position:fixed;inset:0;z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(11,17,24,0.96);opacity:0;animation:seqOverlayFade 4s ease-in-out forwards;padding:0 16px;cursor:pointer;pointer-events:all}
 @keyframes seqOverlayFade{0%{opacity:0}5%{opacity:1}88%{opacity:1}100%{opacity:0;visibility:hidden}}
 @keyframes fadeInSeq{0%{opacity:0}100%{opacity:1}}
 .lvl-txt-congrats{font-size:clamp(32px,10vw,54px);font-weight:900;color:var(--y);letter-spacing:clamp(1px,2vw,4px);text-shadow:0 0 20px rgba(252,238,10,.9),0 0 40px rgba(252,238,10,.5),0 0 80px rgba(252,238,10,.2);line-height:1;text-align:center;margin-bottom:2px;opacity:0;animation:fadeInSeq 0.3s ease-out forwards;animation-delay:0.1s;width:100%}
@@ -1042,9 +1042,10 @@ function showLevelUp(lvl){
     rafId = requestAnimationFrame(update);
   }, 0);
 
-  ov.style.cursor='pointer';
-  ov.onclick=()=>{ov.remove();};
-  setTimeout(()=>{ if(ov.parentNode)ov.remove(); }, 4000);
+  const _dismiss=()=>{if(ov.parentNode)ov.remove();};
+  ov.onclick=_dismiss;
+  ov.addEventListener('touchstart',(e)=>{e.preventDefault();_dismiss();},{passive:false});
+  setTimeout(_dismiss, 4000);
 }
 
 function showCongrats(desc){
@@ -1120,7 +1121,7 @@ function tTask(type,id,e){
 
 function exList(items,key){
   return items.map((ex,i)=>{
-    const locked=(key==='portfolio'||key==='memoire')&&i>0&&!items[i-1].done;
+    const locked=(key==='portfolio'||key==='memoire'||key==='guitare')&&i>0&&!items[i-1].done;
     return '<div class="ex'+(ex.done?' dn':'')+(ex.boss?' boss':'')+(locked?' lk':'')+'" id="task-'+ex.id+'" onclick="tEx(\''+key+'\',\''+ex.id+'\',event)">'+
       '<div class="ex-content"><div class="et">'+ex.desc+'</div><div class="etc">// '+ex.t+'</div><div class="erw">+'+ex.xp+' REP / +'+ex.ip+' E$</div></div>'+
       '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>';
