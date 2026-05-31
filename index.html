@@ -46,9 +46,10 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   80%   {opacity:1;transform:rotate(0deg);animation-timing-function:ease-out}
   100%  {opacity:1;transform:rotate(45deg)}
 }
-.qi.dn .btn-plus,.ex.dn .btn-plus{
+.qi.anim-lock .btn-plus,.ex.anim-lock .btn-plus{
   animation: plusToX 2.5s linear forwards;
 }
+.qi.dn:not(.anim-lock) .btn-plus,.ex.dn:not(.anim-lock) .btn-plus{opacity:1;transform:rotate(45deg)}
 .qi.dn .qi-btn:hover .btn-plus,.ex.dn .qi-btn:hover .btn-plus{color:#000}
 .qi.dn .qi-btn,.ex.dn .qi-btn{pointer-events:none;cursor:default}
 .anim-lock{pointer-events:none!important;cursor:default!important}
@@ -72,7 +73,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
 #nb-s{font-weight:900;letter-spacing:1.2px;font-size:14px}
-#nb-s:not(.on){background:rgba(0,240,255,.1);color:var(--cy);border-top:2px solid rgba(0,240,255,.55);text-shadow:0 0 14px rgba(0,240,255,.8),0 0 28px rgba(0,240,255,.35)}
+#nb-s:not(.on){background:rgba(0,240,255,.45);color:#000;border-top:2px solid rgba(0,240,255,.8);text-shadow:none}
 #nb-s.on{box-shadow:0 -2px 12px rgba(252,238,10,.4)}
 
 /* ─── MAIN APP ─── */
@@ -1310,17 +1311,20 @@ function logW(e){
 function logG(min,e){
   const xp=min>=30?15:min>=20?10:min>=15?7:5,ip=min>=30?5:0;
   addXP(xp);S.player.ip+=ip;S.practiceWeek=(S.practiceWeek||0)+1;
-  S.lastGuitarXp=xp;S.lastGuitarIp=ip;
+  S.lastGuitarXp=xp;S.lastGuitarIp=ip;S.lastGuitarMin=min;S.lastGuitarDate=today();
   save();rCamps();rHdr();showGain(xp,ip,e);
 }
 function undoG(){
   if(!(S.practiceWeek>0)){toast('NO SESSION TO CANCEL','err');return;}
   const xp=S.lastGuitarXp||5,ip=S.lastGuitarIp||0;
+  const min=S.lastGuitarMin||0,dt=S.lastGuitarDate||'';
+  const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
   S.player.xp=Math.max(0,S.player.xp-xp);
   S.player.ip=Math.max(0,S.player.ip-ip);
   S.practiceWeek=Math.max(0,S.practiceWeek-1);
-  S.lastGuitarXp=0;S.lastGuitarIp=0;
-  save();rCamps();rHdr();toast('SESSION CANCELED','err');
+  S.lastGuitarXp=0;S.lastGuitarIp=0;S.lastGuitarMin=0;S.lastGuitarDate='';
+  const label='SESSION CANCELED'+(min?' — '+(min>=30?'30+':min)+' MIN':'')+(dtFmt?' / '+dtFmt:'');
+  save();rCamps();rHdr();toast(label,'err');
 }
 
 let showAddForm=false;
@@ -1494,11 +1498,11 @@ function resetAll(){
 
 function go(tab){
   checkReset();
+  document.getElementById('content').scrollTop=0;
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
-  document.getElementById('content').scrollTop=0;
   if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();
 }
 
