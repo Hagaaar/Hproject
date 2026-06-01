@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>H PROJECT - TERMINAL LOCKED</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Bruno+Ace&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Doto:wght@100..900&display=swap" rel="stylesheet">
 <style>
 :root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -72,8 +72,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Bruno Ace',sans-serif;font-size:21px;letter-spacing:1.5px;line-height:1;padding:9px 4px;background:transparent!important;color:rgba(0,240,255,.42);border:none!important;text-shadow:none;transition:none}
-#nb-s.on{color:var(--cy);clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:9px 4px;background:transparent!important;color:rgba(0,240,255,.42);border:none!important;text-shadow:none;transition:none;clip-path:none!important}
+#nb-s.on{color:var(--cy)}
 #nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important}
 
 /* ─── MAIN APP ─── */
@@ -120,12 +120,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;
-  background:linear-gradient(var(--y),var(--y)) 0 0 / calc(60% - 1px) 2px no-repeat, var(--bg);
+  background:var(--bg);
   display:flex;z-index:1000;
   padding:0 10px 18px;
   gap:5px;
-  align-items:flex-start;border-top:none;
+  align-items:flex-start;
 }
+#nav::before{content:'';position:absolute;top:0;left:0;width:calc(60% - 1px);height:2px;background:var(--y);pointer-events:none}
 .nb{
   flex:1;
   background:var(--pan);
@@ -1516,20 +1517,18 @@ function _snBuild(gi){
   const i=Math.max(0,Math.min(1.05,gi)),i2=i*i,i3=i2*i;
   el.style.color=`rgb(${Math.round(25*i)},${Math.min(255,Math.round(228+27*i))},255)`;
   el.style.textShadow=[
-    `0 0 3px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
-    `0 0 8px rgba(0,240,255,${+(1.0*i).toFixed(3)})`,
-    `0 0 18px rgba(0,230,255,${+(0.94*i2).toFixed(3)})`,
-    `0 0 38px rgba(0,212,252,${+(0.82*i2).toFixed(3)})`,
-    `0 0 75px rgba(0,192,242,${+(0.62*i3).toFixed(3)})`,
-    `0 0 130px rgba(0,162,228,${+(0.42*i3).toFixed(3)})`,
-    `0 0 210px rgba(0,132,208,${+(0.22*i3).toFixed(3)})`,
+    `0 0 2px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
+    `0 0 7px rgba(0,240,255,${+(1.0*i).toFixed(3)})`,
+    `0 0 15px rgba(0,230,255,${+(0.90*i2).toFixed(3)})`,
+    `0 0 28px rgba(0,212,252,${+(0.72*i2).toFixed(3)})`,
+    `0 0 46px rgba(0,192,242,${+(0.46*i3).toFixed(3)})`,
   ].join(',');
 }
 function _snBreathe(ts){
   if(!_snLastTs)_snLastTs=ts;
   const dt=Math.min(ts-_snLastTs,50);_snLastTs=ts;
   _snPhase+=dt*0.00032;_snElapsed+=dt;
-  if(!_snInFlicker){const noise=(Math.random()-0.5)*0.055;_snGI=Math.max(0.74,Math.min(1.0,0.82+0.18*(0.5+0.5*Math.sin(_snPhase))+noise));_snBuild(_snGI);}
+  if(!_snInFlicker){const noise=(Math.random()-0.5)*0.10;_snGI=Math.max(0.52,Math.min(1.0,0.74+0.26*(0.5+0.5*Math.sin(_snPhase))+noise));_snBuild(_snGI);}
   if(_snElapsed>=_snNextFlicker&&!_snInFlicker){_snElapsed=0;_snNextFlicker=8e3+Math.random()*15e3;_snFlicker();}
   _snRaf=requestAnimationFrame(_snBreathe);
 }
@@ -1555,7 +1554,7 @@ function _snRunSeq(seq,idx,done){
 function initShopNeon(){
   stopShopNeon();_snOn=true;
   _snLastTs=null;_snPhase=0;_snElapsed=0;_snInFlicker=true;
-  _snNextFlicker=12e3+Math.random()*10e3;
+  _snNextFlicker=3e3+Math.random()*5e3;
   const pow=[[0,18],[0.95,28],[0.15,18],[1.0,32],[0.35,16],[0.0,14],[1.0,42],[0.55,18],[1.0,65]];
   _snBuild(0);
   _snRunSeq(pow,0,()=>{_snInFlicker=false;_snRaf=requestAnimationFrame(_snBreathe);});
