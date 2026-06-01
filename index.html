@@ -72,9 +72,9 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:9px 4px;background:transparent!important;color:rgba(0,240,255,.42);border:none!important;text-shadow:none;transition:none;clip-path:none!important}
-#nb-s.on{color:var(--cy)}
-#nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important}
+#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:0 4px!important;background:transparent!important;color:rgba(0,240,255,.42);text-shadow:0 0 6px rgba(0,240,255,.2),0 0 14px rgba(0,240,255,.1);clip-path:none!important;border:3px solid rgba(0,240,255,.42)!important;border-radius:12px;box-shadow:0 0 7px rgba(0,240,255,.28),0 0 16px rgba(0,240,255,.1),inset 0 0 6px rgba(0,240,255,.04);margin-top:5px;height:34px;display:flex!important;align-items:center;justify-content:center;transition:color .2s,border-color .2s,box-shadow .2s,text-shadow .2s}
+#nb-s.on{color:var(--cy);border-color:var(--cy)!important;box-shadow:0 0 10px rgba(0,240,255,.7),0 0 22px rgba(0,240,255,.45),0 0 45px rgba(0,240,255,.2),inset 0 0 10px rgba(0,240,255,.1);text-shadow:0 0 8px rgba(0,240,255,.9),0 0 18px rgba(0,240,255,.6),0 0 35px rgba(0,240,255,.3)}
+#nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important;border-color:#fff!important;box-shadow:0 0 14px rgba(255,255,255,.5),0 0 28px rgba(0,240,255,.5),inset 0 0 12px rgba(0,240,255,.15)!important}
 
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
@@ -122,7 +122,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   width:100%;max-width:430px;
   background:var(--bg);
   display:flex;z-index:1000;
-  padding:0 10px 18px;
+  padding:0 5px 18px 10px;
   gap:5px;
   align-items:flex-start;
 }.nb{
@@ -1598,6 +1598,39 @@ function toggleStats(){
   if(statsOpen){rStats();d.classList.add('open');}
   else d.classList.remove('open');
 }
+
+// ─── SHOP NEON FLICKER ───
+(function(){
+  const btn=document.getElementById('nb-s');
+  if(!btn)return;
+  function schedule(){
+    // Random interval 1.2s – 9s between flicker events
+    setTimeout(doEvent, 1200+Math.random()*7800);
+  }
+  function doEvent(){
+    // 1–4 rapid flicker bursts per event
+    const bursts=Math.floor(Math.random()*4)+1;
+    let i=0;
+    function next(){
+      if(i>=bursts){schedule();return;}
+      i++;
+      // Attenuation aléatoire : 28 % – 42 % d'opacité (soit -58% à -72%)
+      btn.style.opacity=(0.28+Math.random()*0.14).toFixed(3);
+      // Durée du clignotement : 20 – 130 ms
+      setTimeout(()=>{
+        btn.style.opacity='1';
+        if(i<bursts){
+          // Pause entre les bursts : 15 – 90 ms
+          setTimeout(next, 15+Math.random()*75);
+        }else{
+          schedule();
+        }
+      }, 20+Math.random()*110);
+    }
+    next();
+  }
+  schedule();
+})();
 </script>
 </body>
 </html>
