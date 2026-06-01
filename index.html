@@ -72,8 +72,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:0 4px!important;background:transparent!important;color:rgba(0,240,255,.42);text-shadow:0 0 6px rgba(0,240,255,.2),0 0 14px rgba(0,240,255,.1);clip-path:none!important;border:3px solid rgba(0,240,255,.42)!important;border-radius:12px;box-shadow:0 0 7px rgba(0,240,255,.28),0 0 16px rgba(0,240,255,.1),inset 0 0 6px rgba(0,240,255,.04);margin-top:5px;height:34px;display:flex!important;align-items:center;justify-content:center;transition:color .2s,border-color .2s,box-shadow .2s,text-shadow .2s}
-#nb-s.on{color:var(--cy);border-color:var(--cy)!important;box-shadow:0 0 10px rgba(0,240,255,.7),0 0 22px rgba(0,240,255,.45),0 0 45px rgba(0,240,255,.2),inset 0 0 10px rgba(0,240,255,.1);text-shadow:0 0 8px rgba(0,240,255,.9),0 0 18px rgba(0,240,255,.6),0 0 35px rgba(0,240,255,.3)}
+#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:0 4px!important;background:transparent!important;color:rgba(0,240,255,.42);text-shadow:0 0 6px rgba(0,240,255,.2),0 0 14px rgba(0,240,255,.1);clip-path:none!important;border:3px solid rgba(0,240,255,.42)!important;border-radius:6px;box-shadow:0 0 7px rgba(0,240,255,.28),0 0 16px rgba(0,240,255,.1),inset 0 0 10px rgba(0,240,255,.14),inset 0 0 22px rgba(0,240,255,.06);align-self:stretch;display:flex!important;align-items:center;justify-content:center;transition:color .2s,border-color .2s,box-shadow .2s,text-shadow .2s,opacity .1s}
+#nb-s.on{color:var(--cy);border-color:var(--cy)!important;box-shadow:0 0 10px rgba(0,240,255,.7),0 0 22px rgba(0,240,255,.45),0 0 45px rgba(0,240,255,.2),inset 0 0 14px rgba(0,240,255,.22),inset 0 0 28px rgba(0,240,255,.09);text-shadow:0 0 8px rgba(0,240,255,.9),0 0 18px rgba(0,240,255,.6),0 0 35px rgba(0,240,255,.3)}
 #nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important;border-color:#fff!important;box-shadow:0 0 14px rgba(255,255,255,.5),0 0 28px rgba(0,240,255,.5),inset 0 0 12px rgba(0,240,255,.15)!important}
 
 /* ─── MAIN APP ─── */
@@ -221,7 +221,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .shbtn.np{color:rgba(255,255,255,0.25);background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);cursor:not-allowed;pointer-events:none}
 .shbtn.ok{background:var(--cy);color:#000;border:none}
 .shbtn.ok:active{background:#fff;color:#000}
-.sh-sect{font-size:22px;font-weight:900;color:var(--y);letter-spacing:2px;margin-bottom:12px;margin-left:20px;padding-bottom:8px;border-bottom:1px solid rgba(252,238,10,.3)}
+.sh-sect{font-size:22px;font-weight:900;color:var(--y);letter-spacing:2px;margin-bottom:12px;margin-left:25px;padding-bottom:8px;border-bottom:1px solid rgba(252,238,10,.3)}
 #sp:not(:empty){margin-bottom:24px}
 .shi-b{display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;cursor:pointer;background:linear-gradient(110deg,rgba(252,238,10,.14) 0%,rgba(252,238,10,.05) 100%);border:1px solid var(--y);border-left:4px solid var(--y);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);animation:bPulse 2.8s ease-in-out infinite;position:relative;overflow:hidden}
 .shi-b::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(252,238,10,.1),transparent);animation:bShimmer 2.8s ease-in-out infinite}
@@ -1603,31 +1603,42 @@ function toggleStats(){
 (function(){
   const btn=document.getElementById('nb-s');
   if(!btn)return;
-  function schedule(){
-    // Random interval 1.2s – 9s between flicker events
-    setTimeout(doEvent, 1200+Math.random()*7800);
+  function ease(target,dur,cb){
+    btn.style.transition='opacity '+dur+'ms ease-in-out';
+    btn.style.opacity=target;
+    setTimeout(()=>{btn.style.transition='opacity .1s';if(cb)cb();},dur+30);
   }
-  function doEvent(){
-    // 1–4 rapid flicker bursts per event
-    const bursts=Math.floor(Math.random()*4)+1;
-    let i=0;
-    function next(){
-      if(i>=bursts){schedule();return;}
-      i++;
-      // Attenuation aléatoire : 28 % – 42 % d'opacité (soit -58% à -72%)
-      btn.style.opacity=(0.28+Math.random()*0.14).toFixed(3);
-      // Durée du clignotement : 20 – 130 ms
+  function schedule(){
+    // Délai très aléatoire : 0.6s – 11s
+    setTimeout(doFlicker, 600+Math.random()*10400);
+  }
+  function doFlicker(){
+    // Atténuation légère : 60 – 72 % de l'opacité actuelle
+    const dim=(0.60+Math.random()*0.12).toFixed(3);
+    // Durée de la descente : 80 – 500 ms (lente, pas violente)
+    const downDur=80+Math.random()*420;
+    // Temps en bas : 60 – 700 ms
+    const holdDur=60+Math.random()*640;
+    // Durée de la remontée : 120 – 600 ms
+    const upDur=120+Math.random()*480;
+    ease(dim,downDur,()=>{
       setTimeout(()=>{
-        btn.style.opacity='1';
-        if(i<bursts){
-          // Pause entre les bursts : 15 – 90 ms
-          setTimeout(next, 15+Math.random()*75);
-        }else{
-          schedule();
-        }
-      }, 20+Math.random()*110);
-    }
-    next();
+        ease('1',upDur,()=>{
+          // 25 % de chance d'une légère seconde vague
+          if(Math.random()<0.25){
+            const delay2=100+Math.random()*800;
+            setTimeout(()=>{
+              const dim2=(0.65+Math.random()*0.12).toFixed(3);
+              ease(dim2,60+Math.random()*180,()=>{
+                setTimeout(()=>ease('1',100+Math.random()*300,schedule),80+Math.random()*300);
+              });
+            },delay2);
+          }else{
+            schedule();
+          }
+        });
+      },holdDur);
+    });
   }
   schedule();
 })();
