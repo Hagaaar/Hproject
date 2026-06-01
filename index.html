@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>H PROJECT - TERMINAL LOCKED</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Doto:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Doto:wght@100..900&family=Bungee+Hairline&display=swap" rel="stylesheet">
 <style>
 :root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -72,7 +72,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Doto',monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1;padding:0 4px!important;background:transparent!important;color:rgba(0,240,255,.42);text-shadow:0 0 6px rgba(0,240,255,.2),0 0 14px rgba(0,240,255,.1);clip-path:none!important;border:3px solid rgba(0,240,255,.42)!important;border-radius:6px 6px 6px 44px;box-shadow:0 0 7px rgba(0,240,255,.28),0 0 16px rgba(0,240,255,.1),inset 0 0 10px rgba(0,240,255,.14),inset 0 0 22px rgba(0,240,255,.06);align-self:stretch;display:flex!important;align-items:center;justify-content:center;transition:color .2s,border-color .2s,box-shadow .2s,text-shadow .2s,opacity .1s}
+#nb-s{font-family:'Bungee Hairline',sans-serif;font-size:21px;font-weight:400;letter-spacing:2px;line-height:1;padding:0 4px!important;background:transparent!important;color:rgba(0,240,255,.42);text-shadow:0 0 6px rgba(0,240,255,.2),0 0 14px rgba(0,240,255,.1);clip-path:none!important;border:1px solid rgba(0,240,255,.42)!important;border-radius:6px 6px 44px 6px;box-shadow:0 0 7px rgba(0,240,255,.28),0 0 16px rgba(0,240,255,.1),inset 0 0 10px rgba(0,240,255,.14),inset 0 0 22px rgba(0,240,255,.06);align-self:stretch;display:flex!important;align-items:center;justify-content:center;transition:color .2s,border-color .2s,box-shadow .2s,text-shadow .2s,opacity .1s}
 #nb-s.on{color:var(--cy);border-color:var(--cy)!important;box-shadow:0 0 10px rgba(0,240,255,.47),0 0 22px rgba(0,240,255,.3),0 0 45px rgba(0,240,255,.13),inset 0 0 14px rgba(0,240,255,.31),inset 0 0 28px rgba(0,240,255,.18);text-shadow:0 0 8px rgba(0,240,255,.9),0 0 18px rgba(0,240,255,.6),0 0 35px rgba(0,240,255,.3)}
 #nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important;border-color:#fff!important;box-shadow:0 0 14px rgba(255,255,255,.5),0 0 28px rgba(0,240,255,.5),inset 0 0 12px rgba(0,240,255,.15)!important}
 
@@ -1558,7 +1558,7 @@ function _snRunSeq(seq,idx,done){
   setTimeout(()=>_snRunSeq(seq,idx+1,done),seq[idx][1]);
 }
 function initShopNeon(){
-  stopShopNeon();_snOn=true;
+  stopShopNeon();_snOn=true;if(window._startOpFlicker)_startOpFlicker();
   _snLastTs=null;_snPhase=0;_snElapsed=0;_snInFlicker=true;
   _snNextFlicker=1e3+Math.random()*2e3;
   const pow=[[0,18],[0.95,28],[0.15,18],[1.0,32],[0.35,16],[0.0,14],[1.0,42],[0.55,18],[1.0,65]];
@@ -1567,6 +1567,7 @@ function initShopNeon(){
 }
 function stopShopNeon(){
   _snOn=false;if(_snRaf){cancelAnimationFrame(_snRaf);_snRaf=null;}
+  if(window._stopOpFlicker)_stopOpFlicker();
   const el=document.getElementById('nb-s');
   if(el){el.style.color='';el.style.textShadow='';el.style.boxShadow='';}
 }
@@ -1607,7 +1608,8 @@ function toggleStats(){
   else d.classList.remove('open');
 }
 
-// ─── SHOP NEON FLICKER ───
+// ─── SHOP OPACITY FLICKER (activé uniquement quand SHOP est actif) ───
+let _opActive=false;
 (function(){
   const btn=document.getElementById('nb-s');
   if(!btn)return;
@@ -1617,22 +1619,18 @@ function toggleStats(){
     setTimeout(()=>{btn.style.transition='opacity .1s';if(cb)cb();},dur+30);
   }
   function schedule(){
-    // Délai : 0.4s – 4s
+    if(!_opActive)return;
     setTimeout(doFlicker, 400+Math.random()*3600);
   }
   function doFlicker(){
-    // Atténuation légère : 60 – 72 % de l'opacité actuelle
+    if(!_opActive){btn.style.opacity='1';return;}
     const dim=(0.60+Math.random()*0.12).toFixed(3);
-    // Durée de la descente : 80 – 500 ms (lente, pas violente)
     const downDur=80+Math.random()*420;
-    // Temps en bas : 60 – 700 ms
     const holdDur=60+Math.random()*640;
-    // Durée de la remontée : 120 – 600 ms
     const upDur=120+Math.random()*480;
     ease(dim,downDur,()=>{
       setTimeout(()=>{
         ease('1',upDur,()=>{
-          // 25 % de chance d'une légère seconde vague
           if(Math.random()<0.25){
             const delay2=100+Math.random()*800;
             setTimeout(()=>{
@@ -1648,7 +1646,8 @@ function toggleStats(){
       },holdDur);
     });
   }
-  schedule();
+  window._startOpFlicker=function(){_opActive=true;schedule();};
+  window._stopOpFlicker=function(){_opActive=false;btn.style.opacity='1';};
 })();
 </script>
 </body>
