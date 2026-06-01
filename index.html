@@ -116,26 +116,30 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 
 /* ─── NAV ─── */
 @keyframes nbNeon{
-  0%,100%{text-shadow:0 0 6px rgba(0,240,255,.95),0 0 16px rgba(0,240,255,.65),0 0 32px rgba(0,240,255,.35)}
-  50%{text-shadow:0 0 10px rgba(0,240,255,1),0 0 24px rgba(0,240,255,.9),0 0 50px rgba(0,240,255,.55),0 0 85px rgba(0,240,255,.2)}
+  /* On utilise un cyan plus sombre (0, 160, 180) pour qu'il soit visible sur le jaune */
+  0%,100%{text-shadow:0 0 6px rgba(0,160,180,.95),0 0 16px rgba(0,160,180,.65),0 0 32px rgba(0,160,180,.35)}
+  50%{text-shadow:0 0 10px rgba(0,160,180,1),0 0 24px rgba(0,160,180,.9),0 0 50px rgba(0,160,180,.55),0 0 85px rgba(0,160,180,.2)}
 }
 #nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;
   background:var(--y);
   display:flex;z-index:1000;
-  padding:0 0 12px;
+  padding:0 0 12px; /* Garde l'espace du bas pour les écrans de téléphone */
   gap:0;
   align-items:stretch;
   filter:drop-shadow(0 -8px 12px rgba(0,0,0,.85));
+  /* Biseau des deux coins supérieurs (12px) */
+  clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
 }.nb{
   flex:1;
   background:transparent;
   border:none;
-  color:rgba(0,0,0,0.45);
+  /* Noir avec une légère transparence pour les onglets inactifs */
+  color:rgba(0,0,0,0.65); 
   cursor:pointer;
-  padding:5px 8px 5px;
-  font-size:18px;font-weight:900;letter-spacing:1px;
+  padding:14px 8px 14px;
+  font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
   clip-path:none;
   transition:color .2s,text-shadow .2s;
@@ -143,10 +147,15 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   z-index:1;
   text-align:center;
 }
-.nb+.nb::before{content:'';position:absolute;left:0;top:22%;height:56%;width:1px;background:rgba(0,0,0,0.13)}
+.nb+.nb::before{
+  content:'';position:absolute;left:0;
+  top:30%;height:40%;width:1px;
+  background:rgba(0,0,0,0.15)
+}
 .nb.on{
   background:transparent;
-  color:var(--cy);
+  /* Cyan légèrement foncé pour l'onglet actif (code hex: #00a0b4) */
+  color:#00a0b4; 
   clip-path:none;
   z-index:2;
   animation:nbNeon 2s ease-in-out infinite;
@@ -1518,23 +1527,27 @@ function _snBuild(gi){
   if(!el||!el.classList.contains('on'))return;
   const i=Math.max(0,Math.min(1.05,gi)),i2=i*i,i3=i2*i;
   const bi=i*(2/3),bi2=bi*bi,bi3=bi2*bi;
-  el.style.color=`rgb(${Math.round(25*i)},${Math.min(255,Math.round(228+27*i))},255)`;
+  
+  // On force la couleur du texte en cyan foncé pendant l'animation
+  el.style.color = '#00a0b4';
+  
   el.style.textShadow=[
     `0 0 2px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
-    `0 0 7px rgba(0,240,255,${+(1.0*i).toFixed(3)})`,
-    `0 0 15px rgba(0,230,255,${+(0.90*i2).toFixed(3)})`,
-    `0 0 28px rgba(0,212,252,${+(0.72*i2).toFixed(3)})`,
-    `0 0 46px rgba(0,192,242,${+(0.46*i3).toFixed(3)})`,
+    `0 0 7px rgba(0,160,180,${+(1.0*i).toFixed(3)})`,
+    `0 0 15px rgba(0,150,170,${+(0.90*i2).toFixed(3)})`,
+    `0 0 28px rgba(0,140,160,${+(0.72*i2).toFixed(3)})`,
+    `0 0 46px rgba(0,130,150,${+(0.46*i3).toFixed(3)})`,
   ].join(',');
+  
   el.style.boxShadow=[
-    `0 0 7px rgba(0,240,255,${+(0.65*bi).toFixed(3)})`,
-    `0 0 18px rgba(0,220,255,${+(0.42*bi2).toFixed(3)})`,
-    `0 0 35px rgba(0,200,255,${+(0.22*bi3).toFixed(3)})`,
-    `inset 0 0 10px rgba(0,240,255,${+(0.55*bi).toFixed(3)})`,
-    `inset 0 0 22px rgba(0,220,255,${+(0.30*bi2).toFixed(3)})`,
+    `0 0 7px rgba(0,160,180,${+(0.65*bi).toFixed(3)})`,
+    `0 0 18px rgba(0,150,170,${+(0.42*bi2).toFixed(3)})`,
+    `0 0 35px rgba(0,140,160,${+(0.22*bi3).toFixed(3)})`,
+    `inset 0 0 10px rgba(0,160,180,${+(0.55*bi).toFixed(3)})`,
+    `inset 0 0 22px rgba(0,150,170,${+(0.30*bi2).toFixed(3)})`,
   ].join(',');
 }
-function _snBreathe(ts){
+  function _snBreathe(ts){
   if(!_snLastTs)_snLastTs=ts;
   const dt=Math.min(ts-_snLastTs,50);_snLastTs=ts;
   _snPhase+=dt*0.00032;_snElapsed+=dt;
