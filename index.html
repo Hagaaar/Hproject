@@ -111,7 +111,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
 @keyframes gfPop{0%{opacity:0;transform:translateY(10px) scale(0.8)}15%{opacity:1;transform:translateY(0) scale(1.1)}30%{opacity:1;transform:translateY(-2px) scale(1)}65%{opacity:1;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-12px)}}
 
-#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:127px 16px 120px}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:127px 16px 140px}
 ::-webkit-scrollbar{width:0}
 
 /* ─── NAV ─── */
@@ -124,26 +124,25 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   width:100%;max-width:430px;
   background:var(--y);
   display:flex;z-index:1000;
-  padding:12px 10px 20px;
+  padding:0 0 24px;
   gap:0;
-  align-items:center;
-  clip-path:polygon(0 12px,20px 12px,35px 0,170px 0,185px 12px,calc(66.6% - 15px) 12px,66.6% 2px,calc(66.6% + 15px) 12px,calc(100% - 49px) 12px,calc(100% - 49px) 4px,calc(100% - 47px) 4px,calc(100% - 47px) 12px,calc(100% - 38px) 12px,calc(100% - 38px) 4px,calc(100% - 33px) 4px,calc(100% - 33px) 12px,calc(100% - 28px) 12px,calc(100% - 28px) 4px,calc(100% - 26px) 4px,calc(100% - 26px) 12px,calc(100% - 18px) 12px,calc(100% - 18px) 4px,calc(100% - 15px) 4px,calc(100% - 15px) 12px,100% 12px,100% 100%,0 100%);
+  align-items:stretch;
 }.nb{
   flex:1;
   background:transparent;
   border:none;
-  color:rgba(0,0,0,0.5);
+  color:rgba(0,0,0,0.45);
   cursor:pointer;
-  padding:6px 4px;
-  font-size:10px;font-weight:800;letter-spacing:.8px;
+  padding:20px 8px 16px;
+  font-size:13px;font-weight:900;letter-spacing:1px;
   font-family:inherit;
   clip-path:none;
   transition:color .2s,text-shadow .2s;
   position:relative;
   z-index:1;
-  margin-top:0;
   text-align:center;
 }
+.nb+.nb::before{content:'';position:absolute;left:0;top:22%;height:56%;width:1px;background:rgba(0,0,0,0.13)}
 .nb.on{
   background:transparent;
   color:var(--cy);
@@ -472,7 +471,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <button class="nb on" onclick="go('d')" id="nb-d">MISSIONS</button>
   <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
-  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">SHOP</button>
+  <button class="nb" onclick="go('s')" id="nb-s">SHOP</button>
 </nav>
 </div>
 <div id="stats-drawer"><div id="st-all"></div></div>
