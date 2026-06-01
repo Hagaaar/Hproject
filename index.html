@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>H PROJECT - TERMINAL LOCKED</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Ms+Madi&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Sixtyfour&display=swap" rel="stylesheet">
 <style>
 :root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -72,7 +72,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Ms Madi',cursive;font-weight:400;font-size:22px;letter-spacing:0;line-height:1.1;padding:8px 4px;border:none!important;color:rgba(0,240,255,.42);text-shadow:none;transition:none;background:linear-gradient(var(--y),var(--y)) 0 0/2px 100% no-repeat,linear-gradient(var(--y),var(--y)) 100% 0/2px calc(100% - 8px) no-repeat,linear-gradient(var(--y),var(--y)) 0 100%/calc(100% - 8px) 2px no-repeat,linear-gradient(to bottom-right,transparent 55%,var(--y) 55%,var(--y) 67%,transparent 67%) 100% 100%/12px 12px no-repeat,var(--pan)}
+#nb-s{font-family:'Sixtyfour',monospace;font-size:14px;letter-spacing:1.5px;line-height:1;padding:12px 4px;background:var(--pan);color:rgba(0,240,255,.42);border:2px solid var(--y)!important;border-top:none!important;text-shadow:none;transition:none}
 #nb-s.on{color:var(--cy);clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
 #nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important}
 
@@ -469,7 +469,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <button class="nb on" onclick="go('d')" id="nb-d">MISSIONS</button>
   <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
-  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">Shop</button>
+  <button class="nb" onclick="go('s')" id="nb-s" style="flex:2">SHOP</button>
 </nav>
 </div>
 <div id="stats-drawer"><div id="st-all"></div></div>
