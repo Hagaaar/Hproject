@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>H PROJECT - TERMINAL LOCKED</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Sixtyfour&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Bruno+Ace&display=swap" rel="stylesheet">
 <style>
 :root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -72,7 +72,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{font-family:'Sixtyfour',monospace;font-size:24px;letter-spacing:1.5px;line-height:1;padding:9px 4px;background:var(--pan);color:rgba(0,240,255,.42);border:none!important;text-shadow:none;transition:none}
+#nb-s{font-family:'Bruno Ace',sans-serif;font-size:21px;letter-spacing:1.5px;line-height:1;padding:9px 4px;background:transparent!important;color:rgba(0,240,255,.42);border:none!important;text-shadow:none;transition:none}
 #nb-s.on{color:var(--cy);clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
 #nb-s:active{color:#fff!important;text-shadow:0 0 5px #fff,0 0 14px #fff,0 0 32px #00f0ff,0 0 68px #00f0ff,0 0 130px rgba(0,240,255,.85),0 0 215px rgba(0,240,255,.52)!important}
 
@@ -107,7 +107,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .streak-badge{display:flex;align-items:baseline;gap:4px;font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
 
 /* ─── GAIN FLOTTANT ─── */
-.gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:2500;left:50%;transform:translateX(-50%);top:50px}
+.gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:9100;left:50%;transform:translateX(-50%);top:50px}
 .gf-item{font-size:16px;font-weight:800;padding:4px 10px;background:rgba(11,17,24,.95);border:1px solid currentColor;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);animation:gfPop 1s ease-out forwards}
 .gf-rep{color:var(--cy);box-shadow:0 0 8px rgba(0,240,255,.3)}
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
@@ -120,12 +120,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;
-  background:var(--bg);
+  background:linear-gradient(var(--y),var(--y)) 0 0 / calc(60% - 1px) 2px no-repeat, var(--bg);
   display:flex;z-index:1000;
   padding:0 10px 18px;
   gap:5px;
-  
-  align-items:flex-start;border-top:2px solid var(--y);
+  align-items:flex-start;border-top:none;
 }
 .nb{
   flex:1;
@@ -274,7 +273,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;line-height:1;flex-shrink:0;padding:0;border-left:none;background:none;position:relative;z-index:2;width:88px;min-width:88px}
+.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;line-height:1;flex-shrink:0;padding:0;border-left:none;background:none;position:relative;z-index:2;width:88px;min-width:88px}
 .scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.5);border-left-color:rgba(0,240,255,.15)}
 .scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.5);border-left-color:rgba(252,238,10,.15)}
 .scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5);border-left-color:rgba(192,132,252,.15)}
@@ -1531,7 +1530,7 @@ function _snBreathe(ts){
   const dt=Math.min(ts-_snLastTs,50);_snLastTs=ts;
   _snPhase+=dt*0.00032;_snElapsed+=dt;
   if(!_snInFlicker){const noise=(Math.random()-0.5)*0.055;_snGI=Math.max(0.74,Math.min(1.0,0.82+0.18*(0.5+0.5*Math.sin(_snPhase))+noise));_snBuild(_snGI);}
-  if(_snElapsed>=_snNextFlicker&&!_snInFlicker){_snElapsed=0;_snNextFlicker=4e3+Math.random()*9e3;_snFlicker();}
+  if(_snElapsed>=_snNextFlicker&&!_snInFlicker){_snElapsed=0;_snNextFlicker=8e3+Math.random()*15e3;_snFlicker();}
   _snRaf=requestAnimationFrame(_snBreathe);
 }
 function _snFlicker(){
@@ -1556,7 +1555,7 @@ function _snRunSeq(seq,idx,done){
 function initShopNeon(){
   stopShopNeon();_snOn=true;
   _snLastTs=null;_snPhase=0;_snElapsed=0;_snInFlicker=true;
-  _snNextFlicker=5e3+Math.random()*7e3;
+  _snNextFlicker=12e3+Math.random()*10e3;
   const pow=[[0,18],[0.95,28],[0.15,18],[1.0,32],[0.35,16],[0.0,14],[1.0,42],[0.55,18],[1.0,65]];
   _snBuild(0);
   _snRunSeq(pow,0,()=>{_snInFlicker=false;_snRaf=requestAnimationFrame(_snBreathe);});
