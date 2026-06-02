@@ -102,8 +102,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .xp-rep-val{font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
 .xb{height:8px;background:rgba(0,0,0,.18);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .xbf{height:100%;background:#000;transition:width .5s}
-.streak-badge{display:flex;align-items:baseline;gap:4px;font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
-#hsk-prog{font-size:10px;font-weight:600;opacity:.55}
+.streak-badge{display:flex;align-items:baseline;gap:4px;font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px;position:relative}
+@keyframes streak-bump{0%{transform:scale(1)}45%{transform:scale(1.4)}100%{transform:scale(1)}}
+.streak-bump{animation:streak-bump .45s ease-out}
+@keyframes streak-plus{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-18px)}}
+.streak-plus{position:absolute;left:0;top:-4px;font-size:10px;font-weight:900;color:#000;pointer-events:none;animation:streak-plus .65s ease-out forwards}
 
 /* ─── GAIN FLOTTANT ─── */
 .gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:9100;left:50%;transform:translateX(-50%);top:50px}
@@ -452,7 +455,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
     <div class="xp-block">
       <div class="xb"><div class="xbf" id="xbf" style="width:0%"></div></div>
       <div class="xp-bottom-row">
-        <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span><span id="hsk-prog"></span></div>
+        <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span></div>
         <div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div>
       </div>
     </div>
@@ -628,7 +631,7 @@ function submitPin(){
 // ─── DATA ───
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
-  lastDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,
+  lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],
   dailies:[
     {id:'d1',t:'BLOODSTREAM PURGE',desc:'Drink a large amount of water',done:false,xp:10,ip:5},
@@ -782,7 +785,7 @@ function load(){
       const saved=JSON.parse(raw);
       S=JSON.parse(JSON.stringify(DS));
       if(saved.player)S.player={...S.player,...saved.player};
-      ['lastDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent','weightLog'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent','weightLog'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
       if(!S.weightLog)S.weightLog=[];
       ['dailies','weeklies','portfolio','memoire','poids','guitare'].forEach(k=>{
         if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
@@ -814,15 +817,8 @@ function wasYesterday(dateStr){const y=new Date();y.setDate(y.getDate()-1);retur
 function checkReset(){
   const td=today(),wid=weekId();
   if(S.lastDate!==td){
-    if(S.lastDate){
-      S.daysPlayed=(S.daysPlayed||0)+1;
-      if(!wasYesterday(S.lastDate)){
-        S.player.streak=0;
-      } else {
-        const frac=S.dailies.length>0?S.dailies.filter(d=>d.done).length/S.dailies.length:0;
-        S.player.streak=frac>=0.7?(S.player.streak||0)+1:0;
-      }
-    }
+    if(S.lastDate)S.daysPlayed=(S.daysPlayed||0)+1;
+    if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate))S.player.streak=0;
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
   if(S.lastWeekId!==wid){S.weeklies.forEach(w=>w.done=false);S.practiceWeek=0;S.lastWeekId=wid;}
@@ -1100,17 +1096,19 @@ function rHdr(){
   const p=S.player,need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
   document.getElementById('hlv').innerHTML='CORPO // LEVEL <span style="font-size:17px;font-weight:900;vertical-align:baseline">'+p.level+'</span>';
   document.getElementById('hsk-val').textContent=(p.streak||0);
-  const progEl=document.getElementById('hsk-prog');
-  if(progEl&&S.dailies.length>0){
-    const done=S.dailies.filter(d=>d.done).length;
-    const needed=Math.ceil(S.dailies.length*0.7);
-    progEl.textContent=done>=needed?'(OK)':'('+done+'/'+needed+' today)';
-  }
   document.getElementById('xbf').style.width=pct+'%';
   document.getElementById('hxm').textContent=need;
   animVal('hip',prevIp,p.ip);
   animVal('hxv',prevXp,p.xp);
   prevIp=p.ip;prevXp=p.xp;
+}
+function triggerStreakAnim(){
+  const el=document.getElementById('hsk-val');if(!el)return;
+  el.classList.remove('streak-bump');void el.offsetWidth;el.classList.add('streak-bump');
+  setTimeout(()=>el.classList.remove('streak-bump'),450);
+  const badge=el.closest('.streak-badge');if(!badge)return;
+  const fl=document.createElement('span');fl.className='streak-plus';fl.textContent='+1';
+  badge.appendChild(fl);setTimeout(()=>fl.remove(),700);
 }
 
 function updateCount(type){
@@ -1134,6 +1132,14 @@ function tTask(type,id,e){
   const el=document.getElementById('task-'+id);
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
+    if(type==='dailies'){
+      const td=today();
+      if(S.lastStreakDate!==td){
+        S.player.streak=wasYesterday(S.lastStreakDate)?(S.player.streak||0)+1:1;
+        S.lastStreakDate=td;
+        save();rHdr();triggerStreakAnim();
+      }
+    }
     showGain(it.xp,it.ip,e);save();rHdr();
     if(el){el.classList.add('dn');el.classList.add('anim-lock');setTimeout(()=>el.classList.remove('anim-lock'),2700);}
     updateCount(type);
