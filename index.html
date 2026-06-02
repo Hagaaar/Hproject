@@ -103,6 +103,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .xb{height:8px;background:rgba(0,0,0,.18);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .xbf{height:100%;background:#000;transition:width .5s}
 .streak-badge{display:flex;align-items:baseline;gap:4px;font-size:12px;font-weight:800;color:#000;opacity:.75;letter-spacing:.3px}
+#hsk-prog{font-size:10px;font-weight:600;opacity:.55}
 
 /* ─── GAIN FLOTTANT ─── */
 .gain-float{position:fixed;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:9100;left:50%;transform:translateX(-50%);top:50px}
@@ -451,7 +452,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
     <div class="xp-block">
       <div class="xb"><div class="xbf" id="xbf" style="width:0%"></div></div>
       <div class="xp-bottom-row">
-        <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span></div>
+        <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span><span id="hsk-prog"></span></div>
         <div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div>
       </div>
     </div>
@@ -808,11 +809,20 @@ function triggerSync(){
 function today(){const n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate());}
 function p2(n){return String(n).padStart(2,'0');}
 function weekId(){const d=new Date(),day=d.getDay()||7;d.setDate(d.getDate()+4-day);const y=d.getFullYear(),s=new Date(y,0,1);return y+'-W'+Math.ceil((((d-s)/86400000)+1)/7);}
+function wasYesterday(dateStr){const y=new Date();y.setDate(y.getDate()-1);return dateStr===y.getFullYear()+'-'+p2(y.getMonth()+1)+'-'+p2(y.getDate());}
 
 function checkReset(){
   const td=today(),wid=weekId();
   if(S.lastDate!==td){
-    if(S.lastDate){S.daysPlayed=(S.daysPlayed||0)+1;const frac=S.dailies.filter(d=>d.done).length/S.dailies.length;S.player.streak=frac>=0.7?(S.player.streak||0)+1:0;}
+    if(S.lastDate){
+      S.daysPlayed=(S.daysPlayed||0)+1;
+      if(!wasYesterday(S.lastDate)){
+        S.player.streak=0;
+      } else {
+        const frac=S.dailies.length>0?S.dailies.filter(d=>d.done).length/S.dailies.length:0;
+        S.player.streak=frac>=0.7?(S.player.streak||0)+1:0;
+      }
+    }
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
   if(S.lastWeekId!==wid){S.weeklies.forEach(w=>w.done=false);S.practiceWeek=0;S.lastWeekId=wid;}
@@ -1090,6 +1100,12 @@ function rHdr(){
   const p=S.player,need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
   document.getElementById('hlv').innerHTML='CORPO // LEVEL <span style="font-size:17px;font-weight:900;vertical-align:baseline">'+p.level+'</span>';
   document.getElementById('hsk-val').textContent=(p.streak||0);
+  const progEl=document.getElementById('hsk-prog');
+  if(progEl&&S.dailies.length>0){
+    const done=S.dailies.filter(d=>d.done).length;
+    const needed=Math.ceil(S.dailies.length*0.7);
+    progEl.textContent=done>=needed?'(OK)':'('+done+'/'+needed+' today)';
+  }
   document.getElementById('xbf').style.width=pct+'%';
   document.getElementById('hxm').textContent=need;
   animVal('hip',prevIp,p.ip);
