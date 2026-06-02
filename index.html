@@ -796,6 +796,7 @@ function load(){
   }catch(e){S=JSON.parse(JSON.stringify(DS));}
   if(!S.shop||S.shop.length<DS.shop.length)S.shop=DS.shop.map(def=>{const sv=(S.shop||[]).find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:{...def};});
   if(!S.weightLog)S.weightLog=[];
+  if(!S.lastStreakDate&&S.lastDate)S.lastStreakDate=S.lastDate;
 }
 
 function save(){localStorage.setItem(KEY,JSON.stringify(S));triggerSync();}
