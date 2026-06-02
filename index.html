@@ -785,7 +785,7 @@ function load(){
       const saved=JSON.parse(raw);
       S=JSON.parse(JSON.stringify(DS));
       if(saved.player)S.player={...S.player,...saved.player};
-      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent','weightLog'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent','weightLog','streakV'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
       if(!S.weightLog)S.weightLog=[];
       ['dailies','weeklies','portfolio','memoire','poids','guitare'].forEach(k=>{
         if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
@@ -796,7 +796,11 @@ function load(){
   }catch(e){S=JSON.parse(JSON.stringify(DS));}
   if(!S.shop||S.shop.length<DS.shop.length)S.shop=DS.shop.map(def=>{const sv=(S.shop||[]).find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:{...def};});
   if(!S.weightLog)S.weightLog=[];
-  if(!S.lastStreakDate&&S.lastDate)S.lastStreakDate=S.lastDate;
+  if(!S.streakV){
+    if(!S.lastStreakDate&&S.lastDate)S.lastStreakDate=S.lastDate;
+    if(wasYesterday(S.lastStreakDate)||S.lastStreakDate===today())S.player.streak=(S.player.streak||0)+1;
+    S.streakV=1;
+  }
 }
 
 function save(){localStorage.setItem(KEY,JSON.stringify(S));triggerSync();}
