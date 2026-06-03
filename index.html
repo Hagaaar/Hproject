@@ -650,7 +650,6 @@ const DS={
     {id:'d10',t:'LOCAL MEMORY BACKUP',desc:'End of day journaling',done:false,xp:10,ip:5},
     {id:'d11',t:'SYSTEM GLITCH PROTOCOL',desc:'Do 20 push-ups every time you sneeze',done:false,xp:10,ip:5},
     {id:'d12',t:'NIBBLES TRAINING',desc:'15 minutes of laser play with Jiji',done:false,xp:10,ip:5},
-    {id:'d13',t:'SECTOR MAINTENANCE BRIEF',desc:'Plan and organize apartment repairs',done:false,xp:10,ip:5},
   ],
   weeklies:[
     {id:'w1',t:'METABOLIC OVERCLOCK',desc:'Fast for a full day',done:false,xp:50,ip:40},
@@ -659,6 +658,7 @@ const DS={
     {id:'w4',t:'HIDEOUT CLEANING',desc:'Full apartment maintenance',done:false,xp:50,ip:40},
     {id:'w5',t:'NETWORK UPDATE',desc:'Call family/friends to catch up',done:false,xp:50,ip:40},
     {id:'w6',t:'QUARANTINE MAINTENANCE',desc:'Full litter box change and brushing Jiji',done:false,xp:50,ip:40},
+    {id:'w7',t:'SECTOR MAINTENANCE BRIEF',desc:'Organize appartement',done:false,xp:50,ip:40},
   ],
   portfolio:[
     {id:'pf1',t:'ENCRYPTION INIT',desc:'Setup InDesign and 3 valid Book files',done:false,xp:100,ip:100},
@@ -1349,6 +1349,28 @@ function rCamps(){
     '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:70px;">ADD</button></div>'+
     '</div>'+
     (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
+  const allCamps=[
+    {key:'portfolio',label:'PORTFOLIO',items:S.portfolio},
+    {key:'memoire',label:'HMONP THESIS',items:S.memoire},
+    {key:'guitare',label:'SILVERHAND',items:S.guitare},
+    {key:'conduite',label:'NOMAD DRIVER',items:S.conduite},
+    {key:'poids',label:'BIOMETRICS',items:S.poids},
+  ];
+  const doneCamps=allCamps.filter(c=>c.items.length>0&&c.items.every(i=>i.done));
+  if(doneCamps.length>0){
+    h+='<div style="margin-top:28px">';
+    h+='<div style="font-size:10px;font-weight:900;letter-spacing:3px;color:rgba(252,238,10,0.28);margin-bottom:10px;border-bottom:1px solid rgba(252,238,10,0.07);padding-bottom:6px">// COMPLETED MAIN QUESTS</div>';
+    doneCamps.forEach(c=>{
+      const totalXp=c.items.reduce((s,i)=>s+i.xp,0),totalIp=c.items.reduce((s,i)=>s+i.ip,0);
+      h+='<div style="opacity:0.22;filter:grayscale(65%);pointer-events:none;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;background:rgba(0,255,102,0.04);border:1px solid rgba(0,255,102,0.18);border-left:3px solid #00ff66;padding:10px 14px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)">'+
+        '<div style="flex:1"><div style="font-size:14px;font-weight:900;color:#00ff66;letter-spacing:1px">'+c.label+'</div>'+
+        '<div style="font-size:10px;font-weight:700;color:#00ff66;opacity:0.6;margin-top:2px">'+c.items.length+'/'+c.items.length+' OBJECTIVES CLEARED</div></div>'+
+        '<div style="text-align:right;font-size:11px;font-weight:800;color:#00ff66;line-height:1.5">+'+totalXp+' REP<br>+'+totalIp+' E$</div>'+
+        '</div></div>';
+    });
+    h+='</div>';
+  }
   document.getElementById('cl').innerHTML=h;
 }
 
