@@ -991,8 +991,11 @@ function save(){
 }
 function setSy(st){document.getElementById('syu').className='sync '+st;document.getElementById('sytx').textContent=st.toUpperCase();}
 
-let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false;
+let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false;
 const _RETRY_DELAYS=[3000,6000,12000,24000,48000,90000];
+
+function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.ip||0)+((d.totalDone||0)*10);}
+
 function _doSync(){
   if(!_hasMeaningfulData(S))return;
   fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
@@ -1001,11 +1004,12 @@ function _doSync(){
         setSy('synched');_syncRetry=0;_offlineDismissed=false;
         localStorage.removeItem('cp_sync_pending');
         _hideOfflineBanner();
+        if(_wasOffline){_wasOffline=false;toast('BACKUP CLOUD MIS À JOUR','win');}
       }else{_onSyncFail();}
     }).catch(_onSyncFail);
 }
 function _onSyncFail(){
-  setSy('offline');
+  setSy('offline');_wasOffline=true;
   localStorage.setItem('cp_sync_pending','1');
   if(!_offlineDismissed&&_hasMeaningfulData(S))_showOfflineBanner();
   if(_syncRetry<_RETRY_DELAYS.length){
@@ -2099,27 +2103,56 @@ if(DEV_RECAP){
   showMonthRecapUI(MOCK_RECAP);
 }
 checkReset();rHdr();rDailies();
-// Si un sync était en attente lors de la dernière session, relancer immédiatement
+// Sync en attente depuis dernière session → relancer
 if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
+// Données locales vides (ex: iOS a effacé le localStorage) → pull silencieux automatique
+if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
 
-function pullFromCloud(){
-  document.getElementById('sytx').textContent='PULLING...';
-  document.getElementById('syu').className='sync synching';
+// autoMode=true : silencieux sauf si restauration réelle (appelé au démarrage)
+// autoMode=false : toujours notifier (appelé par l'utilisateur)
+function pullFromCloud(autoMode){
+  if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
   fetch(SURL)
     .then(r=>r.json())
-    .then(cloudData=>{
-      if(cloudData&&cloudData.player){
-        S=cloudData;
+    .then(resp=>{
+      // Trouver le meilleur état parmi current + tous les snapshots
+      let best=null,bestScore=-1;
+      function _try(d){if(!d||!d.player)return;const sc=_score(d);if(sc>bestScore){bestScore=sc;best=d;}}
+
+      if(resp&&(resp.current!==undefined||resp.snapshots)){
+        // Nouveau format : {current, snapshots:[{data,...}]}
+        _try(resp.current);
+        (resp.snapshots||[]).forEach(s=>_try(s.data));
+      }else if(resp&&resp.player){
+        // Ancien format : réponse directe = état complet
+        _try(resp);
+      }
+
+      const localScore=_score(S);
+
+      if(best&&bestScore>localScore){
+        // Le cloud a de meilleures données → restaurer
+        const wasZero=!_hasMeaningfulData(S);
+        S=best;
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
-        if(_hasMeaningfulData(S))localStorage.setItem(BKEY,snap);
+        localStorage.setItem(BKEY,snap);
         localStorage.removeItem('cp_sync_pending');
         prevIp=S.player.ip;prevXp=S.player.xp;
         checkReset();rHdr();
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
-      }else{setSy('synched');}
+        toast(wasZero?'DONNÉES RESTAURÉES DEPUIS LE CLOUD ✓':'DONNÉES CLOUD PLUS RÉCENTES — RESTAURÉES','win');
+      }else if(best&&bestScore===localScore){
+        setSy('synched');_hideOfflineBanner();
+        if(!autoMode)toast('DONNÉES DÉJÀ À JOUR','win');
+      }else{
+        // Local a plus de données que le cloud → pousser vers le cloud
+        setSy('synched');_hideOfflineBanner();
+        if(!autoMode)toast(_hasMeaningfulData(S)?'DONNÉES LOCALES PLUS RÉCENTES — SYNC EN COURS':'AUCUN BACKUP CLOUD DISPONIBLE',_hasMeaningfulData(S)?'win':'err');
+        if(_hasMeaningfulData(S))triggerSync();
+      }
     })
     .catch(()=>{setSy('offline');if(_hasMeaningfulData(S))_showOfflineBanner();});
 }
