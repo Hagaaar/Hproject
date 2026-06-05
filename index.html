@@ -277,20 +277,23 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .st-kpi-lbl{font-size:8px;font-weight:800;letter-spacing:1px;color:var(--mu);border-left:2px solid var(--cy);padding-left:4px}
 .st-kpi.gold .st-kpi-lbl{border-left-color:var(--y)}
 .st-camp-label{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;margin-bottom:6px}
-.scamp{position:relative;display:flex;align-items:stretch;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
+.scamp{position:relative;display:flex;flex-direction:column;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
 .scamp-left{flex:1;min-width:0}
 .scamp::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.012) 3px,rgba(0,240,255,.012) 4px)}
 .scamp.cat-portfolio{border-left-color:var(--cy)}
 .scamp.cat-memoire{border-left-color:var(--y)}
 .scamp.cat-guitar{border-left-color:#c084fc}
 .scamp.cat-bio{border-left-color:var(--gn)}
-.scamp-top{display:flex;align-items:center;gap:8px;padding:13px 12px 6px;position:relative;z-index:2}
-.scamp-name{font-size:22px;font-weight:900;letter-spacing:1.5px;flex:1;min-width:0}
+.scamp-top{display:flex;align-items:center;gap:6px;padding:9px 12px 5px;position:relative;z-index:2}
+.scamp-name{font-size:20px;font-weight:900;letter-spacing:1.5px;flex:1;min-width:0}
+.scamp-inline-meta{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.sim-rep{font-size:8px;font-weight:800;letter-spacing:.5px;color:var(--cy);background:rgba(0,240,255,.08);border:1px solid rgba(0,240,255,.22);padding:2px 5px}
+.sim-funds{font-size:8px;font-weight:800;letter-spacing:.5px;color:var(--y);background:rgba(252,238,10,.08);border:1px solid rgba(252,238,10,.22);padding:2px 5px}
 .scamp.cat-portfolio .scamp-name{color:var(--cy)}
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;line-height:1;flex-shrink:0;padding:0;border-left:none;background:none;position:relative;z-index:2;width:88px;min-width:88px}
+.scamp-pct{font-size:22px;font-weight:900;line-height:1;flex-shrink:0;position:relative;z-index:2}
 .scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.5);border-left-color:rgba(0,240,255,.15)}
 .scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.5);border-left-color:rgba(252,238,10,.15)}
 .scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5);border-left-color:rgba(192,132,252,.15)}
@@ -313,6 +316,26 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .wt-chart-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--mu);margin-bottom:6px}
 .wt-chart{width:100%;height:55px}
 .wt-chart svg{width:100%;height:100%}
+
+/* STAT CHARTS */
+.st-section-title{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;margin:14px 0 6px}
+.st-chart-box{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);padding:10px 12px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);margin-bottom:7px;position:relative;overflow:hidden}
+.st-chart-box::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.01) 3px,rgba(0,240,255,.01) 4px)}
+.scr-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;position:relative;z-index:1}
+.scr-row:last-child{margin-bottom:0}
+.scr-label{font-size:9px;font-weight:800;letter-spacing:.5px;color:var(--mu);width:26px;flex-shrink:0}
+.scr-track{flex:1;height:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);position:relative;overflow:hidden}
+.scr-fill{height:100%;position:absolute;inset-block:0;left:0;transition:width .6s}
+.scr-track-txt{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:800;color:rgba(255,255,255,.3);line-height:1;pointer-events:none}
+.scr-reward{font-size:8px;font-weight:800;color:var(--mu);white-space:nowrap;flex-shrink:0;min-width:128px;text-align:right}
+.scr-earned{color:var(--gn)!important;text-shadow:0 0 8px rgba(0,255,102,.4)}
+.st-daily-chart{padding:10px 12px 8px}
+.dc-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;position:relative;z-index:1}
+.dc-row:last-child{margin-bottom:0}
+.dc-day{font-size:7px;font-weight:800;color:var(--mu);width:16px;flex-shrink:0;text-align:right;opacity:.55}
+.dc-track{flex:1;height:6px;background:rgba(255,255,255,.04);position:relative;overflow:hidden;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%)}
+.dc-fill{height:100%;background:var(--cy);opacity:.75;position:absolute;inset-block:0;left:0;transition:width .5s}
+.dc-cnt{font-size:7px;font-weight:800;color:var(--cy);width:16px;flex-shrink:0;opacity:.8}
 
 /* TOAST */
 #tc{position:fixed;bottom:112px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:10px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
@@ -636,7 +659,7 @@ function submitPin(){
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
   lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,
-  weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],
+  weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
   dailies:[
     {id:'d1',t:'BLOODSTREAM PURGE',desc:'Drink a large amount of water',done:false,xp:10,ip:5},
     {id:'d2',t:'THERMAL SHOCK',desc:'Hot / cold shower',done:false,xp:10,ip:5},
@@ -794,7 +817,7 @@ function load(){
       const saved=JSON.parse(raw);
       S=JSON.parse(JSON.stringify(DS));
       if(saved.player)S.player={...S.player,...saved.player};
-      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
       if(!S.weightLog)S.weightLog=[];
       ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
         if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
@@ -832,7 +855,7 @@ function checkReset(){
   const td=today(),wid=weekId();
   if(S.lastDate!==td){
     if(S.lastDate)S.daysPlayed=(S.daysPlayed||0)+1;
-    if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate))S.player.streak=0;
+    if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
   if(S.lastWeekId!==wid){S.weeklies.forEach(w=>w.done=false);S.practiceWeek=0;S.conduiteWeek=0;S.lastWeekId=wid;}
@@ -1146,11 +1169,23 @@ function tTask(type,id,e){
   const el=document.getElementById('task-'+id);
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
+    const taskDate=today();
+    if(!S.dailyTaskLog)S.dailyTaskLog=[];
+    const dle=S.dailyTaskLog.find(x=>x.d===taskDate);
+    if(dle)dle.count++;else S.dailyTaskLog.push({d:taskDate,count:1});
     if(type==='dailies'){
-      const td=today();
-      if(S.lastStreakDate!==td){
+      if(S.lastStreakDate!==taskDate){
         S.player.streak=wasYesterday(S.lastStreakDate)?(S.player.streak||0)+1:1;
-        S.lastStreakDate=td;
+        S.lastStreakDate=taskDate;
+        const mils=[{n:7,xp:150,ip:100},{n:15,xp:350,ip:250},{n:30,xp:800,ip:600}];
+        mils.forEach(m=>{
+          if(S.player.streak>=m.n&&!(S.streakMilestonesEarned||[]).includes(m.n)){
+            if(!S.streakMilestonesEarned)S.streakMilestonesEarned=[];
+            S.streakMilestonesEarned.push(m.n);
+            addXP(m.xp);S.player.ip+=m.ip;
+            setTimeout(()=>toast(m.n+'-DAY STREAK! +'+m.xp+' REP  +'+m.ip+' E$','win'),700);
+          }
+        });
         save();rHdr();triggerStreakAnim();
       }
     }
@@ -1159,7 +1194,10 @@ function tTask(type,id,e){
     updateCount(type);
   }else{
     it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
-    S.totalDone=Math.max(0,(S.totalDone||0)-1);save();rHdr();
+    S.totalDone=Math.max(0,(S.totalDone||0)-1);
+    const taskDate2=today();const dle2=(S.dailyTaskLog||[]).find(x=>x.d===taskDate2);
+    if(dle2&&dle2.count>0)dle2.count--;
+    save();rHdr();
     if(el)el.classList.remove('dn');
     updateCount(type);
   }
@@ -1565,7 +1603,7 @@ function buildSegs(done,total){
 }
 
 function rStats(){
-  const p=S.player,need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
+  const p=S.player,need=p.level*100,xpPct=Math.min(100,Math.round(p.xp/need*100));
   const cats=[
     {key:'portfolio',name:'PORTFOLIO',cls:'cat-portfolio',items:S.portfolio},
     {key:'memoire',name:'THESIS',cls:'cat-memoire',items:S.memoire},
@@ -1573,13 +1611,41 @@ function rStats(){
     {key:'conduite',name:'NOMAD DRIVER',cls:'cat-conduite',items:S.conduite},
     {key:'poids',name:'BIOMETRICS',cls:'cat-bio',items:S.poids},
   ];
-  let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+pct+'%"></div></div></div></div>';
+  let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+xpPct+'%"></div></div></div></div>';
   h+=cats.map(c=>{
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
-    const pct=t>0?Math.round((d/t)*100):0;
+    const cpct=t>0?Math.round((d/t)*100):0;
     const catXp=done.reduce((s,e)=>s+(e.xp||0),0),catIp=done.reduce((s,e)=>s+(e.ip||0),0);
-    return '<div class="scamp '+c.cls+'"><div class="scamp-left"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div></div>'+buildSegs(d,t)+'<div class="scamp-bot"><div class="scamp-stat"><div class="scamp-stat-lbl">PROGRESS</div><div class="scamp-stat-val">'+d+'/'+t+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">REP</div><div class="scamp-stat-val rep">+'+catXp+'</div></div><div class="scamp-stat"><div class="scamp-stat-lbl">FUNDS</div><div class="scamp-stat-val funds">+'+catIp+'</div></div></div></div><div class="scamp-pct">'+pct+'%</div></div>';
+    return '<div class="scamp '+c.cls+'"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-inline-meta"><span class="sim-rep">+'+catXp+' REP</span><span class="sim-funds">E$ +'+catIp+'</span></div><div class="scamp-pct">'+cpct+'%</div></div>'+buildSegs(d,t)+'</div>';
   }).join('');
+
+  // ── Streak milestones chart ──
+  const sk=S.player.streak||0,earned=S.streakMilestonesEarned||[];
+  const mils=[{n:7,xp:150,ip:100,col:'var(--cy)'},{n:15,xp:350,ip:250,col:'#c084fc'},{n:30,xp:800,ip:600,col:'var(--y)'}];
+  h+='<div class="st-section-title">STREAK MILESTONES</div><div class="st-chart-box">';
+  mils.forEach(m=>{
+    const fp=Math.min(100,Math.round((sk/m.n)*100));
+    const isDone=earned.includes(m.n);
+    h+='<div class="scr-row"><div class="scr-label">'+m.n+'D</div><div class="scr-track"><div class="scr-fill" style="width:'+fp+'%;background:'+m.col+';opacity:'+(isDone?'1':'.65')+'"></div><div class="scr-track-txt">'+Math.min(sk,m.n)+'/'+m.n+'</div></div><div class="scr-reward'+(isDone?' scr-earned':'')+'">+'+(isDone?'&#10003; ':'')+m.xp+' REP &nbsp;+'+m.ip+' E$</div></div>';
+  });
+  h+='</div>';
+
+  // ── Daily activity chart (current month) ──
+  const td=today(),ym=td.slice(0,7),dayNum=parseInt(td.slice(8,10));
+  const log=S.dailyTaskLog||[];
+  const mLog=log.filter(e=>e.d.startsWith(ym));
+  const maxC=Math.max(1,12,...mLog.map(e=>e.count));
+  const monthLabel=ym.replace('-','.');
+  h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div><div class="st-chart-box st-daily-chart">';
+  for(let day=1;day<=dayNum;day++){
+    const ds=ym+'-'+String(day).padStart(2,'0');
+    const entry=log.find(x=>x.d===ds);
+    const cnt=entry?entry.count:0;
+    const bp=cnt>0?Math.min(100,Math.round((cnt/maxC)*100)):0;
+    h+='<div class="dc-row"><div class="dc-day">'+String(day).padStart(2,'0')+'</div><div class="dc-track"><div class="dc-fill" style="width:'+bp+'%"></div></div><div class="dc-cnt">'+(cnt>0?cnt:'')+'</div></div>';
+  }
+  h+='</div>';
+
   h+='<div style="margin-top:20px;padding-bottom:4px"><button onclick="resetAll()" style="width:100%;background:rgba(160,0,28,0.45);border:1px solid rgba(255,0,60,0.3);color:rgba(255,140,140,0.85);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">SYSTEM PURGE — RESET ALL DATA</button></div>';
   document.getElementById('st-all').innerHTML=h;
 }
