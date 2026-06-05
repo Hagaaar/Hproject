@@ -27,6 +27,14 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 @keyframes blinkCursor{0%,100%{opacity:1}50%{opacity:0}}
 .pin-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--mu);background:transparent;transition:background 0.15s, border-color 0.15s, box-shadow 0.15s}
 .pin-dot.filled{background:var(--y);border-color:var(--y);box-shadow:0 0 8px var(--y),0 0 16px rgba(252,238,10,.4)}
+.auth-trust{margin-top:14px;display:flex;justify-content:center}
+.auth-trust-lbl{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:8px;font-weight:800;letter-spacing:2px;color:var(--mu);opacity:.6;transition:opacity .15s}
+.auth-trust-lbl:active{opacity:1}
+.auth-trust-lbl input{display:none}
+.auth-trust-box{width:13px;height:13px;border:1px solid var(--mu);flex-shrink:0;position:relative;transition:border-color .15s,background .15s}
+.auth-trust-lbl input:checked~.auth-trust-box{border-color:var(--cy);background:rgba(0,240,255,.12)}
+.auth-trust-lbl input:checked~.auth-trust-box::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--cy);line-height:1}
+.auth-trust-lbl input:checked~span{color:var(--cy);opacity:1}
 
 /* ─── BTN EXECUTED → + immédiat grand → tourne en ✕ ─── */
 .btn-lbl{position:absolute;opacity:1;transform:scale(1);transition:opacity 0.15s,transform 0.15s}
@@ -517,6 +525,13 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
       </div>
       <div id="hacker-load"></div>
     </div>
+    <div class="auth-trust" id="auth-trust-row">
+      <label class="auth-trust-lbl">
+        <input type="checkbox" id="auth-trust-check">
+        <div class="auth-trust-box"></div>
+        <span>TRUST THIS DEVICE</span>
+      </label>
+    </div>
   </div>
 </div>
 
@@ -614,7 +629,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     display.appendChild(d);
   }
 
-  if(sessionStorage.getItem('cp_auth')==='true'){
+  if(sessionStorage.getItem('cp_auth')==='true'||localStorage.getItem('cp_trusted')==='true'){
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').style.pointerEvents='all';
   }
@@ -704,6 +719,7 @@ function submitPin(){
     if(fetchResult===true){
       terminal.innerHTML=animPrintedHTML+`<span style="color:#c0c0c0;font-family:'Courier New',Courier,monospace;text-shadow:none;">> ACCESS GRANTED</span>`;
       sessionStorage.setItem('cp_auth','true');
+      if(document.getElementById('auth-trust-check').checked)localStorage.setItem('cp_trusted','true');
       document.getElementById('app').style.pointerEvents='all';
       setTimeout(()=>{
         const screen=document.getElementById('auth-screen');
