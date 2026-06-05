@@ -442,34 +442,55 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #month-recap{position:fixed;inset:0;z-index:9998;background:var(--bg);background-image:radial-gradient(rgba(252,238,10,.12) 1px,transparent 1px);background-size:20px 20px;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:28px 16px 40px}
 #month-recap.on{display:flex;animation:fadeIn .4s ease-out}
 .mrc-wrap{width:100%;max-width:400px}
-.mrc-eyebrow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
-.mrc-eyebrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,.25))}
-.mrc-eyebrow-line.r{background:linear-gradient(90deg,rgba(0,240,255,.25),transparent)}
-.mrc-eyebrow-txt{font-size:8px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.6}
-.mrc-title{font-size:38px;font-weight:900;color:var(--y);line-height:.95;text-align:center;text-shadow:0 0 20px rgba(252,238,10,.55),0 0 50px rgba(252,238,10,.2);margin-bottom:4px}
-.mrc-month{font-size:12px;font-weight:800;letter-spacing:3px;color:var(--mu);text-align:center;margin-bottom:20px}
-.mrc-block{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);margin-bottom:8px;overflow:hidden;position:relative}
-.mrc-block::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.01) 3px,rgba(0,240,255,.01) 4px);pointer-events:none}
-.mrc-block.gn{border-left-color:var(--gn)}
-.mrc-block.rd{border-left-color:var(--rd)}
-.mrc-block.yl{border-left-color:var(--y)}
-.mrc-blk-head{font-size:8px;font-weight:800;letter-spacing:2.5px;color:var(--mu);padding:8px 12px 0;opacity:.65;position:relative;z-index:1}
-.mrc-row{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-top:1px solid rgba(255,255,255,.04);position:relative;z-index:1;gap:10px}
-.mrc-row:first-of-type{border-top:none}
-.mrc-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--mu);flex:1}
-.mrc-val-wrap{text-align:right}
-.mrc-val{font-size:24px;font-weight:900;line-height:1;color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.4)}
-.mrc-val.yl{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.4)}
-.mrc-val.gn{color:var(--gn);text-shadow:0 0 12px rgba(0,255,102,.4)}
-.mrc-val.rd{color:var(--rd);text-shadow:0 0 12px rgba(255,0,60,.35)}
-.mrc-val.wh{color:#fff;text-shadow:none}
-.mrc-unit{font-size:10px;font-weight:700;color:var(--mu);margin-left:4px}
-.mrc-sub{font-size:8px;font-weight:700;color:var(--mu);opacity:.5;margin-top:1px}
-.mrc-net-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;background:rgba(255,255,255,.02)}
-.mrc-net-lbl{font-size:8px;font-weight:800;letter-spacing:1.5px;color:var(--mu)}
-.mrc-net-val{font-size:12px;font-weight:800}
-.mrc-close-btn{width:100%;margin-top:16px;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.3);color:var(--cy);padding:16px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);transition:background .15s}
-.mrc-close-btn:active{background:rgba(0,240,255,.18)}
+.mrc-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mrc-eyebrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,.2))}
+.mrc-eyebrow-line.r{background:linear-gradient(90deg,rgba(0,240,255,.2),transparent)}
+.mrc-eyebrow-txt{font-size:8px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;white-space:nowrap}
+.mrc-title{font-size:40px;font-weight:900;color:var(--y);line-height:.88;text-shadow:0 0 20px rgba(252,238,10,.5),0 0 50px rgba(252,238,10,.2);margin-bottom:3px}
+.mrc-month{font-size:11px;font-weight:800;letter-spacing:3px;color:var(--mu);margin-bottom:18px}
+.mrc-streak{background:linear-gradient(110deg,rgba(252,238,10,.07) 0%,rgba(252,238,10,.02) 100%);border:1px solid rgba(252,238,10,.22);border-left:4px solid var(--y);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);padding:14px 16px 13px;margin-bottom:8px;position:relative;overflow:hidden}
+.mrc-streak::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(252,238,10,.02) 3px,rgba(252,238,10,.02) 4px);pointer-events:none}
+.mrc-streak-lbl{font-size:8px;font-weight:800;letter-spacing:2px;color:var(--y);opacity:.55;margin-bottom:4px;position:relative;z-index:1}
+.mrc-streak-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;position:relative;z-index:1}
+.mrc-streak-num{font-size:76px;font-weight:900;color:var(--y);line-height:.82;text-shadow:0 0 28px rgba(252,238,10,.65),0 0 70px rgba(252,238,10,.25)}
+.mrc-streak-unit{font-size:13px;font-weight:800;color:var(--y);opacity:.6;align-self:flex-end;padding-bottom:8px}
+.mrc-streak-track{height:5px;background:rgba(252,238,10,.08);clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);position:relative;z-index:1;margin-bottom:5px}
+.mrc-streak-fill{height:100%;background:linear-gradient(90deg,var(--y),rgba(252,238,10,.7))}
+.mrc-streak-foot{font-size:8px;font-weight:700;color:var(--y);opacity:.38;position:relative;z-index:1;text-align:right}
+.mrc-gauges{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.mrc-gauge-card{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.08);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);padding:12px 10px 10px;text-align:center;position:relative;overflow:hidden}
+.mrc-gauge-card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.01) 3px,rgba(0,240,255,.01) 4px);pointer-events:none}
+.mrc-gauge-card.cy-card{border-left:3px solid var(--cy)}
+.mrc-gauge-card.pu-card{border-left:3px solid #c084fc}
+.mrc-gauge-lbl{font-size:7px;font-weight:800;letter-spacing:1.5px;color:var(--mu);margin-bottom:8px;position:relative;z-index:1}
+.mrc-arc-host{position:relative;width:90px;height:90px;margin:0 auto 6px}
+.mrc-arc-svg{position:absolute;inset:0;width:100%;height:100%}
+.mrc-gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mrc-gauge-big{font-size:26px;font-weight:900;line-height:1}
+.mrc-gauge-den{font-size:8px;font-weight:700;color:var(--mu);line-height:1.2}
+.mrc-gauge-pct{font-size:9px;font-weight:800;letter-spacing:1px;position:relative;z-index:1}
+.mrc-missions{text-align:center;padding:14px 12px 10px;margin-bottom:8px}
+.mrc-missions-bar{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.mrc-missions-bar-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07))}
+.mrc-missions-bar-line.r{background:linear-gradient(90deg,rgba(255,255,255,.07),transparent)}
+.mrc-missions-top-lbl{font-size:8px;font-weight:800;letter-spacing:2px;color:var(--mu);opacity:.45;white-space:nowrap}
+.mrc-missions-num{font-size:76px;font-weight:900;color:#fff;line-height:.88;text-shadow:0 0 12px rgba(255,255,255,.1);margin:6px 0 4px}
+.mrc-missions-bot-lbl{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--mu)}
+.mrc-eco{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.08);border-left:3px solid var(--cy);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);padding:12px;margin-bottom:8px;position:relative;overflow:hidden}
+.mrc-eco::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.01) 3px,rgba(0,240,255,.01) 4px);pointer-events:none}
+.mrc-eco-sec{margin-bottom:12px;position:relative;z-index:1}
+.mrc-eco-sec:last-child{margin-bottom:0}
+.mrc-eco-cur{font-size:8px;font-weight:800;letter-spacing:2px;color:var(--mu);opacity:.55;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.mrc-eco-cur::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+.mrc-eco-row{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.mrc-eco-row:last-child{margin-bottom:0}
+.mrc-eco-rlbl{font-size:7px;font-weight:800;letter-spacing:1px;color:var(--mu);width:42px;flex-shrink:0;opacity:.65}
+.mrc-eco-track{flex:1;height:7px;background:rgba(255,255,255,.04);position:relative;overflow:hidden;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%)}
+.mrc-eco-fill{height:100%;position:absolute;inset-block:0;left:0;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.mrc-eco-amt{font-size:11px;font-weight:800;width:50px;text-align:right;flex-shrink:0}
+.mrc-eco-sep{height:1px;background:rgba(255,255,255,.05);margin:10px 0}
+.mrc-close-btn{width:100%;margin-top:16px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.25);color:var(--cy);padding:16px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);transition:background .15s}
+.mrc-close-btn:active{background:rgba(0,240,255,.16)}
 </style>
 </head>
 <body>
@@ -1822,46 +1843,86 @@ function monthName(ym){
   const m=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
   return m[parseInt(ym.slice(5,7))-1]+' · '+ym.slice(0,4);
 }
+function daysInMonth(ym){const[y,mo]=ym.split('-').map(Number);return new Date(y,mo,0).getDate();}
+function makeArc(pct,col,bgCol){
+  const r=36,cx=50,cy=50,circ=2*Math.PI*r;
+  const arcL=circ*.75,gap=circ-arcL,fill=Math.max(0,arcL*(Math.min(100,pct)/100));
+  return '<svg viewBox="0 0 100 100" class="mrc-arc-svg">'+
+    '<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+bgCol+'" stroke-width="7" stroke-dasharray="'+arcL.toFixed(1)+' '+gap.toFixed(1)+'" transform="rotate(135 50 50)"/>'+
+    '<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+col+'" stroke-width="7" stroke-dasharray="'+fill.toFixed(1)+' 999" transform="rotate(135 50 50)" stroke-linecap="round"/>'+
+    '</svg>';
+}
 
 function showMonthRecapUI(data){
   const el=document.getElementById('month-recap');
   const wrap=document.getElementById('mrc-content');
-  const netXp=data.xpGained-data.xpLost;
-  const netIp=data.ipGained-data.ipLost;
-  const netXpSign=netXp>=0?'+':'';
-  const netIpSign=netIp>=0?'+':'';
+  const netXp=data.xpGained-data.xpLost,netIp=data.ipGained-data.ipLost;
+  const totalDays=daysInMonth(data.month);
+  const streakPct=Math.round((data.maxStreak/totalDays)*100);
+  const dailyPct=Math.round((data.avgDailies/12)*100);
+  const gigPct=Math.round((data.avgGigsPerWeek/7)*100);
+  const repRef=Math.max(data.xpGained,1),ipRef=Math.max(data.ipGained,1);
+  const repLostPct=Math.min(100,Math.round(data.xpLost/repRef*100));
+  const repNetPct=Math.min(100,Math.max(0,Math.round(netXp/repRef*100)));
+  const ipLostPct=Math.min(100,Math.round(data.ipLost/ipRef*100));
+  const ipNetPct=Math.min(100,Math.max(0,Math.round(netIp/ipRef*100)));
+  const mn=monthName(data.month),mnParts=mn.split(' · ');
+
+  function gaugeCard(label,num,denom,col,bgCol,cls){
+    return '<div class="mrc-gauge-card '+cls+'">'+
+      '<div class="mrc-gauge-lbl">'+label+'</div>'+
+      '<div class="mrc-arc-host">'+
+        makeArc(Math.round(num/denom*100),col,bgCol)+
+        '<div class="mrc-gauge-center">'+
+          '<div class="mrc-gauge-big" style="color:'+col+'">'+num+'</div>'+
+          '<div class="mrc-gauge-den">/ '+denom+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="mrc-gauge-pct" style="color:'+col+'">'+Math.round(num/denom*100)+'%</div>'+
+    '</div>';
+  }
+
   wrap.innerHTML=
-    '<div class="mrc-eyebrow"><div class="mrc-eyebrow-line"></div><div class="mrc-eyebrow-txt">// ARCHIVE //</div><div class="mrc-eyebrow-line r"></div></div>'+
-    '<div class="mrc-title">MONTHLY<br>DEBRIEF</div>'+
-    '<div class="mrc-month">'+monthName(data.month)+'</div>'+
+    '<div class="mrc-eyebrow"><div class="mrc-eyebrow-line"></div><div class="mrc-eyebrow-txt">MONTHLY DEBRIEF</div><div class="mrc-eyebrow-line r"></div></div>'+
+    '<div class="mrc-title">'+mnParts[0]+'</div>'+
+    '<div class="mrc-month">'+mnParts[1]+'</div>'+
 
-    '<div class="mrc-block">'+
-      '<div class="mrc-blk-head">PERFORMANCE</div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">LONGEST STREAK</div><div class="mrc-val-wrap"><div class="mrc-val yl">'+data.maxStreak+'<span class="mrc-unit">DAYS</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">AVG DAILIES / DAY</div><div class="mrc-val-wrap"><div class="mrc-val">'+data.avgDailies+'<span class="mrc-unit">/ 12</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">AVG GIGS / WEEK</div><div class="mrc-val-wrap"><div class="mrc-val">'+data.avgGigsPerWeek+'<span class="mrc-unit">/ 7</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">MISSIONS ACCOMPLISHED</div><div class="mrc-val-wrap"><div class="mrc-val wh">'+data.tasksCompleted+'</div></div></div>'+
+    '<div class="mrc-streak">'+
+      '<div class="mrc-streak-lbl">LONGEST STREAK</div>'+
+      '<div class="mrc-streak-row"><div class="mrc-streak-num">'+data.maxStreak+'</div><div class="mrc-streak-unit">DAYS</div></div>'+
+      '<div class="mrc-streak-track"><div class="mrc-streak-fill" style="width:'+streakPct+'%"></div></div>'+
+      '<div class="mrc-streak-foot">'+streakPct+'% OF '+mnParts[0]+'</div>'+
     '</div>'+
 
-    '<div class="mrc-block gn">'+
-      '<div class="mrc-blk-head">GAINS</div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">XP EARNED</div><div class="mrc-val-wrap"><div class="mrc-val gn">+'+data.xpGained+'<span class="mrc-unit">REP</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">EDDIES EARNED</div><div class="mrc-val-wrap"><div class="mrc-val gn">+'+data.ipGained+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '<div class="mrc-gauges">'+
+      gaugeCard('AVG DAILIES / DAY',data.avgDailies,12,'var(--cy)','rgba(0,240,255,.07)','cy-card')+
+      gaugeCard('AVG GIGS / WEEK',data.avgGigsPerWeek,7,'#c084fc','rgba(192,132,252,.07)','pu-card')+
     '</div>'+
 
-    '<div class="mrc-block rd">'+
-      '<div class="mrc-blk-head">LOSSES</div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">XP BURNED</div><div class="mrc-val-wrap"><div class="mrc-val rd">-'+data.xpLost+'<span class="mrc-unit">REP</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">EDDIES BURNED</div><div class="mrc-val-wrap"><div class="mrc-val rd">-'+data.ipLost+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '<div class="mrc-missions">'+
+      '<div class="mrc-missions-bar"><div class="mrc-missions-bar-line"></div><div class="mrc-missions-top-lbl">MISSIONS</div><div class="mrc-missions-bar-line r"></div></div>'+
+      '<div class="mrc-missions-num">'+data.tasksCompleted+'</div>'+
+      '<div class="mrc-missions-bot-lbl">ACCOMPLISHED</div>'+
     '</div>'+
 
-    '<div class="mrc-block yl">'+
-      '<div class="mrc-blk-head">NET BALANCE</div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">XP NET</div><div class="mrc-val-wrap"><div class="mrc-val '+(netXp>=0?'gn':'rd')+'">'+netXpSign+netXp+'<span class="mrc-unit">REP</span></div></div></div>'+
-      '<div class="mrc-row"><div class="mrc-lbl">EDDIES NET</div><div class="mrc-val-wrap"><div class="mrc-val '+(netIp>=0?'gn':'rd')+'">'+netIpSign+netIp+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '<div class="mrc-eco">'+
+      '<div class="mrc-eco-sec">'+
+        '<div class="mrc-eco-cur">REP</div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">GAINED</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:100%;background:var(--gn)"></div></div><div class="mrc-eco-amt" style="color:var(--gn)">+'+data.xpGained+'</div></div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">BURNED</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:'+repLostPct+'%;background:var(--rd)"></div></div><div class="mrc-eco-amt" style="color:var(--rd)">-'+data.xpLost+'</div></div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">NET</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:'+repNetPct+'%;background:var(--cy);opacity:.65"></div></div><div class="mrc-eco-amt" style="color:var(--cy)">'+(netXp>=0?'+':'')+netXp+'</div></div>'+
+      '</div>'+
+      '<div class="mrc-eco-sep"></div>'+
+      '<div class="mrc-eco-sec">'+
+        '<div class="mrc-eco-cur">E$</div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">GAINED</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:100%;background:var(--gn)"></div></div><div class="mrc-eco-amt" style="color:var(--gn)">+'+data.ipGained+'</div></div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">BURNED</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:'+ipLostPct+'%;background:var(--rd)"></div></div><div class="mrc-eco-amt" style="color:var(--rd)">-'+data.ipLost+'</div></div>'+
+        '<div class="mrc-eco-row"><div class="mrc-eco-rlbl">NET</div><div class="mrc-eco-track"><div class="mrc-eco-fill" style="width:'+ipNetPct+'%;background:var(--cy);opacity:.65"></div></div><div class="mrc-eco-amt" style="color:var(--cy)">'+(netIp>=0?'+':'')+netIp+'</div></div>'+
+      '</div>'+
     '</div>'+
 
     '<button class="mrc-close-btn" onclick="closeMonthRecap()">// CLOSE DEBRIEF //</button>';
+
   el.classList.add('on');
   el.scrollTop=0;
 }
