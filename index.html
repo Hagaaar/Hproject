@@ -437,6 +437,39 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-conduite .scamp-name{color:#ff8c00}
 .scamp.cat-conduite .scamp-pct{color:#ff8c00;text-shadow:0 0 12px rgba(255,140,0,.5)}
 .scamp.cat-conduite .seg.done-seg{background:#ff8c00}
+
+/* ─── MONTHLY RECAP ─── */
+#month-recap{position:fixed;inset:0;z-index:9998;background:var(--bg);background-image:radial-gradient(rgba(252,238,10,.12) 1px,transparent 1px);background-size:20px 20px;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:28px 16px 40px}
+#month-recap.on{display:flex;animation:fadeIn .4s ease-out}
+.mrc-wrap{width:100%;max-width:400px}
+.mrc-eyebrow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+.mrc-eyebrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,.25))}
+.mrc-eyebrow-line.r{background:linear-gradient(90deg,rgba(0,240,255,.25),transparent)}
+.mrc-eyebrow-txt{font-size:8px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.6}
+.mrc-title{font-size:38px;font-weight:900;color:var(--y);line-height:.95;text-align:center;text-shadow:0 0 20px rgba(252,238,10,.55),0 0 50px rgba(252,238,10,.2);margin-bottom:4px}
+.mrc-month{font-size:12px;font-weight:800;letter-spacing:3px;color:var(--mu);text-align:center;margin-bottom:20px}
+.mrc-block{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);margin-bottom:8px;overflow:hidden;position:relative}
+.mrc-block::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.01) 3px,rgba(0,240,255,.01) 4px);pointer-events:none}
+.mrc-block.gn{border-left-color:var(--gn)}
+.mrc-block.rd{border-left-color:var(--rd)}
+.mrc-block.yl{border-left-color:var(--y)}
+.mrc-blk-head{font-size:8px;font-weight:800;letter-spacing:2.5px;color:var(--mu);padding:8px 12px 0;opacity:.65;position:relative;z-index:1}
+.mrc-row{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-top:1px solid rgba(255,255,255,.04);position:relative;z-index:1;gap:10px}
+.mrc-row:first-of-type{border-top:none}
+.mrc-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--mu);flex:1}
+.mrc-val-wrap{text-align:right}
+.mrc-val{font-size:24px;font-weight:900;line-height:1;color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.4)}
+.mrc-val.yl{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.4)}
+.mrc-val.gn{color:var(--gn);text-shadow:0 0 12px rgba(0,255,102,.4)}
+.mrc-val.rd{color:var(--rd);text-shadow:0 0 12px rgba(255,0,60,.35)}
+.mrc-val.wh{color:#fff;text-shadow:none}
+.mrc-unit{font-size:10px;font-weight:700;color:var(--mu);margin-left:4px}
+.mrc-sub{font-size:8px;font-weight:700;color:var(--mu);opacity:.5;margin-top:1px}
+.mrc-net-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;background:rgba(255,255,255,.02)}
+.mrc-net-lbl{font-size:8px;font-weight:800;letter-spacing:1.5px;color:var(--mu)}
+.mrc-net-val{font-size:12px;font-weight:800}
+.mrc-close-btn{width:100%;margin-top:16px;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.3);color:var(--cy);padding:16px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);transition:background .15s}
+.mrc-close-btn:active{background:rgba(0,240,255,.18)}
 </style>
 </head>
 <body>
@@ -531,6 +564,20 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 <script>
 const SURL='https://script.google.com/macros/s/AKfycbzOSoS7cruRVFTl4MZdwbCVrCNRT0hGAPFA7CKNDdFTxD16CU7Bozuv2YPK7O9FJQQc/exec';
 const KEY='cp_rlg_v9';
+
+// ─── DEV: set to true to preview monthly recap with mock data ───
+const DEV_RECAP=true;
+const MOCK_RECAP={
+  month:'2025-05',
+  maxStreak:12,
+  avgDailies:8.4,
+  avgGigsPerWeek:4.2,
+  tasksCompleted:287,
+  xpGained:3450,
+  xpLost:120,
+  ipGained:2180,
+  ipLost:75,
+};
 
 // ─── AUTH ───
 let pinBuffer='';
@@ -660,6 +707,8 @@ const DS={
   player:{level:1,xp:0,ip:0,streak:0},
   lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
+  monthlyStats:{xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}},
+  lastMonthRecap:null,showMonthRecap:false,
   dailies:[
     {id:'d1',t:'BLOODSTREAM PURGE',desc:'Drink a large amount of water',done:false,xp:10,ip:5},
     {id:'d2',t:'THERMAL SHOCK',desc:'Hot / cold shower',done:false,xp:10,ip:5},
@@ -817,7 +866,8 @@ function load(){
       const saved=JSON.parse(raw);
       S=JSON.parse(JSON.stringify(DS));
       if(saved.player)S.player={...S.player,...saved.player};
-      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+      if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
       if(!S.weightLog)S.weightLog=[];
       ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
         if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
@@ -855,6 +905,20 @@ function checkReset(){
   const td=today(),wid=weekId();
   if(S.lastDate!==td){
     if(S.lastDate)S.daysPlayed=(S.daysPlayed||0)+1;
+    // New month detection — must run before S.lastDate is updated
+    if(S.lastDate&&S.lastDate.slice(0,7)!==td.slice(0,7)){
+      const prevYm=S.lastDate.slice(0,7);
+      const prevLog=(S.dailyTaskLog||[]).filter(e=>e.d.startsWith(prevYm));
+      const days=prevLog.length;
+      const avgD=days>0?Math.round((prevLog.reduce((s,e)=>s+e.count,0)/days)*10)/10:0;
+      const ms=S.monthlyStats||{};const wkDone=ms.weeklyDone||{};
+      const wkKeys=Object.keys(wkDone);const wkTotal=wkKeys.reduce((s,k)=>s+wkDone[k],0);
+      const avgG=wkKeys.length>0?Math.round((wkTotal/wkKeys.length)*10)/10:0;
+      S.lastMonthRecap={month:prevYm,maxStreak:ms.maxStreak||0,avgDailies:avgD,avgGigsPerWeek:avgG,
+        tasksCompleted:ms.tasksCompleted||0,xpGained:ms.xpGained||0,xpLost:ms.xpLost||0,ipGained:ms.ipGained||0,ipLost:ms.ipLost||0};
+      S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+      S.showMonthRecap=true;
+    }
     if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
@@ -1173,6 +1237,12 @@ function tTask(type,id,e){
     if(!S.dailyTaskLog)S.dailyTaskLog=[];
     const dle=S.dailyTaskLog.find(x=>x.d===taskDate);
     if(dle)dle.count++;else S.dailyTaskLog.push({d:taskDate,count:1});
+    if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+    S.monthlyStats.xpGained=(S.monthlyStats.xpGained||0)+it.xp;
+    S.monthlyStats.ipGained=(S.monthlyStats.ipGained||0)+it.ip;
+    S.monthlyStats.tasksCompleted=(S.monthlyStats.tasksCompleted||0)+1;
+    if(type==='weeklies'){const wk=weekId();S.monthlyStats.weeklyDone[wk]=(S.monthlyStats.weeklyDone[wk]||0)+1;}
+    if(S.player.streak>(S.monthlyStats.maxStreak||0))S.monthlyStats.maxStreak=S.player.streak;
     if(type==='dailies'){
       if(S.lastStreakDate!==taskDate){
         S.player.streak=wasYesterday(S.lastStreakDate)?(S.player.streak||0)+1:1;
@@ -1197,6 +1267,9 @@ function tTask(type,id,e){
     S.totalDone=Math.max(0,(S.totalDone||0)-1);
     const taskDate2=today();const dle2=(S.dailyTaskLog||[]).find(x=>x.d===taskDate2);
     if(dle2&&dle2.count>0)dle2.count--;
+    if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+    S.monthlyStats.xpLost=(S.monthlyStats.xpLost||0)+it.xp;
+    S.monthlyStats.ipLost=(S.monthlyStats.ipLost||0)+it.ip;
     save();rHdr();
     if(el)el.classList.remove('dn');
     updateCount(type);
@@ -1670,6 +1743,7 @@ function go(tab){
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
   if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();
+  if(S.showMonthRecap&&S.lastMonthRecap){S.showMonthRecap=false;save();setTimeout(()=>showMonthRecapUI(S.lastMonthRecap),350);}
 }
 
 // ── Shop neon: JS-driven realistic glow (adapted from Ms Madi demo) ──
@@ -1742,7 +1816,64 @@ function stopShopNeon(){
   if(el){el.style.color='';el.style.textShadow='';el.style.boxShadow='';}
 }
 
+function monthName(ym){
+  const m=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  return m[parseInt(ym.slice(5,7))-1]+' · '+ym.slice(0,4);
+}
+
+function showMonthRecapUI(data){
+  const el=document.getElementById('month-recap');
+  const wrap=document.getElementById('mrc-content');
+  const netXp=data.xpGained-data.xpLost;
+  const netIp=data.ipGained-data.ipLost;
+  const netXpSign=netXp>=0?'+':'';
+  const netIpSign=netIp>=0?'+':'';
+  wrap.innerHTML=
+    '<div class="mrc-eyebrow"><div class="mrc-eyebrow-line"></div><div class="mrc-eyebrow-txt">// ARCHIVE //</div><div class="mrc-eyebrow-line r"></div></div>'+
+    '<div class="mrc-title">MONTHLY<br>DEBRIEF</div>'+
+    '<div class="mrc-month">'+monthName(data.month)+'</div>'+
+
+    '<div class="mrc-block">'+
+      '<div class="mrc-blk-head">PERFORMANCE</div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">LONGEST STREAK</div><div class="mrc-val-wrap"><div class="mrc-val yl">'+data.maxStreak+'<span class="mrc-unit">DAYS</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">AVG DAILIES / DAY</div><div class="mrc-val-wrap"><div class="mrc-val">'+data.avgDailies+'<span class="mrc-unit">/ 12</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">AVG GIGS / WEEK</div><div class="mrc-val-wrap"><div class="mrc-val">'+data.avgGigsPerWeek+'<span class="mrc-unit">/ 7</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">MISSIONS ACCOMPLISHED</div><div class="mrc-val-wrap"><div class="mrc-val wh">'+data.tasksCompleted+'</div></div></div>'+
+    '</div>'+
+
+    '<div class="mrc-block gn">'+
+      '<div class="mrc-blk-head">GAINS</div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">XP EARNED</div><div class="mrc-val-wrap"><div class="mrc-val gn">+'+data.xpGained+'<span class="mrc-unit">REP</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">EDDIES EARNED</div><div class="mrc-val-wrap"><div class="mrc-val gn">+'+data.ipGained+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '</div>'+
+
+    '<div class="mrc-block rd">'+
+      '<div class="mrc-blk-head">LOSSES</div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">XP BURNED</div><div class="mrc-val-wrap"><div class="mrc-val rd">-'+data.xpLost+'<span class="mrc-unit">REP</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">EDDIES BURNED</div><div class="mrc-val-wrap"><div class="mrc-val rd">-'+data.ipLost+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '</div>'+
+
+    '<div class="mrc-block yl">'+
+      '<div class="mrc-blk-head">NET BALANCE</div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">XP NET</div><div class="mrc-val-wrap"><div class="mrc-val '+(netXp>=0?'gn':'rd')+'">'+netXpSign+netXp+'<span class="mrc-unit">REP</span></div></div></div>'+
+      '<div class="mrc-row"><div class="mrc-lbl">EDDIES NET</div><div class="mrc-val-wrap"><div class="mrc-val '+(netIp>=0?'gn':'rd')+'">'+netIpSign+netIp+'<span class="mrc-unit">E$</span></div></div></div>'+
+    '</div>'+
+
+    '<button class="mrc-close-btn" onclick="closeMonthRecap()">// CLOSE DEBRIEF //</button>';
+  el.classList.add('on');
+  el.scrollTop=0;
+}
+
+function closeMonthRecap(){
+  document.getElementById('month-recap').classList.remove('on');
+}
+
 load();prevIp=S.player.ip;prevXp=S.player.xp;
+if(DEV_RECAP){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.pointerEvents='all';
+  showMonthRecapUI(MOCK_RECAP);
+}
 checkReset();rHdr();rDailies();
 
 function pullFromCloud(){
@@ -1820,5 +1951,6 @@ let _opActive=false;
   window._stopOpFlicker=function(){_opActive=false;btn.style.opacity='1';};
 })();
 </script>
+<div id="month-recap"><div class="mrc-wrap" id="mrc-content"></div></div>
 </body>
 </html>
