@@ -132,6 +132,15 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 @keyframes gfPop{0%{opacity:0;transform:translateY(10px) scale(0.8)}15%{opacity:1;transform:translateY(0) scale(1.1)}30%{opacity:1;transform:translateY(-2px) scale(1)}65%{opacity:1;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-12px)}}
 
 #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:127px 16px 100px}
+#offline-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;background:rgba(11,17,24,.97);z-index:9500;display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease-out}
+.ofb-inner{text-align:center;padding:32px 24px;max-width:320px}
+.ofb-icon{margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(255,0,60,.6))}
+.ofb-title{font-size:26px;font-weight:900;letter-spacing:4px;color:var(--rd);text-shadow:0 0 20px rgba(255,0,60,.5);margin-bottom:14px}
+.ofb-msg{font-size:13px;color:var(--tx);opacity:.75;line-height:1.75;margin-bottom:24px}
+.ofb-btns{display:flex;flex-direction:column;gap:10px}
+.ofb-btn{background:transparent;border:1px solid;padding:13px 24px;font-family:inherit;font-weight:800;font-size:11px;letter-spacing:2px;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.ofb-retry{border-color:var(--cy);color:var(--cy)}
+.ofb-skip{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.4)}
 ::-webkit-scrollbar{width:0}
 
 /* ─── NAV ─── */
@@ -613,6 +622,23 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 </div>
 <div id="stats-drawer"><div id="st-all"></div></div>
 <div id="tc"></div>
+<div id="offline-banner" style="display:none">
+  <div class="ofb-inner">
+    <div class="ofb-icon">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="26" r="23" stroke="#ff003c" stroke-width="2.5"/>
+        <line x1="17" y1="17" x2="35" y2="35" stroke="#ff003c" stroke-width="3" stroke-linecap="round"/>
+        <line x1="35" y1="17" x2="17" y2="35" stroke="#ff003c" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="ofb-title">HORS-LIGNE</div>
+    <div class="ofb-msg">Impossible de joindre le serveur de sync.<br>Tes données sont sauvées localement.<br><span id="ofb-retry-msg">Reconnexion automatique en cours…</span></div>
+    <div class="ofb-btns">
+      <button onclick="retrySync()" class="ofb-btn ofb-retry">RÉESSAYER</button>
+      <button onclick="dismissOfflineBanner()" class="ofb-btn ofb-skip">CONTINUER HORS-LIGNE</button>
+    </div>
+  </div>
+</div>
 <div id="mo">
   <div class="mbox">
     <div class="mt" id="mo-t">CONFIRMATION</div>
@@ -629,6 +655,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 <script>
 const SURL='https://script.google.com/macros/s/AKfycbzOSoS7cruRVFTl4MZdwbCVrCNRT0hGAPFA7CKNDdFTxD16CU7Bozuv2YPK7O9FJQQc/exec';
 const KEY='cp_rlg_v9';
+const BKEY='cp_rlg_bak';
 
 // ─── DEV: set to true to preview monthly recap with mock data ───
 const DEV_RECAP=false;
@@ -925,22 +952,27 @@ function migrate(){
   }catch(e){return null;}
 }
 
+function _hasMeaningfulData(d){return d&&d.player&&(d.player.xp>0||d.player.ip>0||(d.totalDone||0)>0);}
+function _applySnapshot(saved){
+  S=JSON.parse(JSON.stringify(DS));
+  if(saved.player)S.player={...S.player,...saved.player};
+  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+  if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
+  if(!S.weightLog)S.weightLog=[];
+  ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
+    if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
+  });
+  if(saved.shop&&Array.isArray(saved.shop))S.shop=S.shop.map(def=>{const sv=saved.shop.find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:def;});
+  if(saved.mysteryPending)S.mysteryPending=saved.mysteryPending;
+}
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
-    if(raw){
-      const saved=JSON.parse(raw);
-      S=JSON.parse(JSON.stringify(DS));
-      if(saved.player)S.player={...S.player,...saved.player};
-      ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
-      if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
-      if(!S.weightLog)S.weightLog=[];
-      ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
-        if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
-      });
-      if(saved.shop&&Array.isArray(saved.shop))S.shop=S.shop.map(def=>{const sv=saved.shop.find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:def;});
-      if(saved.mysteryPending)S.mysteryPending=saved.mysteryPending;
-    }else{S=migrate()||JSON.parse(JSON.stringify(DS));}
+    const braw=localStorage.getItem(BKEY);
+    let snap=raw?JSON.parse(raw):null;
+    // If main slot is empty or zeroed, try backup slot
+    if(!_hasMeaningfulData(snap)&&braw){const bd=JSON.parse(braw);if(_hasMeaningfulData(bd))snap=bd;}
+    if(snap){_applySnapshot(snap);}else{S=migrate()||JSON.parse(JSON.stringify(DS));}
   }catch(e){S=JSON.parse(JSON.stringify(DS));}
   if(!S.shop||S.shop.length<DS.shop.length)S.shop=DS.shop.map(def=>{const sv=(S.shop||[]).find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:{...def};});
   if(!S.weightLog)S.weightLog=[];
@@ -951,15 +983,59 @@ function load(){
   }
 }
 
-function save(){localStorage.setItem(KEY,JSON.stringify(S));triggerSync();}
+function save(){
+  const snap=JSON.stringify(S);
+  localStorage.setItem(KEY,snap);
+  if(_hasMeaningfulData(S))localStorage.setItem(BKEY,snap);
+  triggerSync();
+}
 function setSy(st){document.getElementById('syu').className='sync '+st;document.getElementById('sytx').textContent=st.toUpperCase();}
+
+let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false;
+const _RETRY_DELAYS=[3000,6000,12000,24000,48000,90000];
+function _doSync(){
+  if(!_hasMeaningfulData(S))return;
+  fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
+    .then(r=>{
+      if(r.ok){
+        setSy('synched');_syncRetry=0;_offlineDismissed=false;
+        localStorage.removeItem('cp_sync_pending');
+        _hideOfflineBanner();
+      }else{_onSyncFail();}
+    }).catch(_onSyncFail);
+}
+function _onSyncFail(){
+  setSy('offline');
+  localStorage.setItem('cp_sync_pending','1');
+  if(!_offlineDismissed&&_hasMeaningfulData(S))_showOfflineBanner();
+  if(_syncRetry<_RETRY_DELAYS.length){
+    _syncRetryTmr=setTimeout(()=>{setSy('synching');_doSync();},_RETRY_DELAYS[_syncRetry++]);
+  }else{
+    const el=document.getElementById('ofb-retry-msg');
+    if(el)el.textContent='Sync en attente. Appuie sur RÉESSAYER.';
+  }
+}
 function triggerSync(){
   setSy('synching');
   if(syncTmr)clearTimeout(syncTmr);
-  syncTmr=setTimeout(()=>{
-    fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
-      .then(r=>setSy(r.ok?'synched':'offline')).catch(()=>setSy('offline'));
-  },2500);
+  if(_syncRetryTmr){clearTimeout(_syncRetryTmr);_syncRetryTmr=null;}_syncRetry=0;
+  syncTmr=setTimeout(_doSync,2500);
+}
+function _showOfflineBanner(){
+  const el=document.getElementById('offline-banner');
+  if(el)el.style.display='flex';
+  const rm=document.getElementById('ofb-retry-msg');
+  if(rm)rm.textContent='Reconnexion automatique en cours…';
+}
+function _hideOfflineBanner(){
+  const el=document.getElementById('offline-banner');
+  if(el)el.style.display='none';
+}
+function dismissOfflineBanner(){_offlineDismissed=true;_hideOfflineBanner();}
+function retrySync(){
+  _offlineDismissed=false;
+  if(_syncRetryTmr){clearTimeout(_syncRetryTmr);_syncRetryTmr=null;}_syncRetry=0;
+  setSy('synching');_doSync();
 }
 
 function today(){const n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate());}
@@ -1797,10 +1873,37 @@ function rStats(){
   }
   h+='</div>';
 
-  h+='<div style="margin-top:20px;padding-bottom:4px"><button onclick="resetAll()" style="width:100%;background:rgba(160,0,28,0.45);border:1px solid rgba(255,0,60,0.3);color:rgba(255,140,140,0.85);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">SYSTEM PURGE — RESET ALL DATA</button></div>';
+  h+='<div style="display:flex;gap:8px;margin-top:20px"><button onclick="exportData()" style="flex:1;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.3);color:rgba(0,240,255,.9);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">EXPORT DATA</button><button onclick="importData()" style="flex:1;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.3);color:rgba(0,240,255,.9);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">IMPORT DATA</button></div>';
+  h+='<div style="margin-top:8px;padding-bottom:4px"><button onclick="resetAll()" style="width:100%;background:rgba(160,0,28,0.45);border:1px solid rgba(255,0,60,0.3);color:rgba(255,140,140,0.85);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">SYSTEM PURGE — RESET ALL DATA</button></div>';
   document.getElementById('st-all').innerHTML=h;
 }
 
+function exportData(){
+  const a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(S));
+  a.download='hproject_'+today()+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('DATA EXPORTED','win');
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=e=>{
+    const fr=new FileReader();
+    fr.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(!d.player)throw 0;
+        S=d;save();prevIp=S.player.ip;prevXp=S.player.xp;
+        rHdr();
+        const tab=document.querySelector('.nb.on');
+        if(tab)go(tab.id.replace('nb-',''));
+        toast('DATA RESTORED','win');
+      }catch{toast('INVALID FILE','err');}
+    };
+    fr.readAsText(e.target.files[0]);
+  };
+  inp.click();
+}
 function resetAll(){
   const dangerContent='<div class="danger-icon"><svg width="64" height="58" viewBox="0 0 64 58"><polygon points="32,2 62,56 2,56" fill="none" stroke="#ff003c" stroke-width="3.5" stroke-linejoin="round"/><text x="32" y="47" font-size="28" font-weight="900" fill="#ff003c" text-anchor="middle" font-family="Rajdhani,sans-serif">!</text></svg></div><p style="margin:0;line-height:1.55">This will permanently erase: Level · XP · E$ · Streak · All missions · All campaigns · Weight log · Shop items. This cannot be undone.</p>';
   showConfirm('WARNING',dangerContent,()=>{
@@ -1996,6 +2099,8 @@ if(DEV_RECAP){
   showMonthRecapUI(MOCK_RECAP);
 }
 checkReset();rHdr();rDailies();
+// Si un sync était en attente lors de la dernière session, relancer immédiatement
+if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
 
 function pullFromCloud(){
   document.getElementById('sytx').textContent='PULLING...';
@@ -2005,17 +2110,18 @@ function pullFromCloud(){
     .then(cloudData=>{
       if(cloudData&&cloudData.player){
         S=cloudData;
-        localStorage.setItem(KEY,JSON.stringify(S));
-        prevIp=S.player.ip;
-        prevXp=S.player.xp;
-        checkReset();
-        rHdr();
+        const snap=JSON.stringify(S);
+        localStorage.setItem(KEY,snap);
+        if(_hasMeaningfulData(S))localStorage.setItem(BKEY,snap);
+        localStorage.removeItem('cp_sync_pending');
+        prevIp=S.player.ip;prevXp=S.player.xp;
+        checkReset();rHdr();
         const activeTab=document.querySelector('.nb.on');
-        if(activeTab){const activeTabId=activeTab.id.replace('nb-','');go(activeTabId);}
-        setSy('synched');
+        if(activeTab)go(activeTab.id.replace('nb-',''));
+        setSy('synched');_hideOfflineBanner();
       }else{setSy('synched');}
     })
-    .catch(err=>{console.error("Cloud pull failed",err);setSy('offline');});
+    .catch(()=>{setSy('offline');if(_hasMeaningfulData(S))_showOfflineBanner();});
 }
 
 // données chargées pendant auth
