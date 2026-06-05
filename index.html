@@ -96,10 +96,17 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .htop{font-size:10px;font-weight:700;opacity:.7;margin-bottom:0;letter-spacing:1px;line-height:1;position:relative;top:5px}
 .sync{position:absolute;top:8px;right:20px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:1px;color:#000}
 .sdot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.sync.synched .sdot{background:#27ae60;box-shadow:0 0 0 3px rgba(39,174,96,.18),0 0 7px rgba(39,174,96,.8),0 0 18px rgba(39,174,96,.45)}
-.sync.synching .sdot{background:#4da6ff;box-shadow:0 0 0 3px rgba(77,166,255,.18),0 0 7px rgba(77,166,255,.8),0 0 18px rgba(77,166,255,.45);animation:blink .8s infinite}
-.sync.offline .sdot{background:var(--rd);box-shadow:0 0 0 3px rgba(255,0,60,.18),0 0 7px rgba(255,0,60,.8),0 0 18px rgba(255,0,60,.45)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.sync.synched .sdot{background:#27ae60;box-shadow:0 0 0 3px rgba(39,174,96,.18),0 0 8px rgba(39,174,96,.9),0 0 22px rgba(39,174,96,.5),0 0 42px rgba(39,174,96,.12)}
+.sync.synching .sdot{animation:led-sync .9s ease-in-out infinite}
+.sync.offline .sdot{animation:led-warn 1.8s ease-in-out infinite}
+@keyframes led-sync{
+  0%,100%{background:#1a6ab5;box-shadow:0 0 0 2px rgba(77,166,255,.06),0 0 4px rgba(77,166,255,.35),0 0 10px rgba(77,166,255,.1)}
+  50%{background:#8dd0ff;box-shadow:0 0 0 6px rgba(77,166,255,.2),0 0 14px rgba(77,166,255,1),0 0 32px rgba(77,166,255,.65),0 0 58px rgba(77,166,255,.2)}
+}
+@keyframes led-warn{
+  0%,100%{background:#b0001a;box-shadow:0 0 0 2px rgba(255,0,60,.1),0 0 5px rgba(255,0,60,.5),0 0 12px rgba(255,0,60,.2)}
+  50%{background:#ff2a52;box-shadow:0 0 0 6px rgba(255,0,60,.2),0 0 14px rgba(255,0,60,.95),0 0 30px rgba(255,0,60,.55),0 0 55px rgba(255,0,60,.18)}
+}
 .hlv{font-size:10px;font-weight:700;opacity:.8;margin-bottom:0;letter-spacing:.5px;color:#000;line-height:1}
 .h1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px}
 .hname{font-size:38px;font-weight:700;line-height:1}
