@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git push -u origin main 2>/dev/null || true",
+            "statusMessage": "Pushing to main..."
+          }
+        ]
+      }
+    ]
+  }
+}
