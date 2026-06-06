@@ -2099,7 +2099,7 @@ function closeMonthRecap(){
 load();prevIp=S.player.ip;prevXp=S.player.xp;
 // ─── ONE-TIME DATA RECOVERY (session 2026-06-05) ───
 (function(){
-  if(_hasMeaningfulData(S)||localStorage.getItem('cp_rec_v1'))return;
+  if(localStorage.getItem('cp_rec_v1'))return;
   localStorage.setItem('cp_rec_v1','1');
   _applySnapshot({
     player:{level:3,xp:130,ip:250,streak:4},
