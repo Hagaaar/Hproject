@@ -2108,31 +2108,33 @@ if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_do
 // Données locales vides (ex: iOS a effacé le localStorage) → pull silencieux automatique
 if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
 
-// autoMode=true : silencieux sauf si restauration réelle (appelé au démarrage)
-// autoMode=false : toujours notifier (appelé par l'utilisateur)
+// autoMode=true : s'exécute au démarrage — restaure UNIQUEMENT si données locales nulles
+// autoMode=false : initié par l'utilisateur — restaure toujours le meilleur snapshot cloud
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
   fetch(SURL)
     .then(r=>r.json())
     .then(resp=>{
-      // Trouver le meilleur état parmi current + tous les snapshots
+      // Collecter le meilleur état parmi current + tous les snapshots
       let best=null,bestScore=-1;
       function _try(d){if(!d||!d.player)return;const sc=_score(d);if(sc>bestScore){bestScore=sc;best=d;}}
-
       if(resp&&(resp.current!==undefined||resp.snapshots)){
-        // Nouveau format : {current, snapshots:[{data,...}]}
         _try(resp.current);
-        (resp.snapshots||[]).forEach(s=>_try(s.data));
+        (resp.snapshots||[]).forEach(s=>_try(s&&s.data));
       }else if(resp&&resp.player){
-        // Ancien format : réponse directe = état complet
-        _try(resp);
+        _try(resp); // ancien format
       }
 
-      const localScore=_score(S);
+      const localEmpty=!_hasMeaningfulData(S);
 
-      if(best&&bestScore>localScore){
-        // Le cloud a de meilleures données → restaurer
-        const wasZero=!_hasMeaningfulData(S);
+      if(autoMode&&!localEmpty){
+        // Mode auto : données locales présentes → ne rien écraser, juste syncer si besoin
+        setSy('synched');
+        return;
+      }
+
+      if(best&&bestScore>0){
+        // Restaurer le meilleur état cloud
         S=best;
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
@@ -2143,15 +2145,10 @@ function pullFromCloud(autoMode){
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
-        toast(wasZero?'DONNÉES RESTAURÉES DEPUIS LE CLOUD ✓':'DONNÉES CLOUD PLUS RÉCENTES — RESTAURÉES','win');
-      }else if(best&&bestScore===localScore){
-        setSy('synched');_hideOfflineBanner();
-        if(!autoMode)toast('DONNÉES DÉJÀ À JOUR','win');
+        toast(localEmpty?'DONNÉES RESTAURÉES DEPUIS LE CLOUD ✓':'BACKUP CLOUD RESTAURÉ ✓','win');
       }else{
-        // Local a plus de données que le cloud → pousser vers le cloud
-        setSy('synched');_hideOfflineBanner();
-        if(!autoMode)toast(_hasMeaningfulData(S)?'DONNÉES LOCALES PLUS RÉCENTES — SYNC EN COURS':'AUCUN BACKUP CLOUD DISPONIBLE',_hasMeaningfulData(S)?'win':'err');
-        if(_hasMeaningfulData(S))triggerSync();
+        setSy('synched');
+        if(!autoMode)toast('AUCUN BACKUP CLOUD DISPONIBLE','err');
       }
     })
     .catch(()=>{setSy('offline');if(_hasMeaningfulData(S))_showOfflineBanner();});
