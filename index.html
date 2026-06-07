@@ -2028,31 +2028,47 @@ function rStats(){
   document.getElementById('st-all').innerHTML=h;
 }
 
+function _showTransferOv(html){
+  let ov=document.getElementById('transfer-ov');if(ov)ov.remove();
+  ov=document.createElement('div');ov.id='transfer-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(11,17,24,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;';
+  ov.innerHTML=html;document.body.appendChild(ov);
+}
+function _hideTransferOv(){const ov=document.getElementById('transfer-ov');if(ov)ov.remove();}
+
 function exportData(){
-  const a=document.createElement('a');
-  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(S));
-  a.download='hproject_'+today()+'.json';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast('DATA EXPORTED','win');
+  const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  _showTransferOv(
+    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">EXPORT SAVE DATA</div>'+
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Appuie COPIER, puis ouvre l\'app dans<br>l\'autre contexte et utilise IMPORT DATA.</div>'+
+    '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:100px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.35);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
+    '<button onclick="(function(){const ta=document.getElementById(\'exp-ta\');ta.select();navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(ta.value).then(()=>toast(\'CODE COPIÉ ✓\',\'win\')).catch(()=>{try{document.execCommand(\'copy\');toast(\'CODE COPIÉ ✓\',\'win\');}catch(e){toast(\'Sélectionne et copie manuellement\',\'err\');}}):(ta.focus(),ta.select(),document.execCommand(\'copy\'),toast(\'CODE COPIÉ ✓\',\'win\'));})();" style="width:100%;margin-top:10px;background:rgba(0,240,255,.15);border:1px solid rgba(0,240,255,.45);color:#00f0ff;padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COPIER</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">FERMER</button>'
+  );
+  setTimeout(()=>{const ta=document.getElementById('exp-ta');if(ta){ta.focus();ta.select();}},150);
 }
 function importData(){
-  const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
-  inp.onchange=e=>{
-    const fr=new FileReader();
-    fr.onload=ev=>{
-      try{
-        const d=JSON.parse(ev.target.result);
-        if(!d.player)throw 0;
-        S=d;save();prevIp=S.player.ip;prevXp=S.player.xp;
-        rHdr();
-        const tab=document.querySelector('.nb.on');
-        if(tab)go(tab.id.replace('nb-',''));
-        toast('DATA RESTORED','win');
-      }catch{toast('INVALID FILE','err');}
-    };
-    fr.readAsText(e.target.files[0]);
-  };
-  inp.click();
+  _showTransferOv(
+    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">IMPORT SAVE DATA</div>'+
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Colle le code copié depuis l\'autre contexte<br>(PWA ou Safari).</div>'+
+    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:100px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.35);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
+    '<button onclick="_applyImport()" style="width:100%;margin-top:10px;background:#fcee0a;border:none;color:#000;padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
+  );
+  setTimeout(()=>{const ta=document.getElementById('imp-ta');if(ta)ta.focus();},150);
+}
+function _applyImport(){
+  const ta=document.getElementById('imp-ta');if(!ta)return;
+  try{
+    const json=decodeURIComponent(escape(atob(ta.value.trim())));
+    const d=JSON.parse(json);
+    if(!d.player)throw 0;
+    S=d;save();prevIp=S.player.ip;prevXp=S.player.xp;
+    checkReset();rHdr();
+    const tab=document.querySelector('.nb.on');if(tab)go(tab.id.replace('nb-',''));
+    _hideTransferOv();
+    toast('DONNÉES IMPORTÉES ✓','win');
+  }catch{toast('CODE INVALIDE','err');}
 }
 function resetAll(){
   const dangerContent='<div class="danger-icon"><svg width="64" height="58" viewBox="0 0 64 58"><polygon points="32,2 62,56 2,56" fill="none" stroke="#ff003c" stroke-width="3.5" stroke-linejoin="round"/><text x="32" y="47" font-size="28" font-weight="900" fill="#ff003c" text-anchor="middle" font-family="Rajdhani,sans-serif">!</text></svg></div><p style="margin:0;line-height:1.55">This will permanently erase: Level · XP · E$ · Streak · All missions · All campaigns · Weight log · Shop items. This cannot be undone.</p>';
