@@ -2348,14 +2348,18 @@ function pullFromCloud(autoMode){
   fetch(SURL)
     .then(r=>r.json())
     .then(resp=>{
-      // Collecter le meilleur état parmi current + tous les snapshots
+      // Préférer current (dernier push) directement — sans comparaison de score
+      // Les snapshots historiques peuvent avoir un score plus élevé (plus de totalDone)
+      // et écraser des données récentes avec streak correct
       let best=null,bestScore=-1;
       function _try(d){if(!d||!d.player)return;const sc=_score(d);if(sc>bestScore){bestScore=sc;best=d;}}
-      if(resp&&(resp.current!==undefined||resp.snapshots)){
+      if(resp&&resp.current&&resp.current.player&&_hasMeaningfulData(resp.current)){
+        best=resp.current;bestScore=_score(resp.current);
+      }else if(resp&&(resp.current!==undefined||resp.snapshots)){
         _try(resp.current);
         (resp.snapshots||[]).forEach(s=>_try(s&&s.data));
       }else if(resp&&resp.player){
-        _try(resp); // ancien format
+        _try(resp);
       }
 
       const localEmpty=!_hasMeaningfulData(S);
