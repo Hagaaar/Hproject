@@ -806,6 +806,7 @@ function submitPin(){
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
   lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,
+  portfolioWeek:0,memoireWeek:0,lastPortfolioXp:0,lastPortfolioIp:0,lastPortfolioDate:'',lastMemoireXp:0,lastMemoireIp:0,lastMemoireDate:'',
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
   monthlyStats:{xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}},
   lastMonthRecap:null,showMonthRecap:false,
@@ -822,6 +823,10 @@ const DS={
     {id:'d10',t:'LOCAL MEMORY BACKUP',desc:'End of day journaling',done:false,xp:10,ip:5},
     {id:'d11',t:'SYSTEM GLITCH PROTOCOL',desc:'Do 20 push-ups every time you sneeze',done:false,xp:10,ip:5},
     {id:'d12',t:'NIBBLES TRAINING',desc:'15 minutes of laser play with Jiji',done:false,xp:10,ip:5},
+    {id:'d13',t:'BLUEPRINT RENDERING',desc:'15 minutes of sketching or architectural drawing',done:false,xp:15,ip:10},
+    {id:'d14',t:'PROTEIN BIO FUEL CYCLE',desc:'Reach daily protein intake quota',done:false,xp:10,ip:5},
+    {id:'d15',t:'NEURAL DISCONNECT',desc:'1h screen-free before sleep',done:false,xp:15,ip:10},
+    {id:'d16',t:'TOTAL BLACKOUT',desc:'Full day off social media',done:false,xp:20,ip:15},
   ],
   weeklies:[
     {id:'w1',t:'METABOLIC OVERCLOCK',desc:'Fast for a full day',done:false,xp:50,ip:40},
@@ -831,6 +836,13 @@ const DS={
     {id:'w5',t:'NETWORK UPDATE',desc:'Call family/friends to catch up',done:false,xp:50,ip:40},
     {id:'w6',t:'QUARANTINE MAINTENANCE',desc:'Full litter box change and brushing Jiji',done:false,xp:50,ip:40},
     {id:'w7',t:'SECTOR MAINTENANCE BRIEF',desc:'Organize appartement',done:false,xp:50,ip:40},
+    {id:'w8',t:'NETRUNNER CODE SESSION',desc:'Dev session on HTML/JS apps and Google Apps Scripts',done:false,xp:60,ip:50},
+    {id:'w9',t:'SECTOR VISUAL PURGE',desc:'Visual purge of the apartment — clear out the surplus',done:false,xp:50,ip:40},
+    {id:'w10',t:'CHASSIS RIG MAINTENANCE',desc:'10 minutes of postural calibration — stretches and mobility',done:false,xp:40,ip:30},
+    {id:'w11',t:'FLORA HYDRATION CYCLE',desc:'Watering round — keep biological organisms operational',done:false,xp:35,ip:25},
+    {id:'w12',t:'CODE DEFRAG',desc:'30 minutes of cleanup, optimization or debug on active scripts',done:false,xp:50,ip:40},
+    {id:'w13',t:'HARDWARE MAINTENANCE',desc:'Dust PC/PS5, clean projector filters, general chrome upkeep',done:false,xp:55,ip:45},
+    {id:'w14',t:'RELICS DUSTING',desc:'Maintenance and careful cleaning of display artifacts',done:false,xp:45,ip:35},
   ],
   portfolio:[
     {id:'pf1',t:'ENCRYPTION INIT',desc:'Setup InDesign and 3 valid Book files',done:false,xp:100,ip:100},
@@ -964,7 +976,7 @@ function _hasMeaningfulData(d){return d&&d.player&&(d.player.xp>0||d.player.ip>0
 function _applySnapshot(saved){
   S=JSON.parse(JSON.stringify(DS));
   if(saved.player)S.player={...S.player,...saved.player};
-  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
   if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
   if(!S.weightLog)S.weightLog=[];
   ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
@@ -1076,7 +1088,7 @@ function checkReset(){
     if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
-  if(S.lastWeekId!==wid){S.weeklies.forEach(w=>{w.done=false;w.count=0;});S.practiceWeek=0;S.conduiteWeek=0;S.lastWeekId=wid;}
+  if(S.lastWeekId!==wid){S.weeklies.forEach(w=>{w.done=false;w.count=0;});S.practiceWeek=0;S.conduiteWeek=0;S.portfolioWeek=0;S.memoireWeek=0;S.lastWeekId=wid;}
   save();
 }
 
@@ -1343,7 +1355,11 @@ function showBadLuckOverlay(){
 function addXP(xp){
   S.player.xp+=xp;
   while(S.player.xp>=S.player.level*100&&S.player.level<50){
-    S.player.xp-=S.player.level*100;S.player.level++;showLevelUp(S.player.level);
+    S.player.xp-=S.player.level*100;S.player.level++;
+    const lvlBonus=Math.round(20*Math.pow(1.35,S.player.level-2));
+    S.player.ip+=lvlBonus;
+    showLevelUp(S.player.level);
+    setTimeout(()=>toast('LEVEL '+S.player.level+' — +'+lvlBonus+' E$ BONUS','win'),800);
   }
 }
 
@@ -1621,9 +1637,25 @@ function rCamps(){
   }
   
   const pfD=S.portfolio.filter(e=>e.done).length,pfT=S.portfolio.length,pfP=Math.round(pfD/pfT*100);
-  h+=buildAcc('portfolio','PORTFOLIO',buildSegBadge(pfD,pfT),exList(S.portfolio,'portfolio'),pfP);
+  h+=buildAcc('portfolio','PORTFOLIO',buildSegBadge(pfD,pfT),
+    '<div style="padding:0 12px 8px">'+
+    '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">WORK SESSIONS THIS WEEK : '+(S.portfolioWeek||0)+'</div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logP(30,event)">30 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logP(60,event)">1H</button>'+
+    '<button onclick="undoP()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
+    '</div></div>'+
+    exList(S.portfolio,'portfolio'),pfP);
   const mD=S.memoire.filter(e=>e.done).length,mT=S.memoire.length,mP=Math.round(mD/mT*100);
-  h+=buildAcc('memoire','HMONP THESIS',buildSegBadge(mD,mT),exList(S.memoire,'memoire'),mP);
+  h+=buildAcc('memoire','HMONP THESIS',buildSegBadge(mD,mT),
+    '<div style="padding:0 12px 8px">'+
+    '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">WORK SESSIONS THIS WEEK : '+(S.memoireWeek||0)+'</div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logM(30,event)">30 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logM(60,event)">1H</button>'+
+    '<button onclick="undoM()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
+    '</div></div>'+
+    exList(S.memoire,'memoire'),mP);
   const gD=S.guitare.filter(g=>g.done).length,gP=Math.round(gD/S.guitare.length*100);
   h+=buildAcc('silverhand','SILVERHAND',buildSegBadge(gD,4,'#a870d8','168,112,216'),
     '<div style="padding:0 12px 8px">'+
@@ -1733,6 +1765,40 @@ function undoC(){
   const label='SESSION CANCELED'+(dtFmt?' / '+dtFmt:'');
   save();rCamps();rHdr();toast(label,'err');
 }
+function logP(min,e){
+  const xp=min>=60?35:18,ip=min>=60?25:12;
+  addXP(xp);S.player.ip+=ip;S.portfolioWeek=(S.portfolioWeek||0)+1;
+  S.lastPortfolioXp=xp;S.lastPortfolioIp=ip;S.lastPortfolioDate=today();
+  save();rCamps();rHdr();showGain(xp,ip,e);
+}
+function undoP(){
+  if(!(S.portfolioWeek>0)){toast('NO SESSION TO CANCEL','err');return;}
+  const xp=S.lastPortfolioXp||18,ip=S.lastPortfolioIp||12;
+  const dt=S.lastPortfolioDate||'';
+  const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
+  S.player.xp=Math.max(0,S.player.xp-xp);
+  S.player.ip=Math.max(0,S.player.ip-ip);
+  S.portfolioWeek=Math.max(0,S.portfolioWeek-1);
+  S.lastPortfolioXp=0;S.lastPortfolioIp=0;S.lastPortfolioDate='';
+  save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
+}
+function logM(min,e){
+  const xp=min>=60?35:18,ip=min>=60?25:12;
+  addXP(xp);S.player.ip+=ip;S.memoireWeek=(S.memoireWeek||0)+1;
+  S.lastMemoireXp=xp;S.lastMemoireIp=ip;S.lastMemoireDate=today();
+  save();rCamps();rHdr();showGain(xp,ip,e);
+}
+function undoM(){
+  if(!(S.memoireWeek>0)){toast('NO SESSION TO CANCEL','err');return;}
+  const xp=S.lastMemoireXp||18,ip=S.lastMemoireIp||12;
+  const dt=S.lastMemoireDate||'';
+  const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
+  S.player.xp=Math.max(0,S.player.xp-xp);
+  S.player.ip=Math.max(0,S.player.ip-ip);
+  S.memoireWeek=Math.max(0,S.memoireWeek-1);
+  S.lastMemoireXp=0;S.lastMemoireIp=0;S.lastMemoireDate='';
+  save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
+}
 
 let showAddForm=false;
 function handleSearch(){
@@ -1798,7 +1864,7 @@ function rShop(){
     else if(isNumSearch){matchSearch=s.cost<=searchNum;}
     else{matchSearch=s.desc.toLowerCase().includes(searchQ)||s.t.toLowerCase().includes(searchQ);}
     return matchCat&&matchSearch;
-  });
+  }).sort((a,b)=>a.cost-b.cost);
   
   if(filteredItems.length===0&&searchQ!==''){
     h+='<div class="no-results"><span>⚠</span>NO MATCHING FILES IN DATABASE</div>';
