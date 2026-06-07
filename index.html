@@ -2059,7 +2059,7 @@ function _cpCode(){
     .catch(()=>{try{document.execCommand('copy');toast('CODE COPIÉ ✓','win');}catch(e){toast('Sélectionne et copie manuellement','err');}});
 }
 function _cpLink(){
-  const url=location.origin+location.pathname+'#import='+(window._expCode||'');
+  const url=location.origin+location.pathname+'#import='+encodeURIComponent(window._expCode||'');
   (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(url):Promise.reject())
     .then(()=>toast('LIEN COPIÉ ✓ — Ouvre-le dans l\'autre contexte','win'))
     .catch(()=>toast('Erreur copie','err'));
@@ -2085,9 +2085,11 @@ function _clipImport(){
 function _applyImport(){const ta=document.getElementById('imp-ta');if(!ta)return;_applyImportText(ta.value.trim());}
 function _applyImportText(raw){
   try{
-    const json=decodeURIComponent(escape(atob(raw)));
+    if(!raw)throw new Error('empty');
+    const cleaned=raw.replace(/\s/g,'');
+    const json=decodeURIComponent(escape(atob(cleaned)));
     const d=JSON.parse(json);
-    if(!d.player)throw 0;
+    if(!d||!d.player)throw new Error('no player');
     S=d;
     localStorage.setItem(KEY,JSON.stringify(S));
     localStorage.setItem(BKEY,JSON.stringify(S));
@@ -2097,18 +2099,24 @@ function _applyImportText(raw){
     const ov=document.getElementById('transfer-ov');
     if(ov)ov.innerHTML='<div style="color:#00f0ff;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNC EN COURS...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Envoi vers le cloud…</div>';
     setSy('synching');
-    fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
-      .then(r=>{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),9000);
+    fetch(SURL,{method:'POST',body:JSON.stringify(S),signal:ctrl.signal,headers:{'Content-Type':'text/plain;charset=utf-8'}})
+      .then(r=>{clearTimeout(tid);
         if(r.ok){setSy('synched');localStorage.removeItem('cp_sync_pending');_hideTransferOv();toast('IMPORTÉ + CLOUD MIS À JOUR ✓','win');}
-        else{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — SYNC CLOUD ÉCHOUÉ','err');}
+        else{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — SYNC ÉCHOUÉ (données locales OK)','err');}
       })
-      .catch(()=>{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — HORS LIGNE, SYNC EN ATTENTE','err');});
-  }catch{toast('CODE INVALIDE','err');}
+      .catch(()=>{clearTimeout(tid);_onSyncFail();_hideTransferOv();toast('IMPORTÉ — HORS LIGNE (données locales OK)','err');});
+  }catch(e){
+    const ov=document.getElementById('transfer-ov');
+    if(ov){const el=ov.querySelector('button');if(el)el.style.background='#ff003c';}
+    toast('CODE INVALIDE — Réessaie avec un nouveau lien','err');
+  }
 }
 function _checkHashImport(){
   const h=window.location.hash;
   if(!h.startsWith('#import='))return;
-  const code=h.slice(8);
+  const code=decodeURIComponent(h.slice(8));
   history.replaceState(null,'',location.pathname+location.search);
   window._pendingImport=code;
   _showTransferOv(
