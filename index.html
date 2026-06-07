@@ -2372,6 +2372,8 @@ function pullFromCloud(autoMode){
 
       if(best&&bestScore>0){
         // Restaurer le meilleur état cloud
+        const _dbgStreak=best.player&&best.player.streak||0;
+        const _dbgDate=best.lastStreakDate||'none';
         S=best;
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
@@ -2379,6 +2381,7 @@ function pullFromCloud(autoMode){
         localStorage.removeItem('cp_sync_pending');
         prevIp=S.player.ip;prevXp=S.player.xp;
         checkReset();rHdr();
+        setTimeout(()=>toast('CLOUD: streak='+_dbgStreak+' lastSD='+_dbgDate+' now='+S.player.streak,'win'),800);
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
