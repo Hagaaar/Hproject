@@ -601,10 +601,9 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
     <div class="xp-block">
       <div class="xb"><div class="xbf" id="xbf" style="width:0%"></div></div>
       <div class="xp-bottom-row">
-        <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span></div>
+        <div class="streak-badge"><span id="ice-btn-wrap"></span><span id="hsk-val">0</span><span>DAY STREAK</span></div>
         <div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div>
       </div>
-      <div id="ice-btn-wrap"></div>
     </div>
   </div>
 </div>
@@ -1393,6 +1392,14 @@ function addXP(xp){
     setTimeout(()=>toast('LEVEL '+S.player.level+' — +'+lvlBonus+' E$ BONUS','win'),800);
   }
 }
+function subXP(xp){
+  S.player.xp-=xp;
+  while(S.player.xp<0&&S.player.level>1){
+    S.player.level--;
+    S.player.xp+=S.player.level*100;
+  }
+  if(S.player.xp<0)S.player.xp=0;
+}
 
 function rHdr(){
   const p=S.player,need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
@@ -1404,7 +1411,7 @@ function rHdr(){
   animVal('hxv',prevXp,p.xp);
   prevIp=p.ip;prevXp=p.xp;
   const iceWrap=document.getElementById('ice-btn-wrap');
-  if(iceWrap)iceWrap.innerHTML=p.streak>0?'<button onclick="activateIceProtocol()" style="font-size:8px;font-weight:800;letter-spacing:1px;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.25);color:rgba(0,240,255,0.7);padding:3px 8px;cursor:pointer;font-family:inherit;clip-path:polygon(4px 0,100% 0,100% calc(100%-4px),calc(100%-4px) 100%,0 100%,0 4px)">ICE ['+(S.iceProtocolUsed||0)+'/2]</button>':'';
+  if(iceWrap)iceWrap.innerHTML=p.streak>0?'<button onclick="activateIceProtocol()" style="font-size:9px;font-weight:900;letter-spacing:.5px;background:transparent;border:none;color:#000;padding:0;margin-right:5px;cursor:pointer;font-family:inherit;opacity:.75;text-transform:uppercase">ICE ['+(S.iceProtocolUsed||0)+'/2]</button>':'';
 }
 function activateIceProtocol(){
   if((S.iceProtocolUsed||0)>=2){toast('ICE PROTOCOL UNAVAILABLE — 2/2 USED THIS MONTH','err');return;}
@@ -1511,7 +1518,7 @@ function gigSub(id){
   const it=S.weeklies.find(w=>w.id===id);if(!it||(it.count||0)<=0)return;
   if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
   it.count=Math.max(0,(it.count||1)-1);it.done=it.count>0;
-  S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
+  subXP(it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
   S.totalDone=Math.max(0,(S.totalDone||0)-1);
   const dle2=(S.dailyTaskLog||[]).find(x=>x.d===today());if(dle2&&dle2.count>0)dle2.count--;
   S.monthlyStats.xpLost=(S.monthlyStats.xpLost||0)+it.xp;S.monthlyStats.ipLost=(S.monthlyStats.ipLost||0)+it.ip;
@@ -1556,7 +1563,7 @@ function tTask(type,id,e,action){
     if(el){el.classList.add('dn');el.classList.add('anim-lock');setTimeout(()=>{el.classList.remove('anim-lock');},2700);}
     updateCount(type);
   }else{
-    it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
+    it.done=false;subXP(it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
     S.totalDone=Math.max(0,(S.totalDone||0)-1);
     const taskDate2=today();const dle2=(S.dailyTaskLog||[]).find(x=>x.d===taskDate2);
     if(dle2&&dle2.count>0)dle2.count--;
@@ -1586,7 +1593,7 @@ function valEx(key,id,e,it){
   if(card){card.classList.add('dn');card.classList.add('anim-lock');setTimeout(()=>card.classList.remove('anim-lock'),2700);setTimeout(()=>rCamps(),4500);}else rCamps();
 }
 function cancelEx(key,id,e,it){
-  it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
+  it.done=false;subXP(it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
   S.totalDone=Math.max(0,(S.totalDone||0)-1);toast('REVOKED','err');save();rHdr();rCamps();
 }
 function toggleAcc(k){accSt[k]=accSt[k]===true?false:true;rCamps();}
@@ -1804,7 +1811,7 @@ function undoG(){
   const xp=S.lastGuitarXp||5,ip=S.lastGuitarIp||0;
   const min=S.lastGuitarMin||0,dt=S.lastGuitarDate||'';
   const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
-  S.player.xp=Math.max(0,S.player.xp-xp);
+  subXP(xp);
   S.player.ip=Math.max(0,S.player.ip-ip);
   S.practiceWeek=Math.max(0,S.practiceWeek-1);
   S.lastGuitarXp=0;S.lastGuitarIp=0;S.lastGuitarMin=0;S.lastGuitarDate='';
@@ -1822,7 +1829,7 @@ function undoC(){
   const xp=S.lastConduiteXp||20,ip=S.lastConduiteIp||10;
   const dt=S.lastConduiteDate||'';
   const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
-  S.player.xp=Math.max(0,S.player.xp-xp);
+  subXP(xp);
   S.player.ip=Math.max(0,S.player.ip-ip);
   S.conduiteWeek=Math.max(0,S.conduiteWeek-1);
   S.lastConduiteXp=0;S.lastConduiteIp=0;S.lastConduiteDate='';
@@ -1840,7 +1847,7 @@ function undoP(){
   const xp=S.lastPortfolioXp||18,ip=S.lastPortfolioIp||12;
   const dt=S.lastPortfolioDate||'';
   const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
-  S.player.xp=Math.max(0,S.player.xp-xp);
+  subXP(xp);
   S.player.ip=Math.max(0,S.player.ip-ip);
   S.portfolioWeek=Math.max(0,S.portfolioWeek-1);
   S.lastPortfolioXp=0;S.lastPortfolioIp=0;S.lastPortfolioDate='';
@@ -1857,7 +1864,7 @@ function undoM(){
   const xp=S.lastMemoireXp||18,ip=S.lastMemoireIp||12;
   const dt=S.lastMemoireDate||'';
   const dtFmt=dt?dt.split('-').reverse().slice(0,2).join('/'):'';
-  S.player.xp=Math.max(0,S.player.xp-xp);
+  subXP(xp);
   S.player.ip=Math.max(0,S.player.ip-ip);
   S.memoireWeek=Math.max(0,S.memoireWeek-1);
   S.lastMemoireXp=0;S.lastMemoireIp=0;S.lastMemoireDate='';
