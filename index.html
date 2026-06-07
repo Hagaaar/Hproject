@@ -534,7 +534,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .mrc-close-btn{width:100%;margin-top:6px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.25);color:var(--cy);padding:8px;font-size:10px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%);transition:background .15s}
 .mrc-close-btn:active{background:rgba(0,240,255,.16)}
 </style>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(reg=>{reg.addEventListener('updatefound',()=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){if(confirm('MISE À JOUR DISPONIBLE — Recharger ?'))window.location.reload();}});});});}</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(reg=>{reg.addEventListener('updatefound',()=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){setTimeout(()=>window.location.reload(),400);}});});});}</script>
 </head>
 <body>
 
