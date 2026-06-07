@@ -1501,7 +1501,6 @@ function gigSub(id){
 
 function tTask(type,id,e,action){
   const it=S[type].find(d=>d.id===id);if(!it)return;
-  if(type==='weeklies'){
   const el=document.getElementById('task-'+id);
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
