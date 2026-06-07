@@ -699,6 +699,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem('cp_auth')==='true'||localStorage.getItem('cp_trusted')==='true'){
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').style.pointerEvents='all';
+    setTimeout(_checkHashImport,400);
   }
 });
 
@@ -791,7 +792,7 @@ function submitPin(){
       setTimeout(()=>{
         const screen=document.getElementById('auth-screen');
         screen.style.opacity='0';
-        setTimeout(()=>{screen.style.display='none';},450);
+        setTimeout(()=>{screen.style.display='none';_checkHashImport();},450);
       },2500);
     }else{
       terminal.innerHTML=animPrintedHTML+`<span style="color:var(--rd);font-family:'Courier New',Courier,monospace;text-shadow:none;">> ACCESS FAILED</span>`;
@@ -2038,55 +2039,84 @@ function _hideTransferOv(){const ov=document.getElementById('transfer-ov');if(ov
 
 function exportData(){
   const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  window._expCode=code;
+  const btn=(label,fn,bg,col,border)=>'<button onclick="'+fn+'" style="width:100%;margin-top:9px;background:'+bg+';border:'+border+';color:'+col+';padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">'+label+'</button>';
   _showTransferOv(
     '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">EXPORT SAVE DATA</div>'+
-    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Appuie COPIER, puis ouvre l\'app dans<br>l\'autre contexte et utilise IMPORT DATA.</div>'+
-    '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:100px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.35);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
-    '<button onclick="(function(){const ta=document.getElementById(\'exp-ta\');ta.select();navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(ta.value).then(()=>toast(\'CODE COPIÉ ✓\',\'win\')).catch(()=>{try{document.execCommand(\'copy\');toast(\'CODE COPIÉ ✓\',\'win\');}catch(e){toast(\'Sélectionne et copie manuellement\',\'err\');}}):(ta.focus(),ta.select(),document.execCommand(\'copy\'),toast(\'CODE COPIÉ ✓\',\'win\'));})();" style="width:100%;margin-top:10px;background:rgba(0,240,255,.15);border:1px solid rgba(0,240,255,.45);color:#00f0ff;padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COPIER</button>'+
-    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">FERMER</button>'
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Copie le code ci-dessous OU copie le lien<br>direct à ouvrir dans n\'importe quel navigateur.</div>'+
+    '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.3);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
+    btn('COPIER LE CODE','_cpCode()','rgba(0,240,255,.13)','#00f0ff','1px solid rgba(0,240,255,.4)')+
+    btn('COPIER LE LIEN (recommandé)','_cpLink()','#fcee0a','#000','none')+
+    btn('FERMER','_hideTransferOv()','transparent','rgba(255,255,255,.4)','1px solid rgba(255,255,255,.18)')
   );
   setTimeout(()=>{const ta=document.getElementById('exp-ta');if(ta){ta.focus();ta.select();}},150);
+}
+function _cpCode(){
+  const ta=document.getElementById('exp-ta');if(!ta)return;
+  const txt=ta.value;ta.select();
+  (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject())
+    .then(()=>toast('CODE COPIÉ ✓','win'))
+    .catch(()=>{try{document.execCommand('copy');toast('CODE COPIÉ ✓','win');}catch(e){toast('Sélectionne et copie manuellement','err');}});
+}
+function _cpLink(){
+  const url=location.origin+location.pathname+'#import='+(window._expCode||'');
+  (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(url):Promise.reject())
+    .then(()=>toast('LIEN COPIÉ ✓ — Ouvre-le dans l\'autre contexte','win'))
+    .catch(()=>toast('Erreur copie','err'));
 }
 function importData(){
   _showTransferOv(
     '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:16px">IMPORT SAVE DATA</div>'+
-    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:18px;line-height:1.7">Tu as déjà copié le code depuis l\'autre contexte.<br>Appuie le bouton ci-dessous — iOS te demandera<br>l\'autorisation de coller.</div>'+
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:16px;line-height:1.7">Appuie le bouton jaune — iOS te demandera<br>l\'autorisation de coller depuis le presse-papier.</div>'+
     '<button onclick="_clipImport()" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COLLER DEPUIS LE PRESSE-PAPIER</button>'+
-    '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:14px 0 8px;letter-spacing:1px">— ou colle manuellement ci-dessous —</div>'+
-    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.25);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
-    '<button onclick="_applyImport()" style="width:100%;margin-top:8px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.3);color:#00f0ff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
-    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
+    '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:12px 0 6px;letter-spacing:1px">— ou colle manuellement —</div>'+
+    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:72px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.22);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
+    '<button onclick="_applyImport()" style="width:100%;margin-top:7px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.28);color:#00f0ff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:7px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
   );
 }
 function _clipImport(){
   if(navigator.clipboard&&navigator.clipboard.readText){
-    navigator.clipboard.readText().then(text=>{
-      if(!text){toast('Presse-papier vide','err');return;}
-      _applyImportText(text.trim());
-    }).catch(()=>{
-      const ta=document.getElementById('imp-ta');
-      if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}
-    });
-  }else{
-    const ta=document.getElementById('imp-ta');
-    if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}
-  }
+    navigator.clipboard.readText()
+      .then(text=>{if(!text){toast('Presse-papier vide','err');return;}_applyImportText(text.trim());})
+      .catch(()=>{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}});
+  }else{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}}
 }
-function _applyImport(){
-  const ta=document.getElementById('imp-ta');if(!ta)return;
-  _applyImportText(ta.value.trim());
-}
+function _applyImport(){const ta=document.getElementById('imp-ta');if(!ta)return;_applyImportText(ta.value.trim());}
 function _applyImportText(raw){
   try{
     const json=decodeURIComponent(escape(atob(raw)));
     const d=JSON.parse(json);
     if(!d.player)throw 0;
-    S=d;save();prevIp=S.player.ip;prevXp=S.player.xp;
+    S=d;
+    localStorage.setItem(KEY,JSON.stringify(S));
+    localStorage.setItem(BKEY,JSON.stringify(S));
+    prevIp=S.player.ip;prevXp=S.player.xp;
     checkReset();rHdr();
     const tab=document.querySelector('.nb.on');if(tab)go(tab.id.replace('nb-',''));
-    _hideTransferOv();
-    toast('DONNÉES IMPORTÉES ✓','win');
+    const ov=document.getElementById('transfer-ov');
+    if(ov)ov.innerHTML='<div style="color:#00f0ff;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNC EN COURS...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Envoi vers le cloud…</div>';
+    setSy('synching');
+    fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
+      .then(r=>{
+        if(r.ok){setSy('synched');localStorage.removeItem('cp_sync_pending');_hideTransferOv();toast('IMPORTÉ + CLOUD MIS À JOUR ✓','win');}
+        else{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — SYNC CLOUD ÉCHOUÉ','err');}
+      })
+      .catch(()=>{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — HORS LIGNE, SYNC EN ATTENTE','err');});
   }catch{toast('CODE INVALIDE','err');}
+}
+function _checkHashImport(){
+  const h=window.location.hash;
+  if(!h.startsWith('#import='))return;
+  const code=h.slice(8);
+  history.replaceState(null,'',location.pathname+location.search);
+  window._pendingImport=code;
+  _showTransferOv(
+    '<div style="color:#fcee0a;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">IMPORT DÉTECTÉ</div>'+
+    '<div style="color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-bottom:18px;line-height:1.7">Un code de sauvegarde a été détecté dans l\'URL.<br>Veux-tu remplacer les données actuelles ?</div>'+
+    '<button onclick="_applyImportText(window._pendingImport)" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">OUI — APPLIQUER</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:9px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
+  );
 }
 function resetAll(){
   const dangerContent='<div class="danger-icon"><svg width="64" height="58" viewBox="0 0 64 58"><polygon points="32,2 62,56 2,56" fill="none" stroke="#ff003c" stroke-width="3.5" stroke-linejoin="round"/><text x="32" y="47" font-size="28" font-weight="900" fill="#ff003c" text-anchor="middle" font-family="Rajdhani,sans-serif">!</text></svg></div><p style="margin:0;line-height:1.55">This will permanently erase: Level · XP · E$ · Streak · All missions · All campaigns · Weight log · Shop items. This cannot be undone.</p>';
