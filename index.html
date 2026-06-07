@@ -158,7 +158,20 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
   overflow:hidden;
 }
-#nav-indicator{display:none}
+#nav-indicator{
+  position:absolute;
+  top:0;bottom:0;left:0;
+  width:25%;
+  background:var(--cy);
+  transition:left .32s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+  z-index:0;
+  box-shadow:
+    0 0 18px rgba(0,240,255,.95),
+    0 0 40px rgba(0,240,255,.65),
+    0 0 75px rgba(0,240,255,.35),
+    0 0 120px rgba(0,240,255,.15);
+}
 .nb{
   flex:1;
   background:transparent;
@@ -168,7 +181,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   padding:14px 8px 14px;
   font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
-  transition:color .3s,text-shadow .3s,background .3s;
+  transition:color .3s,text-shadow .3s;
   position:relative;
   z-index:1;
   text-align:center;
@@ -182,14 +195,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .nb.on+.nb::before,.nb+.nb.on::before{opacity:0}
 .nb.on{
   color:#fff;
-  background:radial-gradient(ellipse 110% 160% at 50% 50%, rgba(0,240,255,.42) 0%, rgba(0,240,255,.18) 42%, transparent 68%);
   text-shadow:
     0 0 3px #fff,
     0 0 8px #fff,
-    0 0 14px var(--cy),
-    0 0 26px var(--cy),
-    0 0 44px rgba(0,240,255,.55),
-    0 0 70px rgba(0,240,255,.25);
+    0 0 14px rgba(0,240,255,.9),
+    0 0 28px rgba(0,240,255,.6);
   z-index:2;
 }
 
