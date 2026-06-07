@@ -792,7 +792,11 @@ function submitPin(){
       setTimeout(()=>{
         const screen=document.getElementById('auth-screen');
         screen.style.opacity='0';
-        setTimeout(()=>{screen.style.display='none';_checkHashImport();},450);
+        setTimeout(()=>{
+          screen.style.display='none';
+          _checkHashImport();
+          if(!_hasMeaningfulData(S))pullFromCloud(true);
+        },450);
       },2500);
     }else{
       terminal.innerHTML=animPrintedHTML+`<span style="color:var(--rd);font-family:'Courier New',Courier,monospace;text-shadow:none;">> ACCESS FAILED</span>`;
@@ -2381,7 +2385,7 @@ function pullFromCloud(autoMode){
         localStorage.removeItem('cp_sync_pending');
         prevIp=S.player.ip;prevXp=S.player.xp;
         checkReset();rHdr();
-        setTimeout(()=>toast('CLOUD: streak='+_dbgStreak+' lastSD='+_dbgDate+' now='+S.player.streak,'win'),800);
+        setTimeout(()=>alert('DEBUG CLOUD\nstreak dans cloud: '+_dbgStreak+'\nlastStreakDate: '+_dbgDate+'\nstreak après checkReset: '+S.player.streak+'\nlastDate cloud: '+(best&&best.lastDate||'?')),800);
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
