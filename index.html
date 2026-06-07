@@ -158,20 +158,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
   overflow:hidden;
 }
-#nav-indicator{
-  position:absolute;
-  top:0;bottom:0;left:0;
-  width:25%;
-  background:var(--cy);
-  transition:left .32s cubic-bezier(.4,0,.2,1);
-  pointer-events:none;
-  z-index:0;
-  box-shadow:
-    0 0 18px rgba(0,240,255,.95),
-    0 0 40px rgba(0,240,255,.65),
-    0 0 75px rgba(0,240,255,.35),
-    0 0 120px rgba(0,240,255,.15);
-}
 .nb{
   flex:1;
   background:transparent;
@@ -181,10 +167,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   padding:14px 8px 14px;
   font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
-  transition:color .3s,text-shadow .3s;
+  transition:background-color .15s ease,color .15s ease,font-size .15s ease;
   position:relative;
   z-index:1;
   text-align:center;
+  overflow:hidden;
 }
 .nb+.nb::before{
   content:'';position:absolute;left:0;
@@ -194,13 +181,21 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 .nb.on+.nb::before,.nb+.nb.on::before{opacity:0}
 .nb.on{
-  color:#fff;
-  text-shadow:
-    0 0 3px #fff,
-    0 0 8px #fff,
-    0 0 14px rgba(0,240,255,.9),
-    0 0 28px rgba(0,240,255,.6);
+  background:var(--cy);
+  color:#000;
+  font-size:17px;
+  text-shadow:0 1px 0 rgba(255,255,255,.45),0 -1px 1px rgba(0,0,0,.18);
+  box-shadow:0 0 18px rgba(0,240,255,.95),0 0 40px rgba(0,240,255,.65),0 0 75px rgba(0,240,255,.35),0 0 120px rgba(0,240,255,.15);
   z-index:2;
+}
+.nb.on::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:55%;
+  background:linear-gradient(to bottom,rgba(0,240,255,.55) 0%,transparent 100%);
+  pointer-events:none;
+  z-index:1;
 }
 
 .sec{display:none}
@@ -208,7 +203,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .gigs-acc-hdr{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:800;letter-spacing:2px;padding:14px 0 8px;margin-top:4px}
 .gigs-acc-hdr::after{content:'';flex:1;height:1px;background:currentColor;opacity:.25}
 .gigs-acc-done{color:var(--gn)}
-.gigs-acc-pending{color:var(--mu)}
+.gigs-acc-pending{color:var(--cy)}
+.gig-count-badge{display:inline-block;background:var(--cy);color:#000;font-size:9px;font-weight:900;padding:1px 6px;margin-left:6px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);letter-spacing:.5px;vertical-align:middle;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .cph{display:flex;align-items:center;background:var(--y);color:#000;padding:11px 16px;margin:18px 0 15px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);font-size:14px;font-weight:800;letter-spacing:1px}
 .cph.cph-search{justify-content:space-between;padding:8px 16px;font-weight:900;letter-spacing:2px}
@@ -624,7 +620,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 </div>
 <div id="nav-wrap">
 <nav id="nav">
-  <div id="nav-indicator"></div>
   <button class="nb on" onclick="go('d')" id="nb-d">DAILIES</button>
   <button class="nb" onclick="go('h')" id="nb-h">GIGS</button>
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
@@ -878,6 +873,7 @@ const DS={
   conduite:[
     {id:'dr1',t:'GEARBOX OVERRIDE',desc:'Tier 1: Master manual transmission control',done:false,xp:200,ip:175},
     {id:'dr2',t:'BADLANDS CROSSING',desc:'Tier 2: Master navigation of the dangerous roads',done:false,xp:300,ip:250,boss:true},
+    {id:'dr3',t:'PARALLEL INSERTION PROTOCOL',desc:'Tier 3: Master parallel parking in tight spots',done:false,xp:250,ip:200},
   ],
   shop:[
     {id:'sm',t:'UNKNOWN MILITECH STASH',desc:'Mystery box - random rewards',cost:75,cat:'fun'},
@@ -958,7 +954,7 @@ function migrate(){
     if(d.player)out.player={...out.player,...d.player};
     ['lastDate','lastWeekId','totalDone','daysPlayed','practiceWeek','weightStart','weightCurrent'].forEach(k=>{if(d[k]!==undefined)out[k]=d[k];});
     ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
-      if(d[k]&&Array.isArray(d[k]))out[k]=out[k].map(def=>{const sv=d[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
+      if(d[k]&&Array.isArray(d[k]))out[k]=out[k].map(def=>{const sv=d[k].find(x=>x.id===def.id);if(!sv)return def;if(k==='weeklies')return {...def,done:!!sv.done,count:sv.count||(sv.done?1:0)};return {...def,done:!!sv.done};});
     });
     return out;
   }catch(e){return null;}
@@ -972,7 +968,7 @@ function _applySnapshot(saved){
   if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
   if(!S.weightLog)S.weightLog=[];
   ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
-    if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);return sv?{...def,done:!!sv.done}:def;});
+    if(saved[k]&&Array.isArray(saved[k]))S[k]=S[k].map(def=>{const sv=saved[k].find(x=>x.id===def.id);if(!sv)return def;if(k==='weeklies')return {...def,done:!!sv.done,count:sv.count||(sv.done?1:0)};return {...def,done:!!sv.done};});
   });
   if(saved.shop&&Array.isArray(saved.shop))S.shop=S.shop.map(def=>{const sv=saved.shop.find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:def;});
   if(saved.mysteryPending)S.mysteryPending=saved.mysteryPending;
@@ -1080,7 +1076,7 @@ function checkReset(){
     if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
-  if(S.lastWeekId!==wid){S.weeklies.forEach(w=>w.done=false);S.practiceWeek=0;S.conduiteWeek=0;S.lastWeekId=wid;}
+  if(S.lastWeekId!==wid){S.weeklies.forEach(w=>{w.done=false;w.count=0;});S.practiceWeek=0;S.conduiteWeek=0;S.lastWeekId=wid;}
   save();
 }
 
@@ -1372,7 +1368,7 @@ function triggerStreakAnim(){
 
 function updateCount(type){
   if(type==='dailies'){const dn=S.dailies.filter(d=>d.done).length;const el=document.getElementById('dtt');if(el)el.textContent='MISSIONS '+dn+'/'+S.dailies.length;}
-  else{const dn=S.weeklies.filter(w=>w.done).length;const el=document.getElementById('wtt');if(el)el.textContent='GIGS '+dn+'/'+S.weeklies.length;}
+  else{const dn=S.weeklies.filter(w=>(w.count||0)>0).length;const el=document.getElementById('wtt');if(el)el.textContent='GIGS '+dn+'/'+S.weeklies.length;}
 }
 
 function buildUI(arr,type){
@@ -1385,20 +1381,53 @@ function buildUI(arr,type){
 }
 function rDailies(){document.getElementById('dl').innerHTML=buildUI(S.dailies,'dailies');}
 function rHebdo(){
-  const done=S.weeklies.filter(d=>d.done);
-  const pending=S.weeklies.filter(d=>!d.done);
-  let html='';
+  const all=S.weeklies;
+  const done=all.filter(w=>(w.count||0)>0);
+  let html='<div class="gigs-acc-hdr gigs-acc-pending">CONTRATS ACTIFS</div>';
+  html+=all.map(w=>
+    '<div class="qi" id="task-'+w.id+'" onclick="tTask(\'weeklies\',\''+w.id+'\',event,\'add\')">'+
+    '<div class="qic"><div class="qt"><span>'+w.t+'</span></div><div class="qd">'+w.desc+'</div></div>'+
+    '<div class="qi-rewards"><span class="qr">+'+w.xp+' REP'+(w.ip>0?'<br>+'+w.ip+' E$':'')+'</span></div>'+
+    '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>'
+  ).join('');
   if(done.length){
-    html+='<div class="gigs-acc-hdr gigs-acc-done">ACCOMPLI</div>';
-    html+=buildUI(done,'weeklies');
-    if(pending.length)html+='<div class="gigs-acc-hdr gigs-acc-pending">EN COURS</div>';
+    html+='<div class="gigs-acc-hdr gigs-acc-done">CONTRATS SOLDÉS</div>';
+    html+=done.map(w=>{
+      const cnt=w.count||1;
+      const badge=cnt>1?'<span class="gig-count-badge">×'+cnt+'</span>':'';
+      return '<div class="qi dn" id="task-done-'+w.id+'" onclick="tTask(\'weeklies\',\''+w.id+'\',event,\'remove\')">'+
+        '<div class="qic"><div class="qt"><span>'+w.t+'</span>'+badge+'</div><div class="qd">'+w.desc+'</div></div>'+
+        '<div class="qi-rewards"><span class="qr">+'+w.xp+' REP'+(w.ip>0?'<br>+'+w.ip+' E$':'')+'</span></div>'+
+        '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>';
+    }).join('');
   }
-  html+=buildUI(pending,'weeklies');
   document.getElementById('wl').innerHTML=html;
 }
 
-function tTask(type,id,e){
+function tTask(type,id,e,action){
   const it=S[type].find(d=>d.id===id);if(!it)return;
+  if(type==='weeklies'){
+    if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+    if(action==='remove'){
+      it.count=Math.max(0,(it.count||1)-1);
+      it.done=it.count>0;
+      S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
+      S.totalDone=Math.max(0,(S.totalDone||0)-1);
+      const dle2=(S.dailyTaskLog||[]).find(x=>x.d===today());if(dle2&&dle2.count>0)dle2.count--;
+      S.monthlyStats.xpLost=(S.monthlyStats.xpLost||0)+it.xp;S.monthlyStats.ipLost=(S.monthlyStats.ipLost||0)+it.ip;
+    }else{
+      it.count=(it.count||0)+1;it.done=true;
+      addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
+      const td=today();if(!S.dailyTaskLog)S.dailyTaskLog=[];
+      const dle=S.dailyTaskLog.find(x=>x.d===td);if(dle)dle.count++;else S.dailyTaskLog.push({d:td,count:1});
+      S.monthlyStats.xpGained=(S.monthlyStats.xpGained||0)+it.xp;S.monthlyStats.ipGained=(S.monthlyStats.ipGained||0)+it.ip;
+      S.monthlyStats.tasksCompleted=(S.monthlyStats.tasksCompleted||0)+1;
+      const wk=weekId();S.monthlyStats.weeklyDone[wk]=(S.monthlyStats.weeklyDone[wk]||0)+1;
+      showGain(it.xp,it.ip,e);
+    }
+    save();rHdr();rHebdo();updateCount(type);
+    return;
+  }
   const el=document.getElementById('task-'+id);
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
@@ -1410,7 +1439,6 @@ function tTask(type,id,e){
     S.monthlyStats.xpGained=(S.monthlyStats.xpGained||0)+it.xp;
     S.monthlyStats.ipGained=(S.monthlyStats.ipGained||0)+it.ip;
     S.monthlyStats.tasksCompleted=(S.monthlyStats.tasksCompleted||0)+1;
-    if(type==='weeklies'){const wk=weekId();S.monthlyStats.weeklyDone[wk]=(S.monthlyStats.weeklyDone[wk]||0)+1;}
     if(S.player.streak>(S.monthlyStats.maxStreak||0))S.monthlyStats.maxStreak=S.player.streak;
     if(type==='dailies'){
       if(S.lastStreakDate!==taskDate){
@@ -1429,7 +1457,7 @@ function tTask(type,id,e){
       }
     }
     showGain(it.xp,it.ip,e);save();rHdr();
-    if(el){el.classList.add('dn');el.classList.add('anim-lock');setTimeout(()=>{el.classList.remove('anim-lock');if(type==='weeklies')rHebdo();},2700);}
+    if(el){el.classList.add('dn');el.classList.add('anim-lock');setTimeout(()=>{el.classList.remove('anim-lock');},2700);}
     updateCount(type);
   }else{
     it.done=false;S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
@@ -1442,7 +1470,6 @@ function tTask(type,id,e){
     save();rHdr();
     if(el)el.classList.remove('dn');
     updateCount(type);
-    if(type==='weeklies')rHebdo();
   }
 }
 
@@ -1939,9 +1966,6 @@ function go(tab){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
-  const _tabs=['d','h','c','s'];
-  const _ind=document.getElementById('nav-indicator');
-  if(_ind)_ind.style.left=(_tabs.indexOf(tab)*25)+'%';
   if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();
   if(S.showMonthRecap&&S.lastMonthRecap){S.showMonthRecap=false;save();setTimeout(()=>showMonthRecapUI(S.lastMonthRecap),350);}
 }
@@ -2119,7 +2143,7 @@ load();prevIp=S.player.ip;prevXp=S.player.xp;
     totalDone:29,daysPlayed:4,conduiteWeek:3,streakV:1,
     lastConduiteXp:20,lastConduiteIp:10,lastConduiteDate:'2026-06-05',
     dailies:DS.dailies.map(d=>({...d,done:['d1','d2','d4','d5','d6','d7','d8'].includes(d.id)})),
-    weeklies:DS.weeklies.map(w=>({...w,done:['w4','w7'].includes(w.id)}))
+    weeklies:DS.weeklies.map(w=>({...w,done:['w4','w7'].includes(w.id),count:['w4','w7'].includes(w.id)?1:0}))
   });
   prevIp=S.player.ip;prevXp=S.player.xp;
   save();
