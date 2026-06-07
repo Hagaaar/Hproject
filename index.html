@@ -2086,7 +2086,10 @@ function _applyImport(){const ta=document.getElementById('imp-ta');if(!ta)return
 function _applyImportText(raw){
   try{
     if(!raw)throw new Error('empty');
-    const cleaned=raw.replace(/\s/g,'');
+    let cleaned=raw.trim().replace(/\s/g,'');
+    const hashIdx=cleaned.indexOf('#import=');
+    if(hashIdx!==-1)cleaned=decodeURIComponent(cleaned.slice(hashIdx+8));
+    else{const qIdx=cleaned.indexOf('?import=');if(qIdx!==-1)cleaned=decodeURIComponent(cleaned.slice(qIdx+8));}
     const json=decodeURIComponent(escape(atob(cleaned)));
     const d=JSON.parse(json);
     if(!d||!d.player)throw new Error('no player');
