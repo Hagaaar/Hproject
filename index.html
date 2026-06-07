@@ -2049,18 +2049,36 @@ function exportData(){
 }
 function importData(){
   _showTransferOv(
-    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">IMPORT SAVE DATA</div>'+
-    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Colle le code copié depuis l\'autre contexte<br>(PWA ou Safari).</div>'+
-    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:100px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.35);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
-    '<button onclick="_applyImport()" style="width:100%;margin-top:10px;background:#fcee0a;border:none;color:#000;padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER</button>'+
+    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:16px">IMPORT SAVE DATA</div>'+
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:18px;line-height:1.7">Tu as déjà copié le code depuis l\'autre contexte.<br>Appuie le bouton ci-dessous — iOS te demandera<br>l\'autorisation de coller.</div>'+
+    '<button onclick="_clipImport()" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COLLER DEPUIS LE PRESSE-PAPIER</button>'+
+    '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:14px 0 8px;letter-spacing:1px">— ou colle manuellement ci-dessous —</div>'+
+    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.25);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
+    '<button onclick="_applyImport()" style="width:100%;margin-top:8px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.3);color:#00f0ff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
     '<button onclick="_hideTransferOv()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
   );
-  setTimeout(()=>{const ta=document.getElementById('imp-ta');if(ta)ta.focus();},150);
+}
+function _clipImport(){
+  if(navigator.clipboard&&navigator.clipboard.readText){
+    navigator.clipboard.readText().then(text=>{
+      if(!text){toast('Presse-papier vide','err');return;}
+      _applyImportText(text.trim());
+    }).catch(()=>{
+      const ta=document.getElementById('imp-ta');
+      if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}
+    });
+  }else{
+    const ta=document.getElementById('imp-ta');
+    if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}
+  }
 }
 function _applyImport(){
   const ta=document.getElementById('imp-ta');if(!ta)return;
+  _applyImportText(ta.value.trim());
+}
+function _applyImportText(raw){
   try{
-    const json=decodeURIComponent(escape(atob(ta.value.trim())));
+    const json=decodeURIComponent(escape(atob(raw)));
     const d=JSON.parse(json);
     if(!d.player)throw 0;
     S=d;save();prevIp=S.player.ip;prevXp=S.player.xp;
