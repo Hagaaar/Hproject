@@ -147,12 +147,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #nav-wrap{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;z-index:1000;
-  filter:drop-shadow(0 -8px 18px rgba(0,0,0,.9));
 }
 #nav{
   background:var(--y);
   display:flex;
-  padding:0 0 12px;
+  padding:0;
   gap:0;
   align-items:stretch;
   clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
@@ -164,7 +163,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   border:none;
   color:rgba(0,0,0,0.5);
   cursor:pointer;
-  padding:14px 8px 14px;
+  padding:14px 8px 22px;
   font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
   transition:background-color .15s ease,color .15s ease,font-size .15s ease;
@@ -185,7 +184,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   color:#000;
   font-size:17px;
   text-shadow:0 1px 0 rgba(255,255,255,.45),0 -1px 1px rgba(0,0,0,.18);
-  box-shadow:0 0 18px rgba(0,240,255,.95),0 0 40px rgba(0,240,255,.65),0 0 75px rgba(0,240,255,.35),0 0 120px rgba(0,240,255,.15);
   z-index:2;
 }
 .nb.on::after{
@@ -374,6 +372,12 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .dc-track{flex:1;height:6px;background:rgba(255,255,255,.04);position:relative;overflow:hidden;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%)}
 .dc-fill{height:100%;background:var(--cy);opacity:.75;position:absolute;inset-block:0;left:0;transition:width .5s}
 .dc-cnt{font-size:7px;font-weight:800;color:var(--cy);width:16px;flex-shrink:0;opacity:.8}
+
+/* ─── GIG LONG PRESS ─── */
+.gig-lp-bar{position:absolute;bottom:0;left:0;right:0;height:3px;pointer-events:none;overflow:hidden;}
+.gig-lp-fill{position:absolute;inset:0;background:var(--rd);transform:scaleX(0);transform-origin:left;}
+@keyframes gigLpFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes gigBtnPop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
 
 /* TOAST */
 #tc{position:fixed;bottom:112px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:10px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
@@ -1400,7 +1404,8 @@ function updateCount(type){
 }
 
 function buildUI(arr,type){
-  return arr.map(d=>
+  const sorted=[...arr].sort((a,b)=>a.ip-b.ip);
+  return sorted.map(d=>
     '<div class="qi'+(d.done?' dn':'')+'" id="task-'+d.id+'" onclick="tTask(\''+type+'\',\''+d.id+'\',event)">'+
       '<div class="qic"><div class="qt"><span>'+d.t+'</span></div><div class="qd">'+d.desc+'</div></div>'+
       '<div class="qi-rewards"><span class="qr">+'+d.xp+' REP'+(d.ip>0?'<br>+'+d.ip+' E$':'')+'</span></div>'+
@@ -1409,53 +1414,84 @@ function buildUI(arr,type){
 }
 function rDailies(){document.getElementById('dl').innerHTML=buildUI(S.dailies,'dailies');}
 function rHebdo(){
-  const all=S.weeklies;
-  const done=all.filter(w=>(w.count||0)>0);
-  let html='<div class="gigs-acc-hdr gigs-acc-pending">CONTRATS ACTIFS</div>';
-  html+=all.map(w=>
-    '<div class="qi" id="task-'+w.id+'" onclick="tTask(\'weeklies\',\''+w.id+'\',event,\'add\')">'+
-    '<div class="qic"><div class="qt"><span>'+w.t+'</span></div><div class="qd">'+w.desc+'</div></div>'+
-    '<div class="qi-rewards"><span class="qr">+'+w.xp+' REP'+(w.ip>0?'<br>+'+w.ip+' E$':'')+'</span></div>'+
-    '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>'
-  ).join('');
-  if(done.length){
-    html+='<div class="gigs-acc-hdr gigs-acc-done">CONTRATS SOLDÉS</div>';
-    html+=done.map(w=>{
-      const cnt=w.count||1;
-      const badge=cnt>1?'<span class="gig-count-badge">×'+cnt+'</span>':'';
-      return '<div class="qi dn" id="task-done-'+w.id+'" onclick="tTask(\'weeklies\',\''+w.id+'\',event,\'remove\')">'+
-        '<div class="qic"><div class="qt"><span>'+w.t+'</span>'+badge+'</div><div class="qd">'+w.desc+'</div></div>'+
-        '<div class="qi-rewards"><span class="qr">+'+w.xp+' REP'+(w.ip>0?'<br>+'+w.ip+' E$':'')+'</span></div>'+
-        '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>';
-    }).join('');
-  }
+  const sorted=[...S.weeklies].sort((a,b)=>a.ip-b.ip);
+  const html=sorted.map(w=>{
+    const cnt=w.count||0,isDone=cnt>0;
+    return '<div class="qi'+(isDone?' dn':'')+'" id="task-'+w.id+'"'+
+      ' onpointerdown="gigDown(\''+w.id+'\',event)"'+
+      ' onpointermove="gigMove(\''+w.id+'\',event)"'+
+      ' onpointerup="gigUp(\''+w.id+'\')"'+
+      ' onpointerleave="gigUp(\''+w.id+'\')"'+
+      ' onpointercancel="gigUp(\''+w.id+'\')"'+
+      ' onclick="gigTap(\''+w.id+'\',event)">'+
+      '<div class="qic"><div class="qt"><span>'+w.t+'</span></div><div class="qd">'+w.desc+'</div></div>'+
+      '<div class="qi-rewards"><span class="qr">+'+w.xp+' REP'+(w.ip>0?'<br>+'+w.ip+' E$':'')+'</span></div>'+
+      '<div class="qi-btn"><span class="gig-cntbtn" id="gcnt-'+w.id+'">'+(cnt>0?'×'+cnt:'+')+'</span></div>'+
+      '<div class="gig-lp-bar"><div class="gig-lp-fill" id="lpfill-'+w.id+'"></div></div>'+
+      '</div>';
+  }).join('');
   document.getElementById('wl').innerHTML=html;
+}
+
+const _gigLP={};
+function gigDown(id,e){
+  _gigLP[id]={t:Date.now(),done:false,cx:e.clientX||0,cy:e.clientY||0,moved:false};
+  const f=document.getElementById('lpfill-'+id);
+  if(f){f.style.animation='none';void f.offsetWidth;f.style.animation='gigLpFill 1.5s linear 1.5s forwards';}
+  _gigLP[id].tmr=setTimeout(()=>{
+    const st=_gigLP[id];
+    if(st&&!st.moved){st.done=true;const f2=document.getElementById('lpfill-'+id);if(f2)f2.style.animation='none';gigSub(id);}
+  },3000);
+}
+function gigMove(id,e){
+  const st=_gigLP[id];if(!st)return;
+  if(Math.abs((e.clientX||0)-st.cx)>8||Math.abs((e.clientY||0)-st.cy)>8){
+    st.moved=true;clearTimeout(st.tmr);const f=document.getElementById('lpfill-'+id);if(f)f.style.animation='none';
+  }
+}
+function gigUp(id){
+  const st=_gigLP[id];if(!st)return;
+  clearTimeout(st.tmr);const f=document.getElementById('lpfill-'+id);if(f)f.style.animation='none';
+}
+function gigTap(id,e){
+  const st=_gigLP[id];delete _gigLP[id];
+  if(st&&(st.done||st.moved))return;
+  gigAdd(id,e);
+}
+function gigAdd(id,e){
+  const it=S.weeklies.find(w=>w.id===id);if(!it)return;
+  if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+  it.count=(it.count||0)+1;it.done=true;
+  addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
+  const td=today();if(!S.dailyTaskLog)S.dailyTaskLog=[];
+  const dle=S.dailyTaskLog.find(x=>x.d===td);if(dle)dle.count++;else S.dailyTaskLog.push({d:td,count:1});
+  S.monthlyStats.xpGained=(S.monthlyStats.xpGained||0)+it.xp;S.monthlyStats.ipGained=(S.monthlyStats.ipGained||0)+it.ip;
+  S.monthlyStats.tasksCompleted=(S.monthlyStats.tasksCompleted||0)+1;
+  const wk=weekId();S.monthlyStats.weeklyDone[wk]=(S.monthlyStats.weeklyDone[wk]||0)+1;
+  save();rHdr();updateCount('weeklies');showGain(it.xp,it.ip,e);
+  const card=document.getElementById('task-'+id);
+  if(card&&!card.classList.contains('dn')){card.classList.add('dn');card.classList.add('anim-lock');setTimeout(()=>card.classList.remove('anim-lock'),2700);}
+  const btn=document.getElementById('gcnt-'+id);
+  if(btn){btn.textContent='×'+it.count;btn.style.animation='none';void btn.offsetWidth;btn.style.animation='gigBtnPop .25s ease-out';}
+}
+function gigSub(id){
+  const it=S.weeklies.find(w=>w.id===id);if(!it||(it.count||0)<=0)return;
+  if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
+  it.count=Math.max(0,(it.count||1)-1);it.done=it.count>0;
+  S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
+  S.totalDone=Math.max(0,(S.totalDone||0)-1);
+  const dle2=(S.dailyTaskLog||[]).find(x=>x.d===today());if(dle2&&dle2.count>0)dle2.count--;
+  S.monthlyStats.xpLost=(S.monthlyStats.xpLost||0)+it.xp;S.monthlyStats.ipLost=(S.monthlyStats.ipLost||0)+it.ip;
+  save();rHdr();updateCount('weeklies');toast('REVOKED','err');
+  const card=document.getElementById('task-'+id);
+  const btn=document.getElementById('gcnt-'+id);
+  if(it.count===0){if(card)card.classList.remove('dn');if(btn)btn.textContent='+';}
+  else{if(btn){btn.textContent='×'+it.count;btn.style.animation='none';void btn.offsetWidth;btn.style.animation='gigBtnPop .25s ease-out';}}
 }
 
 function tTask(type,id,e,action){
   const it=S[type].find(d=>d.id===id);if(!it)return;
   if(type==='weeklies'){
-    if(!S.monthlyStats)S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
-    if(action==='remove'){
-      it.count=Math.max(0,(it.count||1)-1);
-      it.done=it.count>0;
-      S.player.xp=Math.max(0,S.player.xp-it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
-      S.totalDone=Math.max(0,(S.totalDone||0)-1);
-      const dle2=(S.dailyTaskLog||[]).find(x=>x.d===today());if(dle2&&dle2.count>0)dle2.count--;
-      S.monthlyStats.xpLost=(S.monthlyStats.xpLost||0)+it.xp;S.monthlyStats.ipLost=(S.monthlyStats.ipLost||0)+it.ip;
-    }else{
-      it.count=(it.count||0)+1;it.done=true;
-      addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
-      const td=today();if(!S.dailyTaskLog)S.dailyTaskLog=[];
-      const dle=S.dailyTaskLog.find(x=>x.d===td);if(dle)dle.count++;else S.dailyTaskLog.push({d:td,count:1});
-      S.monthlyStats.xpGained=(S.monthlyStats.xpGained||0)+it.xp;S.monthlyStats.ipGained=(S.monthlyStats.ipGained||0)+it.ip;
-      S.monthlyStats.tasksCompleted=(S.monthlyStats.tasksCompleted||0)+1;
-      const wk=weekId();S.monthlyStats.weeklyDone[wk]=(S.monthlyStats.weeklyDone[wk]||0)+1;
-      showGain(it.xp,it.ip,e);
-    }
-    save();rHdr();rHebdo();updateCount(type);
-    return;
-  }
   const el=document.getElementById('task-'+id);
   if(!it.done){
     it.done=true;addXP(it.xp);S.player.ip+=it.ip;S.totalDone=(S.totalDone||0)+1;
