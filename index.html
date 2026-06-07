@@ -144,52 +144,52 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 ::-webkit-scrollbar{width:0}
 
 /* ─── NAV ─── */
-#nav{
+#nav-wrap{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:430px;
+  width:100%;max-width:430px;z-index:1000;
+  filter:drop-shadow(0 -8px 18px rgba(0,0,0,.9));
+}
+#nav{
   background:var(--y);
-  display:flex;z-index:1000;
+  display:flex;
   padding:0 0 12px;
   gap:0;
   align-items:stretch;
-  filter:drop-shadow(0 -8px 12px rgba(0,0,0,.85));
   clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
   overflow:hidden;
 }
-#nav-indicator{
-  position:absolute;
-  top:0;bottom:0;
-  left:0;
-  width:25%;
-  background:var(--cy);
-  transition:left .32s cubic-bezier(.4,0,.2,1);
-  pointer-events:none;
-  z-index:0;
-}
+#nav-indicator{display:none}
 .nb{
   flex:1;
   background:transparent;
   border:none;
-  color:rgba(0,0,0,0.55);
+  color:rgba(0,0,0,0.5);
   cursor:pointer;
   padding:14px 8px 14px;
   font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
-  clip-path:none;
-  transition:color .2s;
+  transition:color .3s,text-shadow .3s,background .3s;
   position:relative;
   z-index:1;
   text-align:center;
 }
 .nb+.nb::before{
   content:'';position:absolute;left:0;
-  top:30%;height:40%;width:1px;
-  background:rgba(0,0,0,0.12)
+  top:25%;height:50%;width:1px;
+  background:rgba(0,0,0,0.12);
+  transition:opacity .3s;
 }
+.nb.on+.nb::before,.nb+.nb.on::before{opacity:0}
 .nb.on{
-  background:transparent;
-  color:#000;
-  clip-path:none;
+  color:#fff;
+  background:radial-gradient(ellipse 110% 160% at 50% 50%, rgba(0,240,255,.42) 0%, rgba(0,240,255,.18) 42%, transparent 68%);
+  text-shadow:
+    0 0 3px #fff,
+    0 0 8px #fff,
+    0 0 14px var(--cy),
+    0 0 26px var(--cy),
+    0 0 44px rgba(0,240,255,.55),
+    0 0 70px rgba(0,240,255,.25);
   z-index:2;
 }
 
@@ -309,8 +309,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .st-kpi-lbl{font-size:8px;font-weight:800;letter-spacing:1px;color:var(--mu);border-left:2px solid var(--cy);padding-left:4px}
 .st-kpi.gold .st-kpi-lbl{border-left-color:var(--y)}
 .st-camp-label{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;margin-bottom:6px}
-.scamp{position:relative;display:flex;flex-direction:column;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
-.scamp-left{flex:1;min-width:0}
+.scamp{position:relative;display:flex;flex-direction:row;background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,240,255,.12);border-left:3px solid var(--cy);margin-bottom:7px;padding:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);overflow:hidden}
+.scamp-left{flex:1;min-width:0;display:flex;flex-direction:column}
 .scamp::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,.012) 3px,rgba(0,240,255,.012) 4px)}
 .scamp.cat-portfolio{border-left-color:var(--cy)}
 .scamp.cat-memoire{border-left-color:var(--y)}
@@ -325,7 +325,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp.cat-memoire .scamp-name{color:var(--y)}
 .scamp.cat-guitar .scamp-name{color:#c084fc}
 .scamp.cat-bio .scamp-name{color:var(--gn)}
-.scamp-pct{font-size:22px;font-weight:900;line-height:1;flex-shrink:0;position:relative;z-index:2}
+.scamp-pct{flex-shrink:0;width:58px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;line-height:1;border-left:1px solid rgba(255,255,255,.06);position:relative;z-index:2}
 .scamp.cat-portfolio .scamp-pct{color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.5);border-left-color:rgba(0,240,255,.15)}
 .scamp.cat-memoire .scamp-pct{color:var(--y);text-shadow:0 0 12px rgba(252,238,10,.5);border-left-color:rgba(252,238,10,.15)}
 .scamp.cat-guitar .scamp-pct{color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5);border-left-color:rgba(192,132,252,.15)}
@@ -612,6 +612,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
     <div id="sl"></div>
   </div>
 </div>
+<div id="nav-wrap">
 <nav id="nav">
   <div id="nav-indicator"></div>
   <button class="nb on" onclick="go('d')" id="nb-d">DAILIES</button>
@@ -619,6 +620,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <button class="nb" onclick="go('c')" id="nb-c">MAIN</button>
   <button class="nb" onclick="go('s')" id="nb-s">SHOP</button>
 </nav>
+</div>
 </div>
 <div id="stats-drawer"><div id="st-all"></div></div>
 <div id="tc"></div>
@@ -1847,7 +1849,7 @@ function rStats(){
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
     const cpct=t>0?Math.round((d/t)*100):0;
     const catXp=done.reduce((s,e)=>s+(e.xp||0),0),catIp=done.reduce((s,e)=>s+(e.ip||0),0);
-    return '<div class="scamp '+c.cls+'"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-inline-meta"><span class="sim-rep">+'+catXp+' REP</span><span class="sim-funds">E$ +'+catIp+'</span></div><div class="scamp-pct">'+cpct+'%</div></div>'+buildSegs(d,t)+'</div>';
+    return '<div class="scamp '+c.cls+'"><div class="scamp-left"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-inline-meta"><span class="sim-rep">+'+catXp+' REP</span><span class="sim-funds">E$ +'+catIp+'</span></div></div>'+buildSegs(d,t)+'</div><div class="scamp-pct">'+cpct+'%</div></div>';
   }).join('');
 
   // ── Streak milestones chart ──
