@@ -596,6 +596,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
         <div class="streak-badge"><span id="hsk-val">0</span><span>DAY STREAK</span></div>
         <div class="xp-rep-val"><span id="hxv">0</span> / <span id="hxm">100</span> REP</div>
       </div>
+      <div id="ice-btn-wrap"></div>
     </div>
   </div>
 </div>
@@ -806,31 +807,32 @@ function submitPin(){
 // ─── DATA ───
 const DS={
   player:{level:1,xp:0,ip:0,streak:0},
-  lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,
+  lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,iceProtocolUsed:0,iceProtocolMonth:'',
   portfolioWeek:0,memoireWeek:0,lastPortfolioXp:0,lastPortfolioIp:0,lastPortfolioDate:'',lastMemoireXp:0,lastMemoireIp:0,lastMemoireDate:'',
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
   monthlyStats:{xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}},
   lastMonthRecap:null,showMonthRecap:false,
   dailies:[
-    {id:'d1',t:'BLOODSTREAM PURGE',desc:'Drink a large amount of water',done:false,xp:10,ip:5},
-    {id:'d2',t:'THERMAL SHOCK',desc:'Hot / cold shower',done:false,xp:10,ip:5},
-    {id:'d3',t:'MATRIX DISCONNECT',desc:'10 min meditation',done:false,xp:10,ip:5},
-    {id:'d4',t:'OFFLINE MEAL',desc:'Eat a meal without any screens',done:false,xp:10,ip:5},
-    {id:'d5',t:'ORGANIC CONSUMPTION',desc:'Eat 1 fruit during the day',done:false,xp:10,ip:5},
-    {id:'d6',t:'BIO-SYNTH RESUPPLY',desc:'Have 50% vegetables at meals',done:false,xp:10,ip:5},
-    {id:'d7',t:'SECTOR PATROL',desc:'Minimum 30 minutes of movement / walking',done:false,xp:10,ip:5},
-    {id:'d8',t:'COMBAT SIMULATOR 1H',desc:'Intense workout session (1 hour)',done:false,xp:10,ip:10},
-    {id:'d9',t:'DATASHARD READING',desc:'15 minutes of reading',done:false,xp:10,ip:5},
-    {id:'d10',t:'LOCAL MEMORY BACKUP',desc:'End of day journaling',done:false,xp:10,ip:5},
-    {id:'d11',t:'SYSTEM GLITCH PROTOCOL',desc:'Do 20 push-ups every time you sneeze',done:false,xp:10,ip:5},
-    {id:'d12',t:'NIBBLES TRAINING',desc:'15 minutes of laser play with Jiji',done:false,xp:10,ip:5},
-    {id:'d13',t:'BLUEPRINT RENDERING',desc:'15 minutes of sketching or architectural drawing',done:false,xp:15,ip:10},
-    {id:'d14',t:'PROTEIN BIO FUEL CYCLE',desc:'Reach daily protein intake quota',done:false,xp:10,ip:5},
-    {id:'d15',t:'NEURAL DISCONNECT',desc:'1h screen-free before sleep',done:false,xp:15,ip:10},
-    {id:'d16',t:'TOTAL BLACKOUT',desc:'Full day off social media',done:false,xp:20,ip:15},
+    {id:'d1',t:'BLOODSTREAM PURGE',desc:'Drink a large amount of water',done:false,xp:10,ip:2},
+    {id:'d2',t:'THERMAL SHOCK',desc:'Hot / cold shower',done:false,xp:10,ip:2},
+    {id:'d3',t:'MATRIX DISCONNECT',desc:'10 min meditation',done:false,xp:10,ip:2},
+    {id:'d4',t:'OFFLINE MEAL',desc:'Eat a meal without any screens',done:false,xp:10,ip:2},
+    {id:'d5',t:'ORGANIC CONSUMPTION',desc:'Eat 1 fruit during the day',done:false,xp:10,ip:2},
+    {id:'d6',t:'BIO-SYNTH RESUPPLY',desc:'Have 50% vegetables at meals',done:false,xp:10,ip:2},
+    {id:'d7',t:'SECTOR PATROL',desc:'Minimum 30 minutes of movement / walking',done:false,xp:10,ip:2},
+    {id:'d8',t:'COMBAT SIMULATOR 1H',desc:'Intense workout session (1 hour)',done:false,xp:20,ip:8},
+    {id:'d9',t:'DATASHARD READING',desc:'15 minutes of reading',done:false,xp:10,ip:2},
+    {id:'d10',t:'LOCAL MEMORY BACKUP',desc:'End of day journaling',done:false,xp:10,ip:2},
+    {id:'d11',t:'SYSTEM GLITCH PROTOCOL',desc:'Do 20 push-ups every time you sneeze',done:false,xp:10,ip:2},
+    {id:'d12',t:'NIBBLES TRAINING',desc:'15 minutes of laser play with Jiji',done:false,xp:10,ip:2},
+    {id:'d13',t:'BLUEPRINT RENDERING',desc:'15 minutes of sketching or architectural drawing',done:false,xp:15,ip:5},
+    {id:'d14',t:'PROTEIN BIO FUEL CYCLE',desc:'Reach daily protein intake quota',done:false,xp:10,ip:2},
+    {id:'d15',t:'NEURAL DISCONNECT',desc:'1h screen-free before sleep',done:false,xp:15,ip:5},
+    {id:'d16',t:'TOTAL BLACKOUT',desc:'Full day off social media',done:false,xp:20,ip:8},
+    {id:'d17',t:'NEURAL REBOOT',desc:'In bed before 23:30',done:false,xp:15,ip:5},
   ],
   weeklies:[
-    {id:'w1',t:'METABOLIC OVERCLOCK',desc:'Fast for a full day',done:false,xp:50,ip:40},
+    {id:'w1',t:'METABOLIC OVERCLOCK',desc:'Fast for a full day',done:false,xp:80,ip:60},
     {id:'w2',t:'COMBAT RATIONS PREP',desc:'Batch cooking or one-pot meals',done:false,xp:50,ip:40},
     {id:'w3',t:'AUDIO DATA INJECTION',desc:'Listen to an audiobook or podcast',done:false,xp:50,ip:40},
     {id:'w4',t:'HIDEOUT CLEANING',desc:'Full apartment maintenance',done:false,xp:50,ip:40},
@@ -860,21 +862,21 @@ const DS={
     {id:'m2',t:'DISCIPLINARY POSITION',desc:'Write Sections 2.1 and 2.2: Disciplinary position',done:false,xp:175,ip:175},
     {id:'m3',t:'MUESPACH INFILTRATION',desc:'Write Section 2.3: ALSH Muespach case study',done:false,xp:300,ip:300,boss:true},
     {id:'m4',t:'PART 3 FINALIZATION',desc:'Write Sections 2.4, Part 3 and the Introduction',done:false,xp:175,ip:175},
-    {id:'m5',t:'SOURCE CODE ASSEMBLY',desc:'Global assembly of the thesis and corrections',done:false,xp:125,ip:125},
+    {id:'m5',t:'SOURCE CODE ASSEMBLY',desc:'Global assembly of the thesis and corrections',done:false,xp:200,ip:200},
     {id:'m6',t:'REGISTRY REVISION',desc:'Do V2 revision (practitioner registry)',done:false,xp:200,ip:200},
     {id:'m7',t:'FINAL FORMATTING',desc:'Finish layout and final proofreading',done:false,xp:150,ip:150},
     {id:'m8',t:'ALT CUNNINGHAM CONNECTION',desc:'Final validation and submission of HMONP thesis',done:false,xp:750,ip:750,boss:true},
   ],
   poids:[
-    {id:'kg1',kg:1,t:'CHASSIS FLUSH',desc:'-1 KG',done:false,xp:80,ip:200},
-    {id:'kg2',kg:2,t:'TISSUE REMAP',desc:'-2 KG',done:false,xp:80,ip:200},
+    {id:'kg1',kg:1,t:'CHASSIS FLUSH',desc:'-1 KG',done:false,xp:80,ip:150},
+    {id:'kg2',kg:2,t:'TISSUE REMAP',desc:'-2 KG',done:false,xp:80,ip:175},
     {id:'kg3',kg:3,t:'SUBDERMAL TRIM',desc:'-3 KG',done:false,xp:80,ip:200},
-    {id:'kg4',kg:4,t:'SKELETAL RELIEF',desc:'-4 KG',done:false,xp:80,ip:200},
-    {id:'kg5',kg:5,t:'MIDPOINT BREACH',desc:'-5 KG',done:false,xp:150,ip:400,boss:false},
-    {id:'kg6',kg:6,t:'METABOLIC HACK',desc:'-6 KG',done:false,xp:80,ip:200},
-    {id:'kg7',kg:7,t:'NEURAL OVERRIDE',desc:'-7 KG',done:false,xp:80,ip:200},
-    {id:'kg8',kg:8,t:'CYBERWARE PURGE',desc:'-8 KG',done:false,xp:80,ip:200},
-    {id:'kg9',kg:9,t:'GHOST PROTOCOL',desc:'-9 KG',done:false,xp:80,ip:200},
+    {id:'kg4',kg:4,t:'SKELETAL RELIEF',desc:'-4 KG',done:false,xp:80,ip:225},
+    {id:'kg5',kg:5,t:'MIDPOINT BREACH',desc:'-5 KG',done:false,xp:150,ip:450,boss:false},
+    {id:'kg6',kg:6,t:'METABOLIC HACK',desc:'-6 KG',done:false,xp:80,ip:250},
+    {id:'kg7',kg:7,t:'NEURAL OVERRIDE',desc:'-7 KG',done:false,xp:80,ip:275},
+    {id:'kg8',kg:8,t:'CYBERWARE PURGE',desc:'-8 KG',done:false,xp:80,ip:300},
+    {id:'kg9',kg:9,t:'GHOST PROTOCOL',desc:'-9 KG',done:false,xp:80,ip:325},
     {id:'kg10',kg:10,t:'MAXTAC BODY',desc:'-10 KG — GOAL',done:false,xp:500,ip:1500,boss:true},
   ],
   guitare:[
@@ -885,7 +887,7 @@ const DS={
   ],
   conduite:[
     {id:'dr1',t:'GEARBOX OVERRIDE',desc:'Tier 1: Master manual transmission control',done:false,xp:200,ip:175},
-    {id:'dr2',t:'BADLANDS CROSSING',desc:'Tier 2: Master navigation of the dangerous roads',done:false,xp:300,ip:250,boss:true},
+    {id:'dr2',t:'BADLANDS CROSSING',desc:'Tier 2: Master navigation of the dangerous roads',done:false,xp:450,ip:375,boss:true},
     {id:'dr3',t:'PARALLEL INSERTION PROTOCOL',desc:'Tier 3: Master parallel parking in tight spots',done:false,xp:250,ip:200},
   ],
   shop:[
@@ -977,7 +979,7 @@ function _hasMeaningfulData(d){return d&&d.player&&(d.player.xp>0||d.player.ip>0
 function _applySnapshot(saved){
   S=JSON.parse(JSON.stringify(DS));
   if(saved.player)S.player={...S.player,...saved.player};
-  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap','iceProtocolUsed','iceProtocolMonth'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
   if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
   if(!S.weightLog)S.weightLog=[];
   ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite'].forEach(k=>{
@@ -1089,6 +1091,7 @@ function checkReset(){
     if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
   }
+  if(td.slice(0,7)!==S.iceProtocolMonth){S.iceProtocolUsed=0;S.iceProtocolMonth=td.slice(0,7);}
   if(S.lastWeekId!==wid){S.weeklies.forEach(w=>{w.done=false;w.count=0;});S.practiceWeek=0;S.conduiteWeek=0;S.portfolioWeek=0;S.memoireWeek=0;S.lastWeekId=wid;}
   save();
 }
@@ -1373,6 +1376,14 @@ function rHdr(){
   animVal('hip',prevIp,p.ip);
   animVal('hxv',prevXp,p.xp);
   prevIp=p.ip;prevXp=p.xp;
+  const iceWrap=document.getElementById('ice-btn-wrap');
+  if(iceWrap)iceWrap.innerHTML=p.streak>0?'<button onclick="activateIceProtocol()" style="font-size:8px;font-weight:800;letter-spacing:1px;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.25);color:rgba(0,240,255,0.7);padding:3px 8px;cursor:pointer;font-family:inherit;clip-path:polygon(4px 0,100% 0,100% calc(100%-4px),calc(100%-4px) 100%,0 100%,0 4px)">ICE ['+(S.iceProtocolUsed||0)+'/2]</button>':'';
+}
+function activateIceProtocol(){
+  if((S.iceProtocolUsed||0)>=2){toast('ICE PROTOCOL UNAVAILABLE — 2/2 USED THIS MONTH','err');return;}
+  S.iceProtocolUsed=(S.iceProtocolUsed||0)+1;
+  S.lastStreakDate=today();
+  save();rHdr();toast('ICE PROTOCOL ACTIVATED — STREAK PRESERVED','gold');
 }
 function triggerStreakAnim(){
   const el=document.getElementById('hsk-val');if(!el)return;
@@ -1531,7 +1542,7 @@ function buildBioRoadmap(pLoss){
   const start = S.weightStart || null;
   const goal  = start ? (start - 10) : null;
 
-  const rewards = [200,200,200,200,400,200,200,200,200,1500];
+  const rewards = [150,175,200,225,450,250,275,300,325,1500];
 
   // Simple grid: START box + 10 rect tiles, no gaps, full width
   // Use CSS grid for pixel-perfect fit
@@ -1767,7 +1778,7 @@ function undoC(){
   save();rCamps();rHdr();toast(label,'err');
 }
 function logP(min,e){
-  const xp=min>=60?35:18,ip=min>=60?25:12;
+  const xp=min>=60?50:25,ip=min>=60?40:20;
   addXP(xp);S.player.ip+=ip;S.portfolioWeek=(S.portfolioWeek||0)+1;
   S.lastPortfolioXp=xp;S.lastPortfolioIp=ip;S.lastPortfolioDate=today();
   save();rCamps();rHdr();showGain(xp,ip,e);
@@ -1784,7 +1795,7 @@ function undoP(){
   save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
 }
 function logM(min,e){
-  const xp=min>=60?35:18,ip=min>=60?25:12;
+  const xp=min>=60?50:25,ip=min>=60?40:20;
   addXP(xp);S.player.ip+=ip;S.memoireWeek=(S.memoireWeek||0)+1;
   S.lastMemoireXp=xp;S.lastMemoireIp=ip;S.lastMemoireDate=today();
   save();rCamps();rHdr();showGain(xp,ip,e);
