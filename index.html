@@ -2319,21 +2319,6 @@ function closeMonthRecap(){
 }
 
 load();prevIp=S.player.ip;prevXp=S.player.xp;
-// ─── ONE-TIME DATA RECOVERY (session 2026-06-05) ───
-(function(){
-  if(localStorage.getItem('cp_rec_v1'))return;
-  localStorage.setItem('cp_rec_v1','1');
-  _applySnapshot({
-    player:{level:3,xp:130,ip:250,streak:4},
-    lastDate:'2026-06-05',lastStreakDate:'2026-06-05',lastWeekId:'2026-W23',
-    totalDone:29,daysPlayed:4,conduiteWeek:3,streakV:1,
-    lastConduiteXp:20,lastConduiteIp:10,lastConduiteDate:'2026-06-05',
-    dailies:DS.dailies.map(d=>({...d,done:['d1','d2','d4','d5','d6','d7','d8'].includes(d.id)})),
-    weeklies:DS.weeklies.map(w=>({...w,done:['w4','w7'].includes(w.id),count:['w4','w7'].includes(w.id)?1:0}))
-  });
-  prevIp=S.player.ip;prevXp=S.player.xp;
-  save();
-})();
 if(DEV_RECAP){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.pointerEvents='all';
@@ -2375,9 +2360,6 @@ function pullFromCloud(autoMode){
       }
 
       if(best&&bestScore>0){
-        // Restaurer le meilleur état cloud
-        const _dbgStreak=best.player&&best.player.streak||0;
-        const _dbgDate=best.lastStreakDate||'none';
         S=best;
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
