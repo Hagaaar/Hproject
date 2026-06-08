@@ -131,7 +131,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .gf-ed{color:var(--y);box-shadow:0 0 8px rgba(252,238,10,.3)}
 @keyframes gfPop{0%{opacity:0;transform:translateY(10px) scale(0.8)}15%{opacity:1;transform:translateY(0) scale(1.1)}30%{opacity:1;transform:translateY(-2px) scale(1)}65%{opacity:1;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-12px)}}
 
-#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:122px 16px 116px}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:152px 16px calc(100px + env(safe-area-inset-bottom,0px))}
 #offline-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;background:rgba(11,17,24,.97);z-index:9500;display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease-out}
 .ofb-inner{text-align:center;padding:32px 24px;max-width:320px}
 .ofb-icon{margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(255,0,60,.6))}
@@ -150,6 +150,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   position:fixed;bottom:8px;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;z-index:1000;
   filter:drop-shadow(0 -6px 14px rgba(0,0,0,.9));
+  background:var(--y);
 }
 #nav{
   background:var(--y);
@@ -166,7 +167,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   border:none;
   color:rgba(0,0,0,0.5);
   cursor:pointer;
-  padding:14px 8px 22px;
+  padding:14px 8px calc(22px + env(safe-area-inset-bottom,0px));
   font-size:14px;font-weight:800;letter-spacing:1px;
   font-family:inherit;
   transition:background-color .15s ease,color .15s ease,font-size .15s ease;
@@ -996,10 +997,11 @@ const DS={
     {id:'t13',t:'FLIGHT TO LONDON',desc:'Weekend in London',cost:9000,cat:'travel'},
     {id:'t14',t:'PADI CERTIFICATION ARC',desc:'Scuba Open Water certification week',cost:10000,cat:'travel'},
     {id:'t15',t:'IRELAND EXPEDITION',desc:'5 to 7 days trip to Ireland',cost:14000,cat:'travel'}
-  ]
+  ],
+  consumed:[]
 };
 
-let S={},shopFilter='all';
+let S={},shopFilter='all',showConsumed=false;
 const accSt={};
 let cfmAction=null,syncTmr=null,prevIp=0,prevXp=0;
 
@@ -1030,6 +1032,7 @@ function _applySnapshot(saved){
   if(saved.shop&&Array.isArray(saved.shop))S.shop=S.shop.map(def=>{const sv=saved.shop.find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:def;});
   if(saved.mysteryPending)S.mysteryPending=saved.mysteryPending;
   if(saved.mainOrder&&Array.isArray(saved.mainOrder)&&saved.mainOrder.length)S.mainOrder=saved.mainOrder;
+  if(saved.consumed&&Array.isArray(saved.consumed))S.consumed=saved.consumed;
 }
 function load(){
   try{
@@ -1631,11 +1634,13 @@ function valEx(key,id,e,it){
 }
 function cancelEx(key,id,e,it){
   it.done=false;subXP(it.xp);S.player.ip=Math.max(0,S.player.ip-it.ip);
-  S.totalDone=Math.max(0,(S.totalDone||0)-1);toast('REVOKED','err');save();rHdr();rCamps();
+  S.totalDone=Math.max(0,(S.totalDone||0)-1);toast('REVOKED','err');save();rHdr();
+  const card=document.getElementById('task-'+id);
+  if(card){card.classList.remove('dn');setTimeout(()=>rCamps(),2200);}else rCamps();
 }
 function toggleAcc(k){if(_cbDragJustEnded){_cbDragJustEnded=false;return;}accSt[k]=accSt[k]===true?false:true;rCamps();}
 function buildSegBadge(done,total,col,rgb){
-  const c=col||'#00d8ec', g=rgb||'0,216,236';
+  const c=col||'#00f0ff', g=rgb||'0,240,255';
   let s='<div style="display:flex;gap:2px;align-items:center;margin-right:6px">';
   for(let i=0;i<total;i++){
     const lit=i<done;
@@ -1699,7 +1704,7 @@ function cbDragInit(key,e){
     if(!_cbDrag)return;
     _cbDrag.active=true;
     const el=document.getElementById('cb-'+key);
-    if(el){el.style.boxShadow='0 16px 48px rgba(0,0,0,.95)';el.style.zIndex='50';el.style.position='relative';}
+    if(el){_cbDrag.cardH=el.getBoundingClientRect().height;el.style.transition='none';el.style.position='relative';el.style.zIndex='50';el.style.outline='2px solid var(--y)';}
     document.addEventListener('pointermove',cbDragMove,{passive:false});
     document.addEventListener('pointerup',cbDragEnd);
     document.addEventListener('pointercancel',cbDragEnd);
@@ -1716,8 +1721,9 @@ function cbDragMove(e){
   e.preventDefault();
   const dy=e.clientY-_cbDrag.startY;
   const el=document.getElementById('cb-'+_cbDrag.key);
-  if(el)el.style.transform='scale(1.02) translateY('+dy+'px)';
+  if(el)el.style.transform='translateY('+dy+'px)';
   const order=(S.mainOrder&&S.mainOrder.length===_CB_ORDER_DEFAULT.length)?[...S.mainOrder]:[..._CB_ORDER_DEFAULT];
+  const fromIdx=order.indexOf(_cbDrag.key);
   const filtered=order.filter(k=>k!==_cbDrag.key);
   const elR=el?el.getBoundingClientRect():null;
   const mid=elR?elR.top+elR.height/2:e.clientY;
@@ -1729,6 +1735,16 @@ function cbDragMove(e){
     if(mid<r.top+r.height/2){ins=i;break;}
   }
   _cbDrag.insertIdx=ins;
+  const h=(_cbDrag.cardH||0)+12;
+  filtered.forEach((k)=>{
+    const oe=document.getElementById('cb-'+k);if(!oe)return;
+    oe.style.transition='transform .18s ease';
+    const origIdx=order.indexOf(k);
+    let shift=0;
+    if(fromIdx<ins){if(origIdx>fromIdx&&origIdx<=ins)shift=-h;}
+    else if(fromIdx>ins){if(origIdx>=ins&&origIdx<fromIdx)shift=h;}
+    oe.style.transform='translateY('+shift+'px)';
+  });
 }
 function cbDragEnd(){
   if(!_cbDrag)return;
@@ -1737,8 +1753,7 @@ function cbDragEnd(){
   document.removeEventListener('pointerup',cbDragEnd);
   document.removeEventListener('pointercancel',cbDragEnd);
   const {key,active,insertIdx}=_cbDrag;_cbDrag=null;
-  const el=document.getElementById('cb-'+key);
-  if(el){el.style.transform='';el.style.boxShadow='';el.style.zIndex='';el.style.position='';}
+  document.querySelectorAll('[id^="cb-"]').forEach(c=>{c.style.transform='';c.style.transition='';c.style.outline='';c.style.zIndex='';c.style.position='';});
   if(!active)return;
   _cbDragJustEnded=true;setTimeout(()=>{_cbDragJustEnded=false;},400);
   if(insertIdx!==undefined){
@@ -2157,6 +2172,17 @@ function rShop(){
       '<button class="wsave" style="width:100%" onclick="saveShopItem()">SAVE TO MARKET</button></div>';
   }
   h+='</div>';
+  const consumed=S.consumed||[];
+  if(consumed.length>0){
+    h+='<div style="margin-top:14px">';
+    h+='<button onclick="toggleConsumed()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);padding:12px 14px;font-size:10px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">CONSUMED<span style="font-size:9px;opacity:.7">'+consumed.length+' ITEMS '+(showConsumed?'▲':'▼')+'</span></button>';
+    if(showConsumed){
+      h+='<div style="margin-top:5px">';
+      h+=consumed.slice().reverse().map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:4px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)"><div style="flex:1;min-width:0"><div class="shin" style="opacity:.5">'+c.desc+'</div><div class="shic" style="opacity:.35">'+c.t+'</div></div><div style="font-size:8px;font-weight:800;color:var(--mu);flex-shrink:0;letter-spacing:1px">USED</div></div>').join('');
+      h+='</div>';
+    }
+    h+='</div>';
+  }
   document.getElementById('sl').innerHTML=h;
 }
 
@@ -2184,9 +2210,14 @@ function buyIt(id){
 function useItem(id){
   const el=document.querySelector('[data-sid="'+id+'"]'),it=S.shop.find(s=>s.id===id);if(!el||it===undefined)return;
   el.classList.add('using');
-  setTimeout(()=>{it.bought=false;save();rShop();},3120);
+  setTimeout(()=>{
+    if(!S.consumed)S.consumed=[];
+    S.consumed.push({id:it.id,t:it.t,desc:it.desc,usedAt:Date.now()});
+    it.bought=false;save();rShop();
+  },3120);
   showUsedOverlay(it.desc);
 }
+function toggleConsumed(){showConsumed=!showConsumed;rShop();}
 
 function useMystery(uid){
   const el=document.querySelector('[data-mid="'+uid+'"]'),idx=(S.mysteryPending||[]).findIndex(r=>r.uid===uid);
@@ -2390,23 +2421,22 @@ function _snBuild(gi){
   const i=Math.max(0,Math.min(1.05,gi)),i2=i*i,i3=i2*i;
   const bi=i*(2/3),bi2=bi*bi,bi3=bi2*bi;
   
-  // On force la couleur du texte en cyan foncé pendant l'animation
-  el.style.color = '#00a0b4';
-  
+  el.style.color = '#00f0ff';
+
   el.style.textShadow=[
     `0 0 2px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
-    `0 0 7px rgba(0,160,180,${+(1.0*i).toFixed(3)})`,
-    `0 0 15px rgba(0,150,170,${+(0.90*i2).toFixed(3)})`,
-    `0 0 28px rgba(0,140,160,${+(0.72*i2).toFixed(3)})`,
-    `0 0 46px rgba(0,130,150,${+(0.46*i3).toFixed(3)})`,
+    `0 0 7px rgba(0,240,255,${+(1.0*i).toFixed(3)})`,
+    `0 0 15px rgba(0,240,255,${+(0.90*i2).toFixed(3)})`,
+    `0 0 28px rgba(0,240,255,${+(0.72*i2).toFixed(3)})`,
+    `0 0 46px rgba(0,240,255,${+(0.46*i3).toFixed(3)})`,
   ].join(',');
-  
+
   el.style.boxShadow=[
-    `0 0 7px rgba(0,160,180,${+(0.65*bi).toFixed(3)})`,
-    `0 0 18px rgba(0,150,170,${+(0.42*bi2).toFixed(3)})`,
-    `0 0 35px rgba(0,140,160,${+(0.22*bi3).toFixed(3)})`,
-    `inset 0 0 10px rgba(0,160,180,${+(0.55*bi).toFixed(3)})`,
-    `inset 0 0 22px rgba(0,150,170,${+(0.30*bi2).toFixed(3)})`,
+    `0 0 7px rgba(0,240,255,${+(0.65*bi).toFixed(3)})`,
+    `0 0 18px rgba(0,240,255,${+(0.42*bi2).toFixed(3)})`,
+    `0 0 35px rgba(0,240,255,${+(0.22*bi3).toFixed(3)})`,
+    `inset 0 0 10px rgba(0,240,255,${+(0.55*bi).toFixed(3)})`,
+    `inset 0 0 22px rgba(0,240,255,${+(0.30*bi2).toFixed(3)})`,
   ].join(',');
 }
   function _snBreathe(ts){
