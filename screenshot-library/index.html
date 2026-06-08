@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>H PROJECT — Interface Evolution</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#080d13; color:#fcee0a;
+  font-family:'Courier New',monospace;
+  padding:48px 32px 80px;
+  min-height:100vh;
+}
+h1{
+  text-align:center; font-size:24px;
+  letter-spacing:8px; margin-bottom:6px;
+  text-shadow:0 0 20px rgba(252,238,10,.4);
+}
+.subtitle{
+  text-align:center; font-size:10px;
+  letter-spacing:4px; color:rgba(252,238,10,.4);
+  margin-bottom:64px;
+}
+.timeline{
+  max-width:900px; margin:0 auto;
+  border-left:2px solid rgba(252,238,10,.15);
+  padding-left:32px;
+}
+.commit-block{
+  margin-bottom:64px;
+  position:relative;
+}
+.commit-dot{
+  position:absolute; left:-40px; top:4px;
+  width:10px; height:10px;
+  background:#fcee0a; border-radius:50%;
+  box-shadow:0 0 10px rgba(252,238,10,.6);
+}
+.commit-meta{ margin-bottom:18px; }
+.commit-msg{
+  font-size:13px; letter-spacing:1px;
+  color:#fcee0a; margin-bottom:5px;
+  line-height:1.4;
+}
+.commit-info{
+  font-size:10px; letter-spacing:2px;
+  color:rgba(0,216,236,.55);
+}
+.phones-row{
+  display:flex; gap:20px; flex-wrap:wrap;
+}
+
+    /* ── iPhone 13 mini frame ── */
+    .phone-slot { display:flex; flex-direction:column; align-items:center; gap:8px; }
+    .tab-label  { font-size:9px; letter-spacing:3px; color:rgba(252,238,10,.5); }
+
+    /* Outer wrapper reserves the space of the scaled-down phone */
+    .phone-wrapper {
+      width:169px; height:366px;
+      position:relative; flex-shrink:0;
+    }
+    /* Full-size frame, scaled down 45 % */
+    .phone-frame {
+      width:375px; height:812px;
+      transform:scale(0.45); transform-origin:top left;
+      position:absolute; top:0; left:0;
+      background:#1a1a1e;
+      border-radius:54px;
+      border:10px solid #2c2c2e;
+      box-shadow:
+        0 0 0 1px #3a3a3c,
+        0 0 0 2px #111,
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 40px 100px rgba(0,0,0,.95),
+        0 0 60px rgba(252,238,10,.06);
+      overflow:hidden;
+    }
+    /* Power button (right) */
+    .phone-frame::before {
+      content:''; position:absolute;
+      right:-13px; top:120px;
+      width:4px; height:68px;
+      background:#3a3a3c; border-radius:0 3px 3px 0;
+    }
+    /* Volume buttons (left) */
+    .phone-frame::after {
+      content:''; position:absolute;
+      left:-13px; top:90px;
+      width:4px; height:36px;
+      background:#3a3a3c; border-radius:3px 0 0 3px;
+      box-shadow:0 56px 0 #3a3a3c, 0 106px 0 #3a3a3c;
+    }
+    .phone-screen {
+      width:100%; height:100%;
+      overflow:hidden; position:relative;
+    }
+    .phone-screen img {
+      width:100%; height:100%;
+      object-fit:cover; display:block;
+    }
+    /* Notch */
+    .phone-notch {
+      position:absolute; top:0; left:50%;
+      transform:translateX(-50%);
+      width:154px; height:34px;
+      background:#1a1a1e;
+      border-radius:0 0 22px 22px;
+      z-index:20;
+    }
+    /* Home bar */
+    .phone-home {
+      position:absolute; bottom:10px; left:50%;
+      transform:translateX(-50%);
+      width:120px; height:5px;
+      background:rgba(255,255,255,.3); border-radius:3px;
+      z-index:20;
+    }
+    /* Status bar */
+    .phone-status {
+      position:absolute; top:8px; left:0; right:0;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0 28px;
+      font-size:13px; font-weight:700;
+      color:rgba(255,255,255,.75);
+      font-family:-apple-system,sans-serif;
+      z-index:15; pointer-events:none;
+    }
+  
+</style>
+</head>
+<body>
+<h1>H PROJECT</h1>
+<div class="subtitle">INTERFACE EVOLUTION &nbsp;—&nbsp; 11 SNAPSHOTS &nbsp;·&nbsp; iPhone 13 mini</div>
+<div class="timeline">
+
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Add Stop hook to always push to origin/main</div>
+      <div class="commit-info">86c0731 &nbsp;·&nbsp; 5 juin 2026 &nbsp;·&nbsp; snapshot 1/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="86c0731/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="86c0731/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="86c0731/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="86c0731/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Compact monthly recap UI to fit iPhone 13 mini without scroll</div>
+      <div class="commit-info">0f05d29 &nbsp;·&nbsp; 5 juin 2026 &nbsp;·&nbsp; snapshot 2/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="0f05d29/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="0f05d29/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="0f05d29/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="0f05d29/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Realistic LED glow animation for sync indicator</div>
+      <div class="commit-info">11812c7 &nbsp;·&nbsp; 5 juin 2026 &nbsp;·&nbsp; snapshot 3/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="11812c7/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="11812c7/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="11812c7/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="11812c7/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Inject one-time data recovery for lost 2026-06-05 session</div>
+      <div class="commit-info">f355513 &nbsp;·&nbsp; 6 juin 2026 &nbsp;·&nbsp; snapshot 4/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="f355513/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="f355513/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="f355513/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="f355513/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Nouvelles tâches, sessions MAIN, tri SHOP, bonus level-up</div>
+      <div class="commit-info">a7c7a2b &nbsp;·&nbsp; 7 juin 2026 &nbsp;·&nbsp; snapshot 5/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="a7c7a2b/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="a7c7a2b/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="a7c7a2b/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="a7c7a2b/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Fix JS syntax error: remove stray if(type==='weeklies') wrapper from tTask</div>
+      <div class="commit-info">e7227f2 &nbsp;·&nbsp; 7 juin 2026 &nbsp;·&nbsp; snapshot 6/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="e7227f2/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="e7227f2/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="e7227f2/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="e7227f2/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Fix URL import: encode base64 in URL + decode on read + add fetch timeout</div>
+      <div class="commit-info">9bbf988 &nbsp;·&nbsp; 7 juin 2026 &nbsp;·&nbsp; snapshot 7/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="9bbf988/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="9bbf988/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="9bbf988/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="9bbf988/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Fix incognito streak bug: remove stale ONE-TIME DATA RECOVERY block</div>
+      <div class="commit-info">ebdc667 &nbsp;·&nbsp; 7 juin 2026 &nbsp;·&nbsp; snapshot 8/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="ebdc667/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="ebdc667/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="ebdc667/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="ebdc667/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">Add KIROSHI ARCHIVES campaign + 3 dailies + 1 gig (FOOD DATA AUDIT)</div>
+      <div class="commit-info">d6bf87d &nbsp;·&nbsp; 7 juin 2026 &nbsp;·&nbsp; snapshot 9/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="d6bf87d/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="d6bf87d/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="d6bf87d/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="d6bf87d/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">fix: cyan #00d8ec everywhere, nav flush bottom, drag darkens yellow, shop items accordion</div>
+      <div class="commit-info">1b69dd7 &nbsp;·&nbsp; 8 juin 2026 &nbsp;·&nbsp; snapshot 10/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1b69dd7/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1b69dd7/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1b69dd7/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1b69dd7/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="commit-block">
+    <div class="commit-dot"></div>
+    <div class="commit-meta">
+      <div class="commit-msg">fix: revert cyan to #00d8ec, chart tweaks, shop always open, smooth arrow, taller nav</div>
+      <div class="commit-info">1918522 &nbsp;·&nbsp; 8 juin 2026 &nbsp;·&nbsp; snapshot 11/11</div>
+    </div>
+    <div class="phones-row">
+    <div class="phone-slot">
+      <div class="tab-label">DAILIES</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1918522/d.png" alt="DAILIES" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">GIGS</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1918522/h.png" alt="GIGS" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">MAIN</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1918522/c.png" alt="MAIN" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-slot">
+      <div class="tab-label">SHOP</div>
+      <div class="phone-wrapper">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <img src="1918522/s.png" alt="SHOP" loading="lazy">
+          </div>
+          <div class="phone-notch"></div>
+          <div class="phone-home"></div>
+          <div class="phone-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+</body>
+</html>
