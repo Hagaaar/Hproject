@@ -6,7 +6,7 @@
 <title>H PROJECT - TERMINAL LOCKED</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600;700;800;900&family=Doto:wght@100..900&family=Bungee+Hairline&display=swap" rel="stylesheet">
 <style>
-:root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00f0ff;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
+:root{--y:#fcee0a;--bg:#0b1118;--pan:#141d26;--brd:#233242;--cy:#00d8ec;--rd:#ff003c;--tx:#e0e0e0;--mu:#6b7d8f;--gn:#00ff66}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);background-image:radial-gradient(rgba(252,238,10,.15) 1px,transparent 1px);background-size:24px 24px;color:var(--tx)}
 body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;letter-spacing:.5px}
@@ -147,10 +147,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 
 /* ─── NAV ─── */
 #nav-wrap{
-  position:fixed;bottom:8px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;z-index:1000;
-  filter:drop-shadow(0 -6px 14px rgba(0,0,0,.9));
-  background:var(--y);
 }
 #nav{
   background:var(--y);
@@ -160,6 +158,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   align-items:stretch;
   clip-path:polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px);
   overflow:hidden;
+  filter:drop-shadow(0 -6px 14px rgba(0,0,0,.9));
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 .nb{
   flex:1;
@@ -1228,12 +1228,12 @@ function showLevelUp(lvl){
     const ofc  = document.createElement('canvas');
     ofc.width  = GW; ofc.height = GH;
     const oCtx = ofc.getContext('2d');
-    oCtx.shadowColor = '#00f0ff';
+    oCtx.shadowColor = '#00d8ec';
     oCtx.shadowBlur  = 28;
     oCtx.font         = FONT;
     oCtx.textBaseline = 'middle';
     oCtx.textAlign    = 'center';
-    oCtx.fillStyle    = '#00f0ff';
+    oCtx.fillStyle    = '#00d8ec';
     oCtx.fillText(TEXT, GW / 2, GH / 2);
 
     glitchCanvas.style.opacity = '1';
@@ -1327,12 +1327,12 @@ function showLevelUp(lvl){
       if (now-startTime > CLEAR_END) {
         cancelAnimationFrame(rafId);
         gc.clearRect(0,0,GW,GH);
-        gc.shadowColor = '#00f0ff';
+        gc.shadowColor = '#00d8ec';
         gc.shadowBlur  = 30;
         gc.font        = FONT;
         gc.textBaseline = 'middle';
         gc.textAlign   = 'center';
-        gc.fillStyle   = '#00f0ff';
+        gc.fillStyle   = '#00d8ec';
         gc.fillText(TEXT, GW/2, GH/2);
         return;
       }
@@ -1640,7 +1640,7 @@ function cancelEx(key,id,e,it){
 }
 function toggleAcc(k){if(_cbDragJustEnded){_cbDragJustEnded=false;return;}accSt[k]=accSt[k]===true?false:true;rCamps();}
 function buildSegBadge(done,total,col,rgb){
-  const c=col||'#00f0ff', g=rgb||'0,240,255';
+  const c=col||'#00d8ec', g=rgb||'0,216,236';
   let s='<div style="display:flex;gap:2px;align-items:center;margin-right:6px">';
   for(let i=0;i<total;i++){
     const lit=i<done;
@@ -1704,7 +1704,7 @@ function cbDragInit(key,e){
     if(!_cbDrag)return;
     _cbDrag.active=true;
     const el=document.getElementById('cb-'+key);
-    if(el){_cbDrag.cardH=el.getBoundingClientRect().height;el.style.transition='none';el.style.position='relative';el.style.zIndex='50';el.style.outline='2px solid var(--y)';}
+    if(el){_cbDrag.cardH=el.getBoundingClientRect().height;el.style.transition='none';el.style.position='relative';el.style.zIndex='50';el.style.filter='brightness(0.78)';}
     document.addEventListener('pointermove',cbDragMove,{passive:false});
     document.addEventListener('pointerup',cbDragEnd);
     document.addEventListener('pointercancel',cbDragEnd);
@@ -1753,7 +1753,7 @@ function cbDragEnd(){
   document.removeEventListener('pointerup',cbDragEnd);
   document.removeEventListener('pointercancel',cbDragEnd);
   const {key,active,insertIdx}=_cbDrag;_cbDrag=null;
-  document.querySelectorAll('[id^="cb-"]').forEach(c=>{c.style.transform='';c.style.transition='';c.style.outline='';c.style.zIndex='';c.style.position='';});
+  document.querySelectorAll('[id^="cb-"]').forEach(c=>{c.style.transform='';c.style.transition='';c.style.filter='';c.style.zIndex='';c.style.position='';});
   if(!active)return;
   _cbDragJustEnded=true;setTimeout(()=>{_cbDragJustEnded=false;},400);
   if(insertIdx!==undefined){
@@ -2083,7 +2083,7 @@ function undoM(){
   save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
 }
 
-let showAddForm=false;
+let showAddForm=false,showShopItems=false;
 function handleSearch(){
   const inp=document.getElementById('shop-search');
   const mag=document.getElementById('icon-mag');
@@ -2137,28 +2137,32 @@ function rShop(){
 
   // NOUVELLES CATÉGORIES ICI
   const cats=[{id:'all',l:'ALL'},{id:'fun',l:'FUN'},{id:'gear',l:'GEAR'},{id:'body',l:'BODY'},{id:'out',l:'OUT'},{id:'travel',l:'TRAVEL'}];
-  h+='<div class="shop-filters">'+cats.map(c=>'<button class="sfb'+(shopFilter===c.id?' on':'')+'" onclick="setShopFilter(\''+c.id+'\')">'+c.l+'</button>').join('')+'</div>';
-  
-  const filteredItems=S.shop.filter(s=>{
-    if(s.bought)return false;
-    const matchCat=(shopFilter==='all'||s.cat===shopFilter);
-    let matchSearch=false;
-    if(searchQ===''){matchSearch=true;}
-    else if(isNumSearch){matchSearch=s.cost<=searchNum;}
-    else{matchSearch=s.desc.toLowerCase().includes(searchQ)||s.t.toLowerCase().includes(searchQ);}
-    return matchCat&&matchSearch;
-  }).sort((a,b)=>a.cost-b.cost);
-  
-  if(filteredItems.length===0&&searchQ!==''){
-    h+='<div class="no-results"><span>⚠</span>NO MATCHING FILES IN DATABASE</div>';
-  }else{
-    h+=filteredItems.map(s=>{
-      const can=S.player.ip>=s.cost;
-      return '<div class="shi"><div class="shi-info"><div class="shin">'+s.desc+'</div><div class="shic">'+s.t+'</div></div>'+
-        '<span class="shp">'+s.cost+' E$</span>'+
-        '<button class="shbtn'+(can?' ok':' np')+'" onclick="'+(can?'buyIt(\''+s.id+'\')':'')+'">BUY</button>'+
-        (s.custom?'<button style="background:none;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="removeCustomItem(\''+s.id+'\')">✕</button>':'')+'</div>';
-    }).join('');
+  const allAvail=S.shop.filter(s=>!s.bought).length;
+  h+='<button onclick="toggleShopItems()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:'+(showShopItems?'rgba(252,238,10,.08)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px 14px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);margin-bottom:'+(showShopItems?'10px':'0')+'">'
+    +'ITEMS<span style="font-size:9px;letter-spacing:1px;opacity:.7">'+allAvail+' DISPONIBLES '+(showShopItems?'▲':'▼')+'</span></button>';
+
+  if(showShopItems){
+    h+='<div class="shop-filters">'+cats.map(c=>'<button class="sfb'+(shopFilter===c.id?' on':'')+'" onclick="setShopFilter(\''+c.id+'\')">'+c.l+'</button>').join('')+'</div>';
+    const filteredItems=S.shop.filter(s=>{
+      if(s.bought)return false;
+      const matchCat=(shopFilter==='all'||s.cat===shopFilter);
+      let matchSearch=false;
+      if(searchQ===''){matchSearch=true;}
+      else if(isNumSearch){matchSearch=s.cost<=searchNum;}
+      else{matchSearch=s.desc.toLowerCase().includes(searchQ)||s.t.toLowerCase().includes(searchQ);}
+      return matchCat&&matchSearch;
+    }).sort((a,b)=>a.cost-b.cost);
+    if(filteredItems.length===0&&searchQ!==''){
+      h+='<div class="no-results"><span>⚠</span>NO MATCHING FILES IN DATABASE</div>';
+    }else{
+      h+=filteredItems.map(s=>{
+        const can=S.player.ip>=s.cost;
+        return '<div class="shi"><div class="shi-info"><div class="shin">'+s.desc+'</div><div class="shic">'+s.t+'</div></div>'+
+          '<span class="shp">'+s.cost+' E$</span>'+
+          '<button class="shbtn'+(can?' ok':' np')+'" onclick="'+(can?'buyIt(\''+s.id+'\')':'')+'">BUY</button>'+
+          (s.custom?'<button style="background:none;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0" onclick="removeCustomItem(\''+s.id+'\')">✕</button>':'')+'</div>';
+      }).join('');
+    }
   }
   
   h+='<div style="margin-top:18px"><button onclick="toggleAddShop()" style="width:100%;background:'+(showAddForm?'rgba(252,238,10,.1)':'transparent')+';border:1px solid var(--y);color:var(--y);padding:12px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+(showAddForm?'✕ CANCEL':'+ ADD ITEM TO BLACK MARKET')+'</button>';
@@ -2218,6 +2222,7 @@ function useItem(id){
   showUsedOverlay(it.desc);
 }
 function toggleConsumed(){showConsumed=!showConsumed;rShop();}
+function toggleShopItems(){showShopItems=!showShopItems;rShop();}
 
 function useMystery(uid){
   const el=document.querySelector('[data-mid="'+uid+'"]'),idx=(S.mysteryPending||[]).findIndex(r=>r.uid===uid);
@@ -2302,10 +2307,10 @@ function exportData(){
   window._expCode=code;
   const btn=(label,fn,bg,col,border)=>'<button onclick="'+fn+'" style="width:100%;margin-top:9px;background:'+bg+';border:'+border+';color:'+col+';padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">'+label+'</button>';
   _showTransferOv(
-    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">EXPORT SAVE DATA</div>'+
+    '<div style="color:#00d8ec;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">EXPORT SAVE DATA</div>'+
     '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Copie le code ci-dessous OU copie le lien<br>direct à ouvrir dans n\'importe quel navigateur.</div>'+
-    '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.3);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
-    btn('COPIER LE CODE','_cpCode()','rgba(0,240,255,.13)','#00f0ff','1px solid rgba(0,240,255,.4)')+
+    '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.3);color:#00d8ec;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
+    btn('COPIER LE CODE','_cpCode()','rgba(0,240,255,.13)','#00d8ec','1px solid rgba(0,240,255,.4)')+
     btn('COPIER LE LIEN (recommandé)','_cpLink()','#fcee0a','#000','none')+
     btn('FERMER','_hideTransferOv()','transparent','rgba(255,255,255,.4)','1px solid rgba(255,255,255,.18)')
   );
@@ -2326,12 +2331,12 @@ function _cpLink(){
 }
 function importData(){
   _showTransferOv(
-    '<div style="color:#00f0ff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:16px">IMPORT SAVE DATA</div>'+
+    '<div style="color:#00d8ec;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:16px">IMPORT SAVE DATA</div>'+
     '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:16px;line-height:1.7">Appuie le bouton jaune — iOS te demandera<br>l\'autorisation de coller depuis le presse-papier.</div>'+
     '<button onclick="_clipImport()" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COLLER DEPUIS LE PRESSE-PAPIER</button>'+
     '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:12px 0 6px;letter-spacing:1px">— ou colle manuellement —</div>'+
-    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:72px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.22);color:#00f0ff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
-    '<button onclick="_applyImport()" style="width:100%;margin-top:7px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.28);color:#00f0ff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
+    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:72px;background:rgba(0,0,0,.6);border:1px solid rgba(0,240,255,.22);color:#00d8ec;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
+    '<button onclick="_applyImport()" style="width:100%;margin-top:7px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.28);color:#00d8ec;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
     '<button onclick="_hideTransferOv()" style="width:100%;margin-top:7px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
   );
 }
@@ -2360,7 +2365,7 @@ function _applyImportText(raw){
     checkReset();rHdr();
     const tab=document.querySelector('.nb.on');if(tab)go(tab.id.replace('nb-',''));
     const ov=document.getElementById('transfer-ov');
-    if(ov)ov.innerHTML='<div style="color:#00f0ff;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNC EN COURS...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Envoi vers le cloud…</div>';
+    if(ov)ov.innerHTML='<div style="color:#00d8ec;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNC EN COURS...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Envoi vers le cloud…</div>';
     setSy('synching');
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),9000);
@@ -2408,7 +2413,7 @@ function go(tab){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('s-'+tab).classList.add('on');
   document.getElementById('nb-'+tab).classList.add('on');
-  if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s')rShop();
+  if(tab==='d')rDailies();else if(tab==='h')rHebdo();else if(tab==='c')rCamps();else if(tab==='s'){showShopItems=false;rShop();}
   if(S.showMonthRecap&&S.lastMonthRecap){S.showMonthRecap=false;save();setTimeout(()=>showMonthRecapUI(S.lastMonthRecap),350);}
 }
 
@@ -2421,22 +2426,22 @@ function _snBuild(gi){
   const i=Math.max(0,Math.min(1.05,gi)),i2=i*i,i3=i2*i;
   const bi=i*(2/3),bi2=bi*bi,bi3=bi2*bi;
   
-  el.style.color = '#00f0ff';
+  el.style.color = '#00d8ec';
 
   el.style.textShadow=[
     `0 0 2px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
-    `0 0 7px rgba(0,240,255,${+(1.0*i).toFixed(3)})`,
-    `0 0 15px rgba(0,240,255,${+(0.90*i2).toFixed(3)})`,
-    `0 0 28px rgba(0,240,255,${+(0.72*i2).toFixed(3)})`,
-    `0 0 46px rgba(0,240,255,${+(0.46*i3).toFixed(3)})`,
+    `0 0 7px rgba(0,216,236,${+(1.0*i).toFixed(3)})`,
+    `0 0 15px rgba(0,216,236,${+(0.90*i2).toFixed(3)})`,
+    `0 0 28px rgba(0,216,236,${+(0.72*i2).toFixed(3)})`,
+    `0 0 46px rgba(0,216,236,${+(0.46*i3).toFixed(3)})`,
   ].join(',');
 
   el.style.boxShadow=[
-    `0 0 7px rgba(0,240,255,${+(0.65*bi).toFixed(3)})`,
-    `0 0 18px rgba(0,240,255,${+(0.42*bi2).toFixed(3)})`,
-    `0 0 35px rgba(0,240,255,${+(0.22*bi3).toFixed(3)})`,
-    `inset 0 0 10px rgba(0,240,255,${+(0.55*bi).toFixed(3)})`,
-    `inset 0 0 22px rgba(0,240,255,${+(0.30*bi2).toFixed(3)})`,
+    `0 0 7px rgba(0,216,236,${+(0.65*bi).toFixed(3)})`,
+    `0 0 18px rgba(0,216,236,${+(0.42*bi2).toFixed(3)})`,
+    `0 0 35px rgba(0,216,236,${+(0.22*bi3).toFixed(3)})`,
+    `inset 0 0 10px rgba(0,216,236,${+(0.55*bi).toFixed(3)})`,
+    `inset 0 0 22px rgba(0,216,236,${+(0.30*bi2).toFixed(3)})`,
   ].join(',');
 }
   function _snBreathe(ts){
