@@ -631,8 +631,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
           <svg id="icon-cross" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
-      <button onclick="toggleShopItems()" id="shop-acc-toggle" style="margin-left:8px;flex-shrink:0;background:rgba(0,0,0,0.25);border:none;border-left:2px solid rgba(0,0,0,0.2);padding:0 12px;height:100%;align-self:stretch;cursor:pointer;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%)">
-        <span id="shop-acc-arrow" style="display:inline-block;transition:transform .28s cubic-bezier(.4,0,.2,1);font-size:18px;color:rgba(0,0,0,0.65);line-height:1">&#9660;</span>
+      <button onclick="toggleShopItems()" id="shop-acc-toggle" style="margin-left:8px;flex-shrink:0;background:none;border:none;padding:0 8px;cursor:pointer;display:flex;align-items:center;justify-content:center">
+        <svg id="shop-acc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(0,0,0,0.65)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5L7 9.5L12 4.5"/></svg>
       </button>
     </div>
     <div id="sl"></div>
@@ -1004,7 +1004,7 @@ const DS={
   consumed:[]
 };
 
-let S={},shopFilter='all',showConsumed=false;
+let S={},shopFilter='all',showConsumed=false,showDoneQuests=false;
 const accSt={};
 let cfmAction=null,syncTmr=null,prevIp=0,prevXp=0;
 
@@ -1910,30 +1910,36 @@ function rCamps(){
     exList(S.kiroshi,'kiroshi'),phP);
 
   const campOrder=(S.mainOrder&&S.mainOrder.length===_CB_ORDER_DEFAULT.length)?S.mainOrder:_CB_ORDER_DEFAULT;
-  let h=campOrder.map(k=>blks[k]||'').join('');
-
-  const allCamps=[
+  const allCampsCheck=[
     {key:'portfolio',label:'PORTFOLIO',items:S.portfolio},
     {key:'memoire',label:'HMONP THESIS',items:S.memoire},
-    {key:'guitare',label:'SILVERHAND',items:S.guitare},
+    {key:'silverhand',label:'SILVERHAND',items:S.guitare},
     {key:'conduite',label:'NOMAD DRIVER',items:S.conduite},
+    {key:'biometrie',label:'BIOMETRICS',items:S.poids},
     {key:'kiroshi',label:'KIROSHI ARCHIVES',items:S.kiroshi},
-    {key:'poids',label:'BIOMETRICS',items:S.poids},
   ];
-  const doneCamps=allCamps.filter(c=>c.items.length>0&&c.items.every(i=>i.done));
+  const doneCamps=allCampsCheck.filter(c=>c.items.length>0&&c.items.every(i=>i.done));
+  const doneKeys=new Set(doneCamps.map(c=>c.key));
+  let h=campOrder.filter(k=>!doneKeys.has(k)).map(k=>blks[k]||'').join('');
+
   if(doneCamps.length>0){
-    h+='<div style="margin-top:28px">';
-    h+='<div style="font-size:10px;font-weight:900;letter-spacing:3px;color:rgba(252,238,10,0.28);margin-bottom:10px;border-bottom:1px solid rgba(252,238,10,0.07);padding-bottom:6px">// COMPLETED MAIN QUESTS</div>';
-    doneCamps.forEach(c=>{
-      const totalXp=c.items.reduce((s,i)=>s+i.xp,0),totalIp=c.items.reduce((s,i)=>s+i.ip,0);
-      h+='<div style="opacity:0.22;filter:grayscale(65%);pointer-events:none;margin-bottom:8px">'+
-        '<div style="display:flex;align-items:center;background:rgba(0,255,102,0.04);border:1px solid rgba(0,255,102,0.18);border-left:3px solid #00ff66;padding:10px 14px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)">'+
-        '<div style="flex:1"><div style="font-size:14px;font-weight:900;color:#00ff66;letter-spacing:1px">'+c.label+'</div>'+
-        '<div style="font-size:10px;font-weight:700;color:#00ff66;opacity:0.6;margin-top:2px">'+c.items.length+'/'+c.items.length+' OBJECTIVES CLEARED</div></div>'+
-        '<div style="text-align:right;font-size:11px;font-weight:800;color:#00ff66;line-height:1.5">+'+totalXp+' REP<br>+'+totalIp+' E$</div>'+
-        '</div></div>';
-    });
-    h+='</div>';
+    const doneQSvg=showDoneQuests
+      ?'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8a9bae" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2L12 12M12 2L2 12"/></svg>'
+      :'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8a9bae" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5L7 9.5L12 4.5"/></svg>';
+    h+='<button onclick="toggleDoneQuests()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#1c2535;border:1px solid #2a3a50;color:#8a9bae;padding:12px 14px;font-size:10px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);margin-top:16px">COMPLETED<div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px">'+doneCamps.length+' QUESTS</span>'+doneQSvg+'</div></button>';
+    if(showDoneQuests){
+      h+='<div style="margin-top:4px">';
+      doneCamps.forEach(c=>{
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:3px;background:#1c2535;border:1px solid #2a3a50;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">'+
+          '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:13px;font-weight:700;color:#8a9bae;line-height:1.2">'+c.label+'</div>'+
+          '<div style="font-size:9px;font-weight:800;color:#4a5a6a;letter-spacing:.5px;margin-top:2px;text-transform:uppercase">'+c.items.length+'/'+c.items.length+' OBJECTIVES CLEARED</div>'+
+          '</div>'+
+          '<div style="font-size:10px;font-weight:800;color:#4a5a6a;flex-shrink:0;letter-spacing:1px">100%</div>'+
+          '</div>';
+      });
+      h+='</div>';
+    }
   }
   document.getElementById('cl').innerHTML=h;
 }
@@ -2138,9 +2144,8 @@ function rShop(){
   }
   document.getElementById('sp').innerHTML=ph;
 
-  // Mettre à jour la flèche accordéon
   const arrowEl=document.getElementById('shop-acc-arrow');
-  if(arrowEl)arrowEl.style.transform=showShopItems?'rotate(180deg)':'rotate(0deg)';
+  if(arrowEl)arrowEl.innerHTML=showShopItems?'<path d="M2 2L12 12M12 2L2 12"/>':'<path d="M2 4.5L7 9.5L12 4.5"/>';
 
   // NOUVELLES CATÉGORIES ICI
   const cats=[{id:'all',l:'ALL'},{id:'fun',l:'FUN'},{id:'gear',l:'GEAR'},{id:'body',l:'BODY'},{id:'out',l:'OUT'},{id:'travel',l:'TRAVEL'}];
@@ -2171,8 +2176,10 @@ function rShop(){
   
   const consumed=S.consumed||[];
   if(consumed.length>0){
-    h+='<div style="height:1px;background:rgba(255,255,255,.12);margin:18px 0 12px"></div>';
-    h+='<button onclick="toggleConsumed()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#1c2535;border:1px solid #2a3a50;color:#8a9bae;padding:12px 14px;font-size:10px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)">CONSUMED<span style="font-size:9px">'+consumed.length+' ITEMS '+(showConsumed?'▲':'▼')+'</span></button>';
+    const consumedSvg=showConsumed
+      ?'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8a9bae" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2L12 12M12 2L2 12"/></svg>'
+      :'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8a9bae" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5L7 9.5L12 4.5"/></svg>';
+    h+='<button onclick="toggleConsumed()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#1c2535;border:1px solid #2a3a50;color:#8a9bae;padding:12px 14px;font-size:10px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:3px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);margin-top:4px">CONSUMED<div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px">'+consumed.length+' ITEMS</span>'+consumedSvg+'</div></button>';
     if(showConsumed){
       h+='<div style="margin-top:4px">';
       h+=consumed.slice().reverse().map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:3px;background:#1c2535;border:1px solid #2a3a50;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#8a9bae;text-transform:none;line-height:1.2">'+c.desc+'</div><div style="font-size:9px;font-weight:800;color:#4a5a6a;letter-spacing:.5px;margin-top:2px;text-transform:uppercase">'+c.t+'</div></div><div style="font-size:8px;font-weight:800;color:#4a5a6a;flex-shrink:0;letter-spacing:1px">USED</div></div>').join('');
@@ -2215,6 +2222,7 @@ function useItem(id){
 }
 function toggleConsumed(){showConsumed=!showConsumed;rShop();}
 function toggleShopItems(){showShopItems=!showShopItems;rShop();}
+function toggleDoneQuests(){showDoneQuests=!showDoneQuests;rCamps();}
 
 function useMystery(uid){
   const el=document.querySelector('[data-mid="'+uid+'"]'),idx=(S.mysteryPending||[]).findIndex(r=>r.uid===uid);
@@ -2246,22 +2254,30 @@ function rStats(){
   };
   const campOrder=(S.mainOrder&&S.mainOrder.length===_CB_ORDER_DEFAULT.length)?S.mainOrder:_CB_ORDER_DEFAULT;
   const cats=campOrder.map(k=>catMap[k]).filter(Boolean);
+  const activeCats=cats.filter(c=>c.items.length===0||!c.items.every(i=>i.done));
+  const doneCats=cats.filter(c=>c.items.length>0&&c.items.every(i=>i.done));
   let h='<div class="st-hero"><div class="st-hero-left"><div class="st-hero-label">STREET CRED</div><div class="st-hero-lv">'+p.level+'</div></div><div class="st-hero-right"><div class="st-hero-class">CORPO CLASS</div><div class="st-hero-xp">'+p.xp+' / '+need+' REP</div><div class="st-hero-xpbar"><div class="st-hero-xpfill" style="width:'+xpPct+'%"></div></div></div></div>';
-  h+=cats.map(c=>{
+  h+=[...activeCats,...doneCats].map(c=>{
     const done=c.items.filter(e=>e.done),d=done.length,t=c.items.length;
     const cpct=t>0?Math.round((d/t)*100):0;
     const catXp=done.reduce((s,e)=>s+(e.xp||0),0),catIp=done.reduce((s,e)=>s+(e.ip||0),0);
     return '<div class="scamp '+c.cls+'"><div class="scamp-left"><div class="scamp-top"><div class="scamp-name">'+c.name+'</div><div class="scamp-inline-meta"><span class="sim-rep">+'+catXp+' REP</span><span class="sim-funds">E$ +'+catIp+'</span></div></div>'+buildSegs(d,t)+'</div><div class="scamp-pct">'+cpct+'%</div></div>';
   }).join('');
 
-  // ── Streak milestones chart ──
+  // ── Streak milestones ──
   const sk=S.player.streak||0,earned=S.streakMilestonesEarned||[];
   const mils=[{n:7,xp:150,ip:100,col:'var(--cy)'},{n:15,xp:350,ip:250,col:'#c084fc'},{n:30,xp:800,ip:600,col:'var(--y)'}];
-  h+='<div class="st-section-title">STREAK MILESTONES</div><div class="st-chart-box">';
+  h+='<div class="st-section-title">STREAK MILESTONES</div>';
+  h+='<div style="display:flex;gap:6px;margin-bottom:16px">';
   mils.forEach(m=>{
-    const fp=Math.min(100,Math.round((sk/m.n)*100));
     const isDone=earned.includes(m.n);
-    h+='<div class="scr-row"><div class="scr-label">'+m.n+'D</div><div class="scr-track"><div class="scr-fill" style="width:'+fp+'%;background:'+m.col+';opacity:'+(isDone?'1':'.65')+'"></div><div class="scr-track-txt">'+Math.min(sk,m.n)+'/'+m.n+'</div></div><div class="scr-reward'+(isDone?' scr-earned':'')+'">+'+(isDone?'&#10003; ':'')+m.xp+' REP &nbsp;+'+m.ip+' E$</div></div>';
+    const pct=Math.min(100,Math.round((sk/m.n)*100));
+    h+='<div style="flex:1;background:'+(isDone?m.col:'rgba(255,255,255,.05)')+';border:1px solid '+(isDone?m.col:'rgba(255,255,255,.1)')+';padding:6px 4px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);text-align:center;position:relative;overflow:hidden">'+
+      (isDone?'':`<div style="position:absolute;bottom:0;left:0;width:${pct}%;height:3px;background:${m.col};opacity:.7"></div>`)+
+      '<div style="font-size:13px;font-weight:900;color:'+(isDone?'#000':m.col)+';line-height:1">'+m.n+'D</div>'+
+      '<div style="font-size:8px;font-weight:800;color:'+(isDone?'rgba(0,0,0,0.7)':'rgba(255,255,255,.45)')+';margin-top:2px;letter-spacing:.5px">+'+m.xp+' REP</div>'+
+      '<div style="font-size:8px;font-weight:800;color:'+(isDone?'rgba(0,0,0,0.6)':'rgba(255,255,255,.35)')+';letter-spacing:.5px">+'+m.ip+' E$</div>'+
+      '</div>';
   });
   h+='</div>';
 
@@ -2269,15 +2285,20 @@ function rStats(){
   const td=today(),ym=td.slice(0,7),dayNum=parseInt(td.slice(8,10));
   const log=S.dailyTaskLog||[];
   const mLog=log.filter(e=>e.d.startsWith(ym));
-  const maxC=Math.max(1,12,...mLog.map(e=>e.count));
+  const maxC=Math.max(1,...mLog.map(e=>e.count));
   const monthLabel=ym.replace('-','.');
-  h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div><div class="st-chart-box st-daily-chart">';
+  const barMaxH=60;
+  h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div>';
+  h+='<div style="display:flex;gap:2px;align-items:flex-end;padding:0 0 4px;margin-bottom:16px">';
   for(let day=1;day<=dayNum;day++){
     const ds=ym+'-'+String(day).padStart(2,'0');
     const entry=log.find(x=>x.d===ds);
     const cnt=entry?entry.count:0;
-    const bp=cnt>0?Math.min(100,Math.round((cnt/maxC)*100)):0;
-    h+='<div class="dc-row"><div class="dc-day">'+String(day).padStart(2,'0')+'</div><div class="dc-track"><div class="dc-fill" style="width:'+bp+'%"></div></div><div class="dc-cnt">'+(cnt>0?cnt:'')+'</div></div>';
+    const barH=cnt>0?Math.max(4,Math.round((cnt/maxC)*barMaxH)):2;
+    h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">'+
+      (cnt>0?'<div style="font-size:7px;font-weight:800;color:var(--cy);line-height:1;margin-bottom:2px">'+cnt+'</div>':'')+
+      '<div style="width:100%;height:'+barH+'px;background:'+(cnt>0?'var(--cy)':'rgba(255,255,255,.06)')+'"></div>'+
+      '</div>';
   }
   h+='</div>';
 
