@@ -1621,8 +1621,7 @@ function tTask(type,id,e,action){
 
 function exList(items,key){
   return items.map((ex,i)=>{
-    const locked=(key==='portfolio'||key==='memoire'||key==='guitare'||key==='kiroshi')&&i>0&&!items[i-1].done;
-    return '<div class="ex'+(ex.done?' dn':'')+(ex.boss?' boss':'')+(locked?' lk':'')+'" id="task-'+ex.id+'" onclick="tEx(\''+key+'\',\''+ex.id+'\',event)">'+
+    return '<div class="ex'+(ex.done?' dn':'')+(ex.boss?' boss':'')+'" id="task-'+ex.id+'" onclick="tEx(\''+key+'\',\''+ex.id+'\',event)">'+
       '<div class="ex-content"><div class="et">'+ex.desc+'</div><div class="etc">// '+ex.t+'</div><div class="erw">+'+ex.xp+' REP / +'+ex.ip+' E$</div></div>'+
       '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>';
   }).join('');
@@ -1864,7 +1863,7 @@ function rCamps(){
     '</div></div>'+
     exList(S.guitare,'guitare'),gP);
   const drD=S.conduite.filter(d=>d.done).length,drP=Math.round(drD/S.conduite.length*100);
-  blks.conduite=buildAcc('conduite','NOMAD DRIVER',buildSegBadge(drD,2,'#ff8c00','255,140,0'),
+  blks.conduite=buildAcc('conduite','NOMAD DRIVER',buildSegBadge(drD,S.conduite.length,'#ff8c00','255,140,0'),
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">DRIVE SESSIONS THIS WEEK : '+(S.conduiteWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
