@@ -383,7 +383,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .cb-drag-icon{font-size:13px;color:rgba(0,0,0,.32);margin-right:4px;flex-shrink:0;font-weight:900;line-height:1;}
 @keyframes gigBtnPop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
 .gig-cntbtn{font-size:38px;font-weight:900;line-height:1;letter-spacing:-.5px;}
-.gig-pressing{border-color:var(--rd)!important;transition:border-color .1s!important;}
+.qi.gig-hold{transition:none!important;animation:gigBorderFill .8s .2s ease-out forwards;}
+@keyframes gigBorderFill{from{border-color:var(--y)}to{border-color:var(--rd)}}
 
 /* TOAST */
 #tc{position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
@@ -827,7 +828,7 @@ const DS={
   player:{level:1,xp:0,ip:0,streak:0},
   lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,iceProtocolUsed:0,iceProtocolMonth:'',
   portfolioWeek:0,memoireWeek:0,lastPortfolioXp:0,lastPortfolioIp:0,lastPortfolioDate:'',lastMemoireXp:0,lastMemoireIp:0,lastMemoireDate:'',
-  kiroshiWeek:0,lastKiroshiXp:0,lastKiroshiIp:0,lastKiroshiDate:'',mainOrder:[],
+  kiroshiWeek:0,lastKiroshiXp:0,lastKiroshiIp:0,lastKiroshiDate:'',kiroshiPhotos:0,lastKiroshiPhotosAdded:0,kiroshiPhotoMilestones:[],mainOrder:[],
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
   monthlyStats:{xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}},
   lastMonthRecap:null,showMonthRecap:false,
@@ -871,12 +872,11 @@ const DS={
     {id:'w15',t:'FOOD DATA AUDIT',desc:'Vérifier et mettre à jour le suivi macro de la semaine (app meal prep, journal ou note)',done:false,xp:40,ip:30},
   ],
   kiroshi:[
-    {id:'ph1',t:'LIGHTROOM BOOT SEQUENCE',desc:'Trier et noter les 40 000 photos — garder les keepers, rejeter le reste',done:false,xp:150,ip:150},
-    {id:'ph2',t:'CHERRY BLOSSOM PROTOCOL',desc:'Créer l\'album Japon Voyage 1',done:false,xp:175,ip:175},
-    {id:'ph3',t:'SAKURA EXTRACTION',desc:'Créer l\'album Japon Voyage 2',done:false,xp:175,ip:175},
-    {id:'ph4',t:'ATLAS OVERRIDE',desc:'Créer l\'album Maroc — Deux Actes',done:false,xp:175,ip:175},
-    {id:'ph5',t:'MICHAEL TRIBUTE FILE',desc:'Créer l\'album départ Michael',done:false,xp:200,ip:200},
-    {id:'ph6',t:'GUARDIAN PROTOCOL',desc:'Créer l\'album pour les deux nièces',done:false,xp:200,ip:200},
+    {id:'ph5',t:'MICHAEL TRIBUTE FILE',desc:"Créer l'album départ Michael",done:false,xp:200,ip:200},
+    {id:'ph2',t:'CHERRY BLOSSOM PROTOCOL',desc:"Créer l'album Japon Voyage 1",done:false,xp:175,ip:175},
+    {id:'ph3',t:'SAKURA EXTRACTION',desc:"Créer l'album Japon Voyage 2",done:false,xp:175,ip:175},
+    {id:'ph6',t:'GUARDIAN PROTOCOL',desc:"Créer l'album pour les deux nièces",done:false,xp:200,ip:200},
+    {id:'ph4',t:'ATLAS OVERRIDE',desc:"Créer l'album Maroc — Deux Actes",done:false,xp:175,ip:175},
     {id:'ph7',t:'KIROSHI MASTER ARCHIVE',desc:'Exporter, commander et recevoir tous les albums imprimés',done:false,xp:500,ip:600,boss:true},
   ],
   portfolio:[
@@ -1021,7 +1021,7 @@ function _hasMeaningfulData(d){return d&&d.player&&(d.player.xp>0||d.player.ip>0
 function _applySnapshot(saved){
   S=JSON.parse(JSON.stringify(DS));
   if(saved.player)S.player={...S.player,...saved.player};
-  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','kiroshiWeek','lastKiroshiXp','lastKiroshiIp','lastKiroshiDate','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','lastMonthRecap','showMonthRecap','iceProtocolUsed','iceProtocolMonth'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','kiroshiWeek','lastKiroshiXp','lastKiroshiIp','lastKiroshiDate','kiroshiPhotos','lastKiroshiPhotosAdded','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','kiroshiPhotoMilestones','lastMonthRecap','showMonthRecap','iceProtocolUsed','iceProtocolMonth'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
   if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
   if(!S.weightLog)S.weightLog=[];
   ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite','kiroshi'].forEach(k=>{
@@ -1485,9 +1485,17 @@ function rHebdo(){
 }
 
 const _gigLP={};
+function _gigReset(id){
+  const st=_gigLP[id];if(!st)return;
+  clearTimeout(st.tmr);
+  const f=document.getElementById('lpfill-'+id);
+  if(f){if(st.endListener)f.removeEventListener('animationend',st.endListener);f.style.animation='none';}
+  const c=document.getElementById('task-'+id);if(c)c.classList.remove('gig-hold');
+  delete _gigLP[id];
+}
 function gigDown(id,e){
   _gigLP[id]={t:Date.now(),done:false,cx:e.clientX||0,cy:e.clientY||0,moved:false};
-  const card=document.getElementById('task-'+id);if(card)card.classList.add('gig-pressing');
+  const card=document.getElementById('task-'+id);
   const f=document.getElementById('lpfill-'+id);
   if(f){
     const rect=card?card.getBoundingClientRect():null;
@@ -1497,31 +1505,31 @@ function gigDown(id,e){
     f.style.setProperty('--gy',gy+'%');
     f.style.animation='none';void f.offsetWidth;
     f.style.animation='gigLpFill 1s ease-out forwards';
+    const onEnd=()=>{
+      f.removeEventListener('animationend',onEnd);
+      const st=_gigLP[id];
+      if(st&&!st.moved){
+        st.done=true;
+        f.style.animation='none';
+        if(card)card.classList.remove('gig-hold');
+        delete _gigLP[id];
+        gigSub(id);
+      }
+    };
+    f.addEventListener('animationend',onEnd);
+    _gigLP[id].endListener=onEnd;
   }
+  if(card)card.classList.add('gig-hold');
   _gigLP[id].tmr=setTimeout(()=>{
     const st=_gigLP[id];
-    if(st&&!st.moved){
-      st.done=true;
-      const f2=document.getElementById('lpfill-'+id);if(f2)f2.style.animation='none';
-      const c=document.getElementById('task-'+id);if(c)c.classList.remove('gig-pressing');
-      gigSub(id);
-    }
-  },1500);
+    if(st&&!st.moved&&!st.done){st.done=true;_gigReset(id);gigSub(id);}
+  },1600);
 }
 function gigMove(id,e){
   const st=_gigLP[id];if(!st)return;
-  if(Math.abs((e.clientX||0)-st.cx)>8||Math.abs((e.clientY||0)-st.cy)>8){
-    st.moved=true;clearTimeout(st.tmr);
-    const f=document.getElementById('lpfill-'+id);if(f)f.style.animation='none';
-    const c=document.getElementById('task-'+id);if(c)c.classList.remove('gig-pressing');
-  }
+  if(Math.abs((e.clientX||0)-st.cx)>8||Math.abs((e.clientY||0)-st.cy)>8){st.moved=true;_gigReset(id);}
 }
-function gigUp(id){
-  const st=_gigLP[id];if(!st)return;
-  clearTimeout(st.tmr);
-  const f=document.getElementById('lpfill-'+id);if(f)f.style.animation='none';
-  const c=document.getElementById('task-'+id);if(c)c.classList.remove('gig-pressing');
-}
+function gigUp(id){_gigReset(id);}
 function gigTap(id,e){
   const st=_gigLP[id];delete _gigLP[id];
   if(st&&(st.done||st.moved))return;
@@ -1691,7 +1699,7 @@ function cbDragInit(key,e){
     if(!_cbDrag)return;
     _cbDrag.active=true;
     const el=document.getElementById('cb-'+key);
-    if(el){el.style.opacity='.88';el.style.boxShadow='0 16px 48px rgba(0,0,0,.95)';el.style.zIndex='50';el.style.position='relative';}
+    if(el){el.style.boxShadow='0 16px 48px rgba(0,0,0,.95)';el.style.zIndex='50';el.style.position='relative';}
     document.addEventListener('pointermove',cbDragMove,{passive:false});
     document.addEventListener('pointerup',cbDragEnd);
     document.addEventListener('pointercancel',cbDragEnd);
@@ -1730,7 +1738,7 @@ function cbDragEnd(){
   document.removeEventListener('pointercancel',cbDragEnd);
   const {key,active,insertIdx}=_cbDrag;_cbDrag=null;
   const el=document.getElementById('cb-'+key);
-  if(el){el.style.opacity='';el.style.transform='';el.style.boxShadow='';el.style.zIndex='';el.style.position='';}
+  if(el){el.style.transform='';el.style.boxShadow='';el.style.zIndex='';el.style.position='';}
   if(!active)return;
   _cbDragJustEnded=true;setTimeout(()=>{_cbDragJustEnded=false;},400);
   if(insertIdx!==undefined){
@@ -1810,8 +1818,8 @@ function rCamps(){
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">WORK SESSIONS THIS WEEK : '+(S.portfolioWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logP(30,event)">30 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logP(60,event)">1H</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#fcee0a;color:#000" onclick="logP(30,event)">30 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#e07000;color:#000" onclick="logP(60,event)">1H</button>'+
     '<button onclick="undoP()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.portfolio,'portfolio'),pfP);
@@ -1820,8 +1828,8 @@ function rCamps(){
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">WORK SESSIONS THIS WEEK : '+(S.memoireWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logM(30,event)">30 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logM(60,event)">1H</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#fcee0a;color:#000" onclick="logM(30,event)">30 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#e07000;color:#000" onclick="logM(60,event)">1H</button>'+
     '<button onclick="undoM()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.memoire,'memoire'),mP);
@@ -1830,10 +1838,10 @@ function rCamps(){
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">SESSIONS THIS WEEK : '+(S.practiceWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(10,event)">10 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(15,event)">15 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px" onclick="logG(20,event)">20 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:var(--cy)" onclick="logG(30,event)">30+ MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#fcee0a;color:#000" onclick="logG(10,event)">10 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#f5b200;color:#000" onclick="logG(15,event)">15 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#e07000;color:#000" onclick="logG(20,event)">20 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#c45500;color:#000" onclick="logG(30,event)">30+ MIN</button>'+
     '<button onclick="undoG()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.guitare,'guitare'),gP);
@@ -1842,7 +1850,7 @@ function rCamps(){
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">DRIVE SESSIONS THIS WEEK : '+(S.conduiteWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#ff8c00" onclick="logC(event)">1H FIELD DRIVE</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:11px;background:#fcee0a;color:#000" onclick="logC(event)">1H FIELD DRIVE</button>'+
     '<button onclick="undoC()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     exList(S.conduite,'conduite'),drP);
@@ -1857,16 +1865,30 @@ function rCamps(){
     '</div>'+
     (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
   const phD=S.kiroshi.filter(e=>e.done).length,phT=S.kiroshi.length,phP=Math.round(phD/phT*100);
+  const kpDone=S.kiroshiPhotos||0,kpPct=Math.min(100,Math.round(kpDone/40000*100));
+  const kpMiles=S.kiroshiPhotoMilestones||[];
+  const kpMilesHtml=_KP_MILESTONES.map(m=>{const earned=kpMiles.includes(m.n);const lbl=m.n>=1000?(m.n/1000)+'K':String(m.n);return '<span style="font-size:9px;font-weight:800;padding:2px 6px;border:1px solid '+(earned?'#ff9f43':'rgba(255,159,67,.3)')+';color:'+(earned?'#ff9f43':'rgba(255,159,67,.35)')+';background:'+(earned?'rgba(255,159,67,.12)':'transparent')+';clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)">'+(earned?'&#10003; ':'')+lbl+'</span>';}).join('');
   blks.kiroshi=buildAcc('kiroshi','KIROSHI ARCHIVES',buildSegBadge(phD,phT,'#ff9f43','255,159,67'),
     '<div style="padding:0 12px 8px">'+
     '<div style="font-size:13px;font-weight:800;color:var(--y);margin-bottom:12px">SESSIONS THIS WEEK : '+(S.kiroshiWeek||0)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:4px;align-items:stretch">'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:10px" onclick="logKiroshi(30,event)">30 MIN</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:var(--cy)" onclick="logKiroshi(60,event)">1H</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#ff9f43;color:#000" onclick="logKiroshi(120,event)">2H</button>'+
-    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#ffb800;color:#000" onclick="logKiroshi(150,event)">2H30</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#fcee0a;color:#000" onclick="logKiroshi(30,event)">30 MIN</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#f5b200;color:#000" onclick="logKiroshi(60,event)">1H</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#e07000;color:#000" onclick="logKiroshi(120,event)">2H</button>'+
+    '<button class="wsave" style="flex:1;padding:8px;font-size:10px;background:#c45500;color:#000" onclick="logKiroshi(150,event)">2H30</button>'+
     '<button onclick="undoKiroshi()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
+    '<div style="padding:8px 12px 10px;border-top:1px solid rgba(255,255,255,.05)">'+
+    '<div style="font-size:10px;font-weight:900;letter-spacing:2px;color:#ff9f43;margin-bottom:8px">TRI / TRAITEMENT / ARCHIVAGE</div>'+
+    '<div style="background:rgba(255,255,255,.05);height:7px;clip-path:polygon(4px 0,100% 0,100% 100%,0 100%,0 4px);margin-bottom:5px"><div style="height:100%;width:'+kpPct+'%;background:linear-gradient(to right,#fcee0a,#ff9f43);transition:width .4s"></div></div>'+
+    '<div style="font-size:11px;font-weight:800;color:#ff9f43;margin-bottom:8px">'+kpDone.toLocaleString()+' / 40 000 PHOTOS</div>'+
+    '<div style="display:flex;gap:6px;margin-bottom:8px;align-items:stretch">'+
+    '<input id="kp-inp" type="number" inputmode="numeric" placeholder="NB PHOTOS" min="1" style="flex:1;min-width:0;font-size:14px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(255,159,67,.06);border:1px solid rgba(255,159,67,.25);color:#ff9f43;padding:8px;font-family:Rajdhani,sans-serif;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);outline:none">'+
+    '<button onclick="logKiroshiPhotos(event)" style="background:#ff9f43;border:none;color:#000;padding:8px 14px;font-size:11px;font-weight:900;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">AJOUTER</button>'+
+    '<button onclick="undoKiroshiPhotos()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 10px;font-size:11px;font-weight:900;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
+    '</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:4px">'+kpMilesHtml+'</div>'+
+    '</div>'+
     exList(S.kiroshi,'kiroshi'),phP);
 
   const campOrder=(S.mainOrder&&S.mainOrder.length===_CB_ORDER_DEFAULT.length)?S.mainOrder:_CB_ORDER_DEFAULT;
@@ -1989,6 +2011,50 @@ function undoKiroshi(){
   S.kiroshiWeek=Math.max(0,S.kiroshiWeek-1);
   S.lastKiroshiXp=0;S.lastKiroshiIp=0;S.lastKiroshiDate='';
   save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
+}
+const _KP_MILESTONES=[
+  {n:500,  xp:25, ip:15},
+  {n:1000, xp:50, ip:30},
+  {n:2500, xp:100,ip:75},
+  {n:5000, xp:200,ip:150},
+  {n:10000,xp:400,ip:300},
+  {n:20000,xp:600,ip:500},
+  {n:40000,xp:1000,ip:800},
+];
+function logKiroshiPhotos(e){
+  const inp=document.getElementById('kp-inp');
+  const n=parseInt(inp?inp.value:0)||0;
+  if(n<=0){toast('ENTRE UN NOMBRE VALIDE','err');return;}
+  const prev=S.kiroshiPhotos||0;
+  S.kiroshiPhotos=prev+n;
+  S.lastKiroshiPhotosAdded=n;
+  S.kiroshiPhotoMilestones=S.kiroshiPhotoMilestones||[];
+  let bonusXp=0,bonusIp=0;
+  _KP_MILESTONES.forEach(m=>{
+    if(!S.kiroshiPhotoMilestones.includes(m.n)&&S.kiroshiPhotos>=m.n){
+      S.kiroshiPhotoMilestones.push(m.n);
+      bonusXp+=m.xp;bonusIp+=m.ip;
+      setTimeout(()=>toast((m.n>=1000?(m.n/1000)+'K':m.n)+' PHOTOS — +'+m.xp+' REP +'+m.ip+' E$','win'),300);
+    }
+  });
+  if(bonusXp>0){addXP(bonusXp);S.player.ip+=bonusIp;}
+  if(inp)inp.value='';
+  save();rCamps();rHdr();
+}
+function undoKiroshiPhotos(){
+  const n=S.lastKiroshiPhotosAdded||0;
+  if(!n){toast('RIEN À ANNULER','err');return;}
+  const after=S.kiroshiPhotos||0;
+  const before=Math.max(0,after-n);
+  S.kiroshiPhotos=before;
+  S.lastKiroshiPhotosAdded=0;
+  const lost=(S.kiroshiPhotoMilestones||[]).filter(reached=>reached>before&&reached<=after);
+  lost.forEach(reached=>{
+    const m=_KP_MILESTONES.find(mm=>mm.n===reached);
+    if(m){subXP(m.xp);S.player.ip=Math.max(0,S.player.ip-m.ip);}
+    S.kiroshiPhotoMilestones=S.kiroshiPhotoMilestones.filter(x=>x!==reached);
+  });
+  save();rCamps();rHdr();toast('-'+n+' PHOTOS ANNULÉES','err');
 }
 function undoM(){
   if(!(S.memoireWeek>0)){toast('NO SESSION TO CANCEL','err');return;}
