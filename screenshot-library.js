@@ -2,15 +2,20 @@
 'use strict';
 
 // Requires playwright installed globally at /opt/node22/lib/node_modules/playwright
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium, devices } = require('/opt/node22/lib/node_modules/playwright');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
 const OUT_DIR = path.join(__dirname, 'screenshot-library');
-const VIEWPORT = { width: 375, height: 812, deviceScaleFactor: 2 };
 const PORT = 7331;
+
+// iPhone 13 Mini preset with full-screen height (no browser chrome)
+const IPHONE = {
+  ...devices['iPhone 13 Mini'],
+  viewport: { width: 375, height: 812 },
+};
 
 const TABS = [
   { id: 'd', name: 'DAILIES' },
@@ -81,8 +86,7 @@ async function main() {
 
     for (const tab of TABS) {
       const ctx = await browser.newContext({
-        viewport: { width: VIEWPORT.width, height: VIEWPORT.height },
-        deviceScaleFactor: VIEWPORT.deviceScaleFactor,
+        ...IPHONE,
         extraHTTPHeaders: { 'Accept-Language': 'fr-FR' },
       });
       const page = await ctx.newPage();
@@ -125,7 +129,7 @@ async function main() {
         const file = `${short}/${tab.id}.png`;
         await page.screenshot({
           path: path.join(OUT_DIR, file),
-          clip: { x: 0, y: 0, width: VIEWPORT.width, height: VIEWPORT.height },
+          clip: { x: 0, y: 0, width: IPHONE.viewport.width, height: IPHONE.viewport.height },
         });
 
         screenshots.push({ tab: tab.name, tabId: tab.id, file });
