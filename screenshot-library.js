@@ -80,9 +80,12 @@ async function main() {
     const screenshots = [];
 
     for (const tab of TABS) {
-      const page = await browser.newPage();
-      await page.setViewportSize({ width: VIEWPORT.width, height: VIEWPORT.height });
-      await page.setExtraHTTPHeaders({ 'Accept-Language': 'fr-FR' });
+      const ctx = await browser.newContext({
+        viewport: { width: VIEWPORT.width, height: VIEWPORT.height },
+        deviceScaleFactor: VIEWPORT.deviceScaleFactor,
+        extraHTTPHeaders: { 'Accept-Language': 'fr-FR' },
+      });
+      const page = await ctx.newPage();
 
       // Bypass PIN auth before any page script runs
       await page.addInitScript(() => {
@@ -93,8 +96,10 @@ async function main() {
       });
 
       try {
-        await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 12000 });
-        await page.waitForTimeout(600);
+        await page.goto(BASE_URL, { waitUntil: 'load', timeout: 20000 });
+        // Wait for Google Fonts (Rajdhani, Doto, Bungee Hairline) to be fully applied
+        await page.evaluate(() => document.fonts.ready);
+        await page.waitForTimeout(800);
 
         // Force-hide auth overlay in case localStorage was blocked
         await page.evaluate(() => {
@@ -113,7 +118,7 @@ async function main() {
           await page.evaluate(id => go(id), tab.id);
           await page.waitForTimeout(350);
         } else if (tab.id !== 'd') {
-          await page.close();
+          await ctx.close();
           continue;
         }
 
@@ -129,7 +134,7 @@ async function main() {
         process.stdout.write(`       ✗ ${tab.name}: ${err.message.split('\n')[0]}\n`);
       }
 
-      await page.close();
+      await ctx.close();
     }
 
     if (screenshots.length) {
