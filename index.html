@@ -2100,7 +2100,7 @@ function undoM(){
   save();rCamps();rHdr();toast('SESSION CANCELED'+(dtFmt?' / '+dtFmt:''),'err');
 }
 
-let showAddForm=false,showShopItems=true;
+let showShopItems=true;
 function handleSearch(){
   const inp=document.getElementById('shop-search');
   const mag=document.getElementById('icon-mag');
@@ -2117,15 +2117,6 @@ function clearSearch(){
   else if(inp){inp.focus();}
 }
 function setShopFilter(c){shopFilter=c;rShop();}
-function toggleAddShop(){showAddForm=!showAddForm;rShop();setTimeout(()=>{const el=document.getElementById('asi-desc');if(el)el.focus();},50);}
-function saveShopItem(){
-  const desc=(document.getElementById('asi-desc').value||'').trim();
-  const cost=parseInt(document.getElementById('asi-cost').value||'0');
-  const cat=document.getElementById('asi-cat').value||'fun';
-  if(!desc||isNaN(cost)||cost<1){toast('FILL ALL FIELDS','err');return;}
-  S.shop.push({id:'cu_'+Date.now(),t:'CUSTOM',desc:desc,cost:cost,cat:cat,custom:true});
-  showAddForm=false;save();rShop();toast('ITEM ADDED TO BLACK MARKET','gold');
-}
 function removeCustomItem(id){S.shop=S.shop.filter(s=>s.id!==id);save();rShop();toast('ITEM REMOVED','err');}
 
 function rShop(){
