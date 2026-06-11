@@ -2647,7 +2647,6 @@ function pullFromCloud(autoMode){
         localStorage.removeItem('cp_sync_pending');
         prevIp=S.player.ip;prevXp=S.player.xp;
         checkReset();rHdr();
-        setTimeout(()=>alert('DEBUG CLOUD\nstreak dans cloud: '+_dbgStreak+'\nlastStreakDate: '+_dbgDate+'\nstreak après checkReset: '+S.player.streak+'\nlastDate cloud: '+(best&&best.lastDate||'?')),800);
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
