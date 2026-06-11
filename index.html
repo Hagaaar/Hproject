@@ -657,20 +657,6 @@ const SURL='https://script.google.com/macros/s/AKfycbzOSoS7cruRVFTl4MZdwbCVrCNRT
 const KEY='cp_rlg_v9';
 const BKEY='cp_rlg_bak';
 
-// ─── DEV: set to true to preview monthly recap with mock data ───
-const DEV_RECAP=false;
-const MOCK_RECAP={
-  month:'2025-05',
-  maxStreak:12,
-  avgDailies:8.4,
-  avgGigsPerWeek:4.2,
-  tasksCompleted:287,
-  xpGained:3450,
-  xpLost:120,
-  ipGained:2180,
-  ipLost:75,
-};
-
 // ─── AUTH ───
 let pinBuffer='';
 let isAuthChecking=false;
@@ -1754,7 +1740,7 @@ function cbDragEnd(){
 
 function rCamps(){
   const pLoss=(S.weightStart&&S.weightCurrent)?Math.max(0,S.weightStart-S.weightCurrent):0;
-  const gActive=S.guitare.find(g=>!g.done);const blks={};
+  const blks={};
   
   // ── BIOMETRICS EN PREMIER ──
   const wLog=(S.weightLog||[]).slice(-10);let chartSvg='';
@@ -2506,11 +2492,6 @@ function closeMonthRecap(){
 }
 
 load();prevIp=S.player.ip;prevXp=S.player.xp;
-if(DEV_RECAP){
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app').style.pointerEvents='all';
-  showMonthRecapUI(MOCK_RECAP);
-}
 checkReset();rHdr();rDailies();
 // Sync en attente depuis dernière session → relancer
 if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
