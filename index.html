@@ -2296,7 +2296,7 @@ function _showTransferOv(html){
 function _hideTransferOv(){const ov=document.getElementById('transfer-ov');if(ov)ov.remove();}
 
 function exportData(){
-  const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  const _b=new TextEncoder().encode(JSON.stringify(S));let _s='';for(let i=0;i<_b.length;i++)_s+=String.fromCharCode(_b[i]);const code=btoa(_s);
   window._expCode=code;
   const btn=(label,fn,bg,col,border)=>'<button onclick="'+fn+'" style="width:100%;margin-top:9px;background:'+bg+';border:'+border+';color:'+col+';padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">'+label+'</button>';
   _showTransferOv(
@@ -2348,7 +2348,7 @@ function _applyImportText(raw){
     const hashIdx=cleaned.indexOf('#import=');
     if(hashIdx!==-1)cleaned=decodeURIComponent(cleaned.slice(hashIdx+8));
     else{const qIdx=cleaned.indexOf('?import=');if(qIdx!==-1)cleaned=decodeURIComponent(cleaned.slice(qIdx+8));}
-    const json=decodeURIComponent(escape(atob(cleaned)));
+    const _raw=atob(cleaned);const _u8=new Uint8Array(_raw.length);for(let i=0;i<_raw.length;i++)_u8[i]=_raw.charCodeAt(i);const json=new TextDecoder().decode(_u8);
     const d=JSON.parse(json);
     if(!d||!d.player)throw new Error('no player');
     S=d;
