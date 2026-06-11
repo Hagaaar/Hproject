@@ -2350,7 +2350,10 @@ function _applyImportText(raw){
     else{const qIdx=cleaned.indexOf('?import=');if(qIdx!==-1)cleaned=decodeURIComponent(cleaned.slice(qIdx+8));}
     const _raw=atob(cleaned);const _u8=new Uint8Array(_raw.length);for(let i=0;i<_raw.length;i++)_u8[i]=_raw.charCodeAt(i);const json=new TextDecoder().decode(_u8);
     const d=JSON.parse(json);
-    if(!d||!d.player)throw new Error('no player');
+    if(!d||typeof d!=='object')throw new Error('not an object');
+    if(!d.player||typeof d.player!=='object')throw new Error('no player');
+    if(typeof d.player.xp!=='number'||typeof d.player.ip!=='number'||typeof d.player.level!=='number')throw new Error('invalid player stats');
+    if(!Array.isArray(d.dailies)||!Array.isArray(d.weeklies))throw new Error('missing collections');
     S=d;
     localStorage.setItem(KEY,JSON.stringify(S));
     localStorage.setItem(BKEY,JSON.stringify(S));
