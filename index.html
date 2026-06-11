@@ -1218,6 +1218,8 @@ function showLevelUp(lvl){
   ov.appendChild(tChoom);
   document.body.appendChild(ov);
 
+  let _glitchRafId = null;
+
   // ── Glitch engine ────────────────────────
   setTimeout(()=>{
     const gc  = glitchCanvas.getContext('2d');
@@ -1238,6 +1240,11 @@ function showLevelUp(lvl){
     oCtx.textAlign    = 'center';
     oCtx.fillStyle    = '#00cfff';
     oCtx.fillText(TEXT, GW / 2, GH / 2);
+
+    // Canvas temporaire réutilisé pour les tranches chroma — alloué une seule fois hors boucle
+    const tmp  = document.createElement('canvas');
+    tmp.width  = GW; tmp.height = GH;
+    const tc   = tmp.getContext('2d');
 
     glitchCanvas.style.opacity = '1';
 
@@ -1291,17 +1298,20 @@ function showLevelUp(lvl){
         for (const s of slices) {
           const sy = Math.round(s.y0);
           const sh = Math.max(1, Math.round(s.y1-s.y0));
-          const tmp = document.createElement('canvas');
-          tmp.width = GW; tmp.height = sh;
-          const tc = tmp.getContext('2d');
-          tc.drawImage(ofc, 0, -sy);
+          gc.globalAlpha = s.alpha;
           if (s.r !== 255 || s.g !== 255 || s.b !== 255) {
+            // Tranche chroma : teinter via le canvas réutilisé
+            tc.clearRect(0, 0, GW, sh);
+            tc.drawImage(ofc, 0, -sy);
             tc.globalCompositeOperation = 'source-atop';
             tc.fillStyle = 'rgb('+s.r+','+s.g+','+s.b+')';
-            tc.fillRect(0,0,GW,sh);
+            tc.fillRect(0, 0, GW, sh);
+            tc.globalCompositeOperation = 'source-over';
+            gc.drawImage(tmp, 0, 0, GW, sh, s.dx, sy+s.dy, GW, sh);
+          } else {
+            // Tranche neutre : source-rect direct, aucun canvas temporaire
+            gc.drawImage(ofc, 0, sy, GW, sh, s.dx, sy+s.dy, GW, sh);
           }
-          gc.globalAlpha = s.alpha;
-          gc.drawImage(tmp, s.dx, sy+s.dy, GW, sh);
         }
         gc.globalCompositeOperation = 'source-over';
         gc.globalAlpha = 1;
@@ -1319,7 +1329,6 @@ function showLevelUp(lvl){
     function computeIdle(env){ return (100+Math.random()*300)+(1-env)*(700+Math.random()*2700); }
 
     let lastNow = null;
-    let rafId = null;
 
     function update(now) {
       if (!startTime) startTime = now;
@@ -1328,7 +1337,7 @@ function showLevelUp(lvl){
       const env = globalEnvelope(now);
 
       if (now-startTime > CLEAR_END) {
-        cancelAnimationFrame(rafId);
+        cancelAnimationFrame(_glitchRafId);
         gc.clearRect(0,0,GW,GH);
         gc.shadowColor = '#00cfff';
         gc.shadowBlur  = 30;
@@ -1376,13 +1385,13 @@ function showLevelUp(lvl){
       else slices=[];
 
       drawFrame(intensity);
-      rafId = requestAnimationFrame(update);
+      _glitchRafId = requestAnimationFrame(update);
     }
 
-    rafId = requestAnimationFrame(update);
+    _glitchRafId = requestAnimationFrame(update);
   }, 0);
 
-  const _dismiss=()=>{if(ov.parentNode)ov.remove();};
+  const _dismiss=()=>{cancelAnimationFrame(_glitchRafId);if(ov.parentNode)ov.remove();};
   ov.onclick=_dismiss;
   ov.addEventListener('touchstart',(e)=>{e.preventDefault();_dismiss();},{passive:false});
   setTimeout(_dismiss, 4000);
