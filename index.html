@@ -2446,75 +2446,6 @@ function go(tab){
   if(S.showMonthRecap&&S.lastMonthRecap){S.showMonthRecap=false;save();setTimeout(()=>showMonthRecapUI(S.lastMonthRecap),350);}
 }
 
-// ── Shop neon: JS-driven realistic glow (adapted from Ms Madi demo) ──
-let _snRaf=null,_snPhase=0,_snLastTs=null,_snInFlicker=false,_snNextFlicker=5e3,_snElapsed=0,_snGI=1,_snOn=false;
-function _snBuild(gi){
-  if(!_snOn)return;
-  const el=document.getElementById('nb-s');
-  if(!el||!el.classList.contains('on'))return;
-  const i=Math.max(0,Math.min(1.05,gi)),i2=i*i,i3=i2*i;
-  const bi=i*(2/3),bi2=bi*bi,bi3=bi2*bi;
-  
-  el.style.color = '#00cfff';
-
-  el.style.textShadow=[
-    `0 0 2px rgba(255,255,255,${+(0.95*i).toFixed(3)})`,
-    `0 0 7px rgba(0,207,255,${+(1.0*i).toFixed(3)})`,
-    `0 0 15px rgba(0,207,255,${+(0.90*i2).toFixed(3)})`,
-    `0 0 28px rgba(0,207,255,${+(0.72*i2).toFixed(3)})`,
-    `0 0 46px rgba(0,207,255,${+(0.46*i3).toFixed(3)})`,
-  ].join(',');
-
-  el.style.boxShadow=[
-    `0 0 7px rgba(0,207,255,${+(0.65*bi).toFixed(3)})`,
-    `0 0 18px rgba(0,207,255,${+(0.42*bi2).toFixed(3)})`,
-    `0 0 35px rgba(0,207,255,${+(0.22*bi3).toFixed(3)})`,
-    `inset 0 0 10px rgba(0,207,255,${+(0.55*bi).toFixed(3)})`,
-    `inset 0 0 22px rgba(0,207,255,${+(0.30*bi2).toFixed(3)})`,
-  ].join(',');
-}
-  function _snBreathe(ts){
-  if(!_snLastTs)_snLastTs=ts;
-  const dt=Math.min(ts-_snLastTs,50);_snLastTs=ts;
-  _snPhase+=dt*0.00032;_snElapsed+=dt;
-  if(!_snInFlicker){const noise=(Math.random()-0.5)*0.10;_snGI=Math.max(0.52,Math.min(1.0,0.74+0.26*(0.5+0.5*Math.sin(_snPhase))+noise));_snBuild(_snGI);}
-  if(_snElapsed>=_snNextFlicker&&!_snInFlicker){_snElapsed=0;_snNextFlicker=2e3+Math.random()*6e3;_snFlicker();}
-  _snRaf=requestAnimationFrame(_snBreathe);
-}
-function _snFlicker(){
-  _snInFlicker=true;
-  const r=Math.random();let seq;
-  if(r<0.35)seq=[[0.05,20],[0.92,28],[0.05,14],[1.0,55]];
-  else if(r<0.65){
-    seq=[];const n=2+Math.floor(Math.random()*3);
-    for(let i=0;i<n;i++){seq.push([0.05+Math.random()*.15,18+Math.random()*40]);seq.push([0.85+Math.random()*.15,28+Math.random()*55]);}
-    seq.push([1.0,80]);
-  }else{
-    seq=[];for(let v=1;v>0.08;v-=0.1+Math.random()*.08)seq.push([Math.max(0.02,v),25+Math.random()*35]);
-    seq.push([0.02,25],[0.4,18],[0.02,12],[1.0,70]);
-  }
-  _snRunSeq(seq,0,()=>{_snInFlicker=false;});
-}
-function _snRunSeq(seq,idx,done){
-  if(idx>=seq.length){done();return;}
-  _snBuild(seq[idx][0]);
-  setTimeout(()=>_snRunSeq(seq,idx+1,done),seq[idx][1]);
-}
-function initShopNeon(){
-  stopShopNeon();_snOn=true;if(window._startOpFlicker)_startOpFlicker();
-  _snLastTs=null;_snPhase=0;_snElapsed=0;_snInFlicker=true;
-  _snNextFlicker=1e3+Math.random()*2e3;
-  const pow=[[0,18],[0.95,28],[0.15,18],[1.0,32],[0.35,16],[0.0,14],[1.0,42],[0.55,18],[1.0,65]];
-  _snBuild(0);
-  _snRunSeq(pow,0,()=>{_snInFlicker=false;_snRaf=requestAnimationFrame(_snBreathe);});
-}
-function stopShopNeon(){
-  _snOn=false;if(_snRaf){cancelAnimationFrame(_snRaf);_snRaf=null;}
-  if(window._stopOpFlicker)_stopOpFlicker();
-  const el=document.getElementById('nb-s');
-  if(el){el.style.color='';el.style.textShadow='';el.style.boxShadow='';}
-}
-
 function monthName(ym){
   const m=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
   return m[parseInt(ym.slice(5,7))-1]+' · '+ym.slice(0,4);
@@ -2680,47 +2611,6 @@ function toggleStats(){
   else d.classList.remove('open');
 }
 
-// ─── SHOP OPACITY FLICKER (activé uniquement quand SHOP est actif) ───
-let _opActive=false;
-(function(){
-  const btn=document.getElementById('nb-s');
-  if(!btn)return;
-  function ease(target,dur,cb){
-    btn.style.transition='opacity '+dur+'ms ease-in-out';
-    btn.style.opacity=target;
-    setTimeout(()=>{btn.style.transition='opacity .1s';if(cb)cb();},dur+30);
-  }
-  function schedule(){
-    if(!_opActive)return;
-    setTimeout(doFlicker, 400+Math.random()*3600);
-  }
-  function doFlicker(){
-    if(!_opActive){btn.style.opacity='1';return;}
-    const dim=(0.60+Math.random()*0.12).toFixed(3);
-    const downDur=80+Math.random()*420;
-    const holdDur=60+Math.random()*640;
-    const upDur=120+Math.random()*480;
-    ease(dim,downDur,()=>{
-      setTimeout(()=>{
-        ease('1',upDur,()=>{
-          if(Math.random()<0.25){
-            const delay2=100+Math.random()*800;
-            setTimeout(()=>{
-              const dim2=(0.65+Math.random()*0.12).toFixed(3);
-              ease(dim2,60+Math.random()*180,()=>{
-                setTimeout(()=>ease('1',100+Math.random()*300,schedule),80+Math.random()*300);
-              });
-            },delay2);
-          }else{
-            schedule();
-          }
-        });
-      },holdDur);
-    });
-  }
-  window._startOpFlicker=function(){_opActive=true;schedule();};
-  window._stopOpFlicker=function(){_opActive=false;btn.style.opacity='1';};
-})();
 </script>
 </body>
 </html>
