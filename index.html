@@ -48,7 +48,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   font-family:'Rajdhani',sans-serif;
   transform:rotate(0deg);
 }
-.btn-x{display:none}
 @keyframes plusToX{
   0%    {opacity:0;transform:rotate(0deg)}
   2%    {opacity:1;transform:rotate(0deg)}
@@ -81,7 +80,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 }
 #stats-drawer.open{transform:translateX(-50%) translateY(0)}
 #hd{cursor:pointer;-webkit-user-select:none;user-select:none}
-#nb-s{}
 
 /* ─── MAIN APP ─── */
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
@@ -205,7 +203,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .gigs-acc-hdr::after{content:'';flex:1;height:1px;background:currentColor;opacity:.25}
 .gigs-acc-done{color:var(--gn)}
 .gigs-acc-pending{color:var(--cy)}
-.gig-count-badge{display:inline-block;background:var(--cy);color:#000;font-size:9px;font-weight:900;padding:1px 6px;margin-left:6px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);letter-spacing:.5px;vertical-align:middle;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .cph{display:flex;align-items:center;background:var(--y);color:#000;padding:11px 16px;margin:18px 0 15px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);font-size:14px;font-weight:800;letter-spacing:1px}
 .cph.cph-search{justify-content:space-between;padding:8px 16px;font-weight:900;letter-spacing:2px}
@@ -297,7 +294,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .wsave{background:var(--y);border:none;padding:10px 20px;color:#000;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 
 /* STATS */
-#s-st{padding-top:0px}
 .st-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(110deg,rgba(252,238,10,.12) 0%,rgba(252,238,10,.04) 100%);border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);padding:52px 14px 10px;margin-bottom:8px;margin-top:-50px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);position:relative;overflow:hidden}
 .st-hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(252,238,10,.03) 3px,rgba(252,238,10,.03) 4px);pointer-events:none}
 .st-hero-label{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--y);opacity:.7}
@@ -349,32 +345,9 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .scamp-stat:last-child{border-right:none}
 .scamp-stat-lbl{font-size:8px;font-weight:800;letter-spacing:1px;color:var(--mu)}
 .scamp-stat-val{font-size:12px;font-weight:800;color:#fff}
-.scamp-stat-val.rep{color:var(--cy);text-shadow:0 0 14px rgba(0,207,255,.8),0 0 28px rgba(0,207,255,.35)}
-.scamp-stat-val.funds{color:var(--cy);text-shadow:0 0 14px rgba(0,207,255,.8),0 0 28px rgba(0,207,255,.35)}
-.wt-chart-wrap{padding:6px 14px 10px;position:relative;z-index:2}
-.wt-chart-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--mu);margin-bottom:6px}
-.wt-chart{width:100%;height:55px}
-.wt-chart svg{width:100%;height:100%}
 
 /* STAT CHARTS */
 .st-section-title{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--cy);opacity:.5;margin:14px 0 6px}
-.st-chart-box{background:linear-gradient(110deg,rgba(14,22,31,.98) 0%,rgba(11,17,24,.95) 100%);border:1px solid rgba(0,207,255,.12);border-left:3px solid var(--cy);padding:10px 12px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);margin-bottom:7px;position:relative;overflow:hidden}
-.st-chart-box::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,207,255,.01) 3px,rgba(0,207,255,.01) 4px)}
-.scr-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;position:relative;z-index:1}
-.scr-row:last-child{margin-bottom:0}
-.scr-label{font-size:9px;font-weight:800;letter-spacing:.5px;color:var(--mu);width:26px;flex-shrink:0}
-.scr-track{flex:1;height:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);position:relative;overflow:hidden}
-.scr-fill{height:100%;position:absolute;inset-block:0;left:0;transition:width .6s}
-.scr-track-txt{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:800;color:rgba(255,255,255,.3);line-height:1;pointer-events:none}
-.scr-reward{font-size:8px;font-weight:800;color:var(--mu);white-space:nowrap;flex-shrink:0;min-width:128px;text-align:right}
-.scr-earned{color:var(--gn)!important;text-shadow:0 0 8px rgba(0,207,255,.4)}
-.st-daily-chart{padding:10px 12px 8px}
-.dc-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;position:relative;z-index:1}
-.dc-row:last-child{margin-bottom:0}
-.dc-day{font-size:7px;font-weight:800;color:var(--mu);width:16px;flex-shrink:0;text-align:right;opacity:.55}
-.dc-track{flex:1;height:6px;background:rgba(255,255,255,.04);position:relative;overflow:hidden;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%)}
-.dc-fill{height:100%;background:var(--cy);opacity:.75;position:absolute;inset-block:0;left:0;transition:width .5s}
-.dc-cnt{font-size:7px;font-weight:800;color:var(--cy);width:16px;flex-shrink:0;opacity:.8}
 
 /* ─── GIG LONG PRESS ─── */
 .gig-lp-bar{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2;}
@@ -1475,7 +1448,7 @@ function buildUI(arr,type){
     '<div class="qi'+(d.done?' dn':'')+'" id="task-'+d.id+'" onclick="tTask(\''+type+'\',\''+d.id+'\',event)">'+
       '<div class="qic"><div class="qt"><span>'+d.t+'</span></div><div class="qd">'+d.desc+'</div></div>'+
       '<div class="qi-rewards"><span class="qr">+'+d.xp+' REP'+(d.ip>0?'<br>+'+d.ip+' E$':'')+'</span></div>'+
-      '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>'
+      '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span></div></div>'
   ).join('');
 }
 function rDailies(){document.getElementById('dl').innerHTML=buildUI(S.dailies,'dailies');}
@@ -1632,7 +1605,7 @@ function exList(items,key){
   return items.map((ex,i)=>{
     return '<div class="ex'+(ex.done?' dn':'')+(ex.boss?' boss':'')+'" id="task-'+ex.id+'" onclick="tEx(\''+key+'\',\''+ex.id+'\',event)">'+
       '<div class="ex-content"><div class="et">'+ex.desc+'</div><div class="etc">// '+ex.t+'</div><div class="erw">+'+ex.xp+' REP / +'+ex.ip+' E$</div></div>'+
-      '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span><span class="btn-x">+</span></div></div>';
+      '<div class="qi-btn"><span class="btn-lbl">EXECUTED</span><span class="btn-plus">+</span></div></div>';
   }).join('');
 }
 function tEx(key,id,e){const it=S[key].find(x=>x.id===id);if(!it)return;if(!it.done)valEx(key,id,e,it);else cancelEx(key,id,e,it);}
