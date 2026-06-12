@@ -37,7 +37,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .auth-trust-lbl input:checked~.lock-open{display:block;color:var(--cy);filter:drop-shadow(0 0 4px var(--cy))}
 .auth-trust-lbl input:checked~span{color:var(--cy);opacity:1}
 
-/* ─── BTN EXECUTED → + immédiat grand → tourne en ✕ ─── */
+/* ─── BTN EXECUTED → + large immediately → rotates to ✕ ─── */
 .btn-lbl{position:absolute;opacity:1;transform:scale(1);transition:opacity 0.15s,transform 0.15s}
 .qi.dn .btn-lbl,.ex.dn .btn-lbl{opacity:0;transform:scale(0.4);transition:opacity 0.12s ease 0s,transform 0.12s ease 0s}
 .btn-plus{
@@ -631,11 +631,11 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
         <line x1="35" y1="17" x2="17" y2="35" stroke="#ff003c" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="ofb-title">HORS-LIGNE</div>
-    <div class="ofb-msg">Impossible de joindre le serveur de sync.<br>Tes données sont sauvées localement.<br><span id="ofb-retry-msg">Reconnexion automatique en cours…</span></div>
+    <div class="ofb-title">OFFLINE</div>
+    <div class="ofb-msg">Cannot reach the sync server.<br>Your data is saved locally.<br><span id="ofb-retry-msg">Automatic reconnection in progress…</span></div>
     <div class="ofb-btns">
-      <button onclick="retrySync()" class="ofb-btn ofb-retry">RÉESSAYER</button>
-      <button onclick="dismissOfflineBanner()" class="ofb-btn ofb-skip">CONTINUER HORS-LIGNE</button>
+      <button onclick="retrySync()" class="ofb-btn ofb-retry">RETRY</button>
+      <button onclick="dismissOfflineBanner()" class="ofb-btn ofb-skip">CONTINUE OFFLINE</button>
     </div>
   </div>
 </div>
@@ -813,9 +813,9 @@ const DS={
     {id:'d15',t:'NEURAL DISCONNECT',desc:'1h screen-free before sleep',done:false,xp:15,ip:5},
     {id:'d16',t:'TOTAL BLACKOUT',desc:'Full day off social media',done:false,xp:20,ip:8},
     {id:'d17',t:'NEURAL REBOOT',desc:'In bed before 23:30',done:false,xp:15,ip:5},
-    {id:'d18',t:'CHROMATIC FIELD SCAN',desc:'Faire une photo intentionnelle dans la journée (cadrage, lumière, sujet choisi)',done:false,xp:10,ip:2},
-    {id:'d19',t:'COGNITIVE WARMUP',desc:'Apprendre un mot, un fait ou un concept nouveau (5 min)',done:false,xp:10,ip:2},
-    {id:'d20',t:'ORGANIC FUEL WINDOW',desc:'Manger dans une fenêtre de 8h ou moins (intermittent léger)',done:false,xp:15,ip:5},
+    {id:'d18',t:'CHROMATIC FIELD SCAN',desc:'Take one intentional photo during the day (framing, light, chosen subject)',done:false,xp:10,ip:2},
+    {id:'d19',t:'COGNITIVE WARMUP',desc:'Learn a new word, fact or concept (5 min)',done:false,xp:10,ip:2},
+    {id:'d20',t:'ORGANIC FUEL WINDOW',desc:'Eat within an 8-hour window or less (light intermittent fasting)',done:false,xp:15,ip:5},
   ],
   weeklies:[
     {id:'w1',t:'METABOLIC OVERCLOCK',desc:'Fast for a full day',done:false,xp:80,ip:60},
@@ -832,15 +832,15 @@ const DS={
     {id:'w12',t:'CODE DEFRAG',desc:'30 minutes of cleanup, optimization or debug on active scripts',done:false,xp:50,ip:40},
     {id:'w13',t:'HARDWARE MAINTENANCE',desc:'Dust PC/PS5, clean projector filters, general chrome upkeep',done:false,xp:55,ip:45},
     {id:'w14',t:'RELICS DUSTING',desc:'Maintenance and careful cleaning of display artifacts',done:false,xp:45,ip:35},
-    {id:'w15',t:'FOOD DATA AUDIT',desc:'Vérifier et mettre à jour le suivi macro de la semaine (app meal prep, journal ou note)',done:false,xp:40,ip:30},
+    {id:'w15',t:'FOOD DATA AUDIT',desc:'Check and update weekly macro tracking (meal prep app, journal or notes)',done:false,xp:40,ip:30},
   ],
   kiroshi:[
-    {id:'ph5',t:'MICHAEL TRIBUTE FILE',desc:"Créer l'album départ Michael",done:false,xp:200,ip:200},
-    {id:'ph2',t:'CHERRY BLOSSOM PROTOCOL',desc:"Créer l'album Japon Voyage 1",done:false,xp:175,ip:175},
-    {id:'ph3',t:'SAKURA EXTRACTION',desc:"Créer l'album Japon Voyage 2",done:false,xp:175,ip:175},
-    {id:'ph6',t:'GUARDIAN PROTOCOL',desc:"Créer l'album pour les deux nièces",done:false,xp:200,ip:200},
-    {id:'ph4',t:'ATLAS OVERRIDE',desc:"Créer l'album Maroc — Deux Actes",done:false,xp:175,ip:175},
-    {id:'ph7',t:'KIROSHI MASTER ARCHIVE',desc:'Exporter, commander et recevoir tous les albums imprimés',done:false,xp:500,ip:600,boss:true},
+    {id:'ph5',t:'MICHAEL TRIBUTE FILE',desc:"Create Michael's farewell album",done:false,xp:200,ip:200},
+    {id:'ph2',t:'CHERRY BLOSSOM PROTOCOL',desc:"Create Japan Trip 1 album",done:false,xp:175,ip:175},
+    {id:'ph3',t:'SAKURA EXTRACTION',desc:"Create Japan Trip 2 album",done:false,xp:175,ip:175},
+    {id:'ph6',t:'GUARDIAN PROTOCOL',desc:"Create the album for both nieces",done:false,xp:200,ip:200},
+    {id:'ph4',t:'ATLAS OVERRIDE',desc:"Create Morocco — Two Acts album",done:false,xp:175,ip:175},
+    {id:'ph7',t:'KIROSHI MASTER ARCHIVE',desc:'Export, order and receive all printed albums',done:false,xp:500,ip:600,boss:true},
   ],
   portfolio:[
     {id:'pf1',t:'ENCRYPTION INIT',desc:'Setup InDesign and 3 valid Book files',done:false,xp:100,ip:100},
@@ -1035,7 +1035,7 @@ function _doSync(){
         setSy('synched');_syncRetry=0;_offlineDismissed=false;
         localStorage.removeItem('cp_sync_pending');
         _hideOfflineBanner();
-        if(_wasOffline){_wasOffline=false;toast('BACKUP CLOUD MIS À JOUR','win');}
+        if(_wasOffline){_wasOffline=false;toast('CLOUD BACKUP UPDATED','win');}
       }else{_onSyncFail();}
     }).catch(_onSyncFail);
 }
@@ -1047,7 +1047,7 @@ function _onSyncFail(){
     _syncRetryTmr=setTimeout(()=>{setSy('synching');_doSync();},_RETRY_DELAYS[_syncRetry++]);
   }else{
     const el=document.getElementById('ofb-retry-msg');
-    if(el)el.textContent='Sync en attente. Appuie sur RÉESSAYER.';
+    if(el)el.textContent='Sync pending. Tap RETRY.';
   }
 }
 function triggerSync(){
@@ -1060,9 +1060,9 @@ function _showOfflineBanner(){
   const el=document.getElementById('offline-banner');
   if(el)el.style.display='flex';
   const rm=document.getElementById('ofb-retry-msg');
-  if(rm)rm.textContent='Reconnexion automatique en cours…';
+  if(rm)rm.textContent='Automatic reconnection in progress…';
   const btn=document.querySelector('.ofb-retry');
-  if(btn){btn.classList.remove('retrying');btn.textContent='RÉESSAYER';}
+  if(btn){btn.classList.remove('retrying');btn.textContent='RETRY';}
 }
 function _hideOfflineBanner(){
   const el=document.getElementById('offline-banner');
@@ -1073,7 +1073,7 @@ function retrySync(){
   _offlineDismissed=false;
   if(_syncRetryTmr){clearTimeout(_syncRetryTmr);_syncRetryTmr=null;}_syncRetry=0;
   const btn=document.querySelector('.ofb-retry');
-  if(btn){btn.classList.add('retrying');btn.textContent='CONNEXION EN COURS...';}
+  if(btn){btn.classList.add('retrying');btn.textContent='CONNECTING...';}
   setSy('synching');_doSync();
 }
 
@@ -1200,7 +1200,7 @@ function showLevelUp(lvl){
     oCtx.fillStyle    = '#00cfff';
     oCtx.fillText(TEXT, GW / 2, GH / 2);
 
-    // Canvas temporaire réutilisé pour les tranches chroma — alloué une seule fois hors boucle
+    // Reusable temp canvas for chroma slices — allocated once outside the loop
     const tmp  = document.createElement('canvas');
     tmp.width  = GW; tmp.height = GH;
     const tc   = tmp.getContext('2d');
@@ -1259,7 +1259,7 @@ function showLevelUp(lvl){
           const sh = Math.max(1, Math.round(s.y1-s.y0));
           gc.globalAlpha = s.alpha;
           if (s.r !== 255 || s.g !== 255 || s.b !== 255) {
-            // Tranche chroma : teinter via le canvas réutilisé
+            // Chroma slice: tint via the reusable canvas
             tc.clearRect(0, 0, GW, sh);
             tc.drawImage(ofc, 0, -sy);
             tc.globalCompositeOperation = 'source-atop';
@@ -1864,12 +1864,12 @@ function rCamps(){
     '<button onclick="undoKiroshi()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div></div>'+
     '<div style="padding:8px 12px 10px;border-top:1px solid rgba(255,255,255,.05)">'+
-    '<div style="font-size:10px;font-weight:900;letter-spacing:2px;color:#ff9f43;margin-bottom:8px">TRI / TRAITEMENT / ARCHIVAGE</div>'+
+    '<div style="font-size:10px;font-weight:900;letter-spacing:2px;color:#ff9f43;margin-bottom:8px">SORT / PROCESS / ARCHIVE</div>'+
     '<div style="background:rgba(255,255,255,.05);height:7px;clip-path:polygon(4px 0,100% 0,100% 100%,0 100%,0 4px);margin-bottom:5px"><div style="height:100%;width:'+kpPct+'%;background:linear-gradient(to right,#fcee0a,#ff9f43);transition:width .4s"></div></div>'+
     '<div style="font-size:11px;font-weight:800;color:#ff9f43;margin-bottom:8px">'+kpDone.toLocaleString()+' / 40 000 PHOTOS</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:8px;align-items:stretch">'+
     '<input id="kp-inp" type="number" inputmode="numeric" placeholder="NB PHOTOS" min="1" style="flex:1;min-width:0;font-size:14px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(255,159,67,.06);border:1px solid rgba(255,159,67,.25);color:#ff9f43;padding:8px;font-family:Rajdhani,sans-serif;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);outline:none">'+
-    '<button onclick="logKiroshiPhotos(event)" style="background:#ff9f43;border:none;color:#000;padding:8px 14px;font-size:11px;font-weight:900;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">AJOUTER</button>'+
+    '<button onclick="logKiroshiPhotos(event)" style="background:#ff9f43;border:none;color:#000;padding:8px 14px;font-size:11px;font-weight:900;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">ADD</button>'+
     '<button onclick="undoKiroshiPhotos()" style="background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.45);color:var(--rd);padding:8px 10px;font-size:11px;font-weight:900;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:1px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">UNDO</button>'+
     '</div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:4px">'+kpMilesHtml+'</div>'+
@@ -2015,7 +2015,7 @@ const _KP_MILESTONES=[
 function logKiroshiPhotos(e){
   const inp=document.getElementById('kp-inp');
   const n=parseInt(inp?inp.value:0)||0;
-  if(n<=0){toast('ENTRE UN NOMBRE VALIDE','err');return;}
+  if(n<=0){toast('ENTER A VALID NUMBER','err');return;}
   const prev=S.kiroshiPhotos||0;
   S.kiroshiPhotos=prev+n;
   S.lastKiroshiPhotosAdded=n;
@@ -2034,7 +2034,7 @@ function logKiroshiPhotos(e){
 }
 function undoKiroshiPhotos(){
   const n=S.lastKiroshiPhotosAdded||0;
-  if(!n){toast('RIEN À ANNULER','err');return;}
+  if(!n){toast('NOTHING TO CANCEL','err');return;}
   const after=S.kiroshiPhotos||0;
   const before=Math.max(0,after-n);
   S.kiroshiPhotos=before;
@@ -2045,7 +2045,7 @@ function undoKiroshiPhotos(){
     if(m){subXP(m.xp);S.player.ip=Math.max(0,S.player.ip-m.ip);}
     S.kiroshiPhotoMilestones=S.kiroshiPhotoMilestones.filter(x=>x!==reached);
   });
-  save();rCamps();rHdr();toast('-'+n+' PHOTOS ANNULÉES','err');
+  save();rCamps();rHdr();toast('-'+n+' PHOTOS CANCELLED','err');
 }
 function undoM(){
   if(!(S.memoireWeek>0)){toast('NO SESSION TO CANCEL','err');return;}
@@ -2105,7 +2105,7 @@ function rShop(){
   const arrowEl=document.getElementById('shop-acc-arrow');
   if(arrowEl)arrowEl.style.transform=showShopItems?'rotate(180deg)':'rotate(0deg)';
 
-  // NOUVELLES CATÉGORIES ICI
+  // NEW CATEGORIES HERE
   const cats=[{id:'all',l:'ALL'},{id:'fun',l:'FUN'},{id:'gear',l:'GEAR'},{id:'body',l:'BODY'},{id:'out',l:'OUT'},{id:'travel',l:'TRAVEL'}];
 
   if(showShopItems){
@@ -2287,11 +2287,11 @@ function exportData(){
   const btn=(label,fn,bg,col,border)=>'<button onclick="'+fn+'" style="width:100%;margin-top:9px;background:'+bg+';border:'+border+';color:'+col+';padding:14px;font-size:12px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">'+label+'</button>';
   _showTransferOv(
     '<div style="color:#00cfff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">EXPORT SAVE DATA</div>'+
-    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Copie le code ci-dessous OU copie le lien<br>direct à ouvrir dans n\'importe quel navigateur.</div>'+
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:14px;line-height:1.6">Copy the code below OR copy the direct link<br>to open in any browser.</div>'+
     '<textarea id="exp-ta" readonly ontouchstart="this.select()" onclick="this.select()" style="width:100%;height:80px;background:rgba(0,0,0,.6);border:1px solid rgba(0,207,255,.3);color:#00cfff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all">'+code+'</textarea>'+
-    btn('COPIER LE CODE','_cpCode()','rgba(0,207,255,.13)','#00cfff','1px solid rgba(0,207,255,.4)')+
-    btn('COPIER LE LIEN (recommandé)','_cpLink()','#fcee0a','#000','none')+
-    btn('FERMER','_hideTransferOv()','transparent','rgba(255,255,255,.4)','1px solid rgba(255,255,255,.18)')
+    btn('COPY CODE','_cpCode()','rgba(0,207,255,.13)','#00cfff','1px solid rgba(0,207,255,.4)')+
+    btn('COPY LINK (recommended)','_cpLink()','#fcee0a','#000','none')+
+    btn('CLOSE','_hideTransferOv()','transparent','rgba(255,255,255,.4)','1px solid rgba(255,255,255,.18)')
   );
   setTimeout(()=>{const ta=document.getElementById('exp-ta');if(ta){ta.focus();ta.select();}},150);
 }
@@ -2299,32 +2299,32 @@ function _cpCode(){
   const ta=document.getElementById('exp-ta');if(!ta)return;
   const txt=ta.value;ta.select();
   (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject())
-    .then(()=>toast('CODE COPIÉ ✓','win'))
-    .catch(()=>{try{document.execCommand('copy');toast('CODE COPIÉ ✓','win');}catch(e){toast('Sélectionne et copie manuellement','err');}});
+    .then(()=>toast('CODE COPIED ✓','win'))
+    .catch(()=>{try{document.execCommand('copy');toast('CODE COPIED ✓','win');}catch(e){toast('Select and copy manually','err');}});
 }
 function _cpLink(){
   const url=location.origin+location.pathname+'#import='+encodeURIComponent(window._expCode||'');
   (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(url):Promise.reject())
-    .then(()=>toast('LIEN COPIÉ ✓ — Ouvre-le dans l\'autre contexte','win'))
-    .catch(()=>toast('Erreur copie','err'));
+    .then(()=>toast('LINK COPIED ✓ — Open it in the other context','win'))
+    .catch(()=>toast('Copy error','err'));
 }
 function importData(){
   _showTransferOv(
     '<div style="color:#00cfff;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:16px">IMPORT SAVE DATA</div>'+
-    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:16px;line-height:1.7">Appuie le bouton jaune — iOS te demandera<br>l\'autorisation de coller depuis le presse-papier.</div>'+
-    '<button onclick="_clipImport()" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">COLLER DEPUIS LE PRESSE-PAPIER</button>'+
-    '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:12px 0 6px;letter-spacing:1px">— ou colle manuellement —</div>'+
-    '<textarea id="imp-ta" placeholder="Colle le code ici..." style="width:100%;height:72px;background:rgba(0,0,0,.6);border:1px solid rgba(0,207,255,.22);color:#00cfff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
-    '<button onclick="_applyImport()" style="width:100%;margin-top:7px;background:rgba(0,207,255,.12);border:1px solid rgba(0,207,255,.28);color:#00cfff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLIQUER LE CODE</button>'+
-    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:7px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
+    '<div style="color:rgba(255,255,255,.55);font-size:11px;text-align:center;margin-bottom:16px;line-height:1.7">Tap the yellow button — iOS will ask<br>for permission to paste from clipboard.</div>'+
+    '<button onclick="_clipImport()" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">PASTE FROM CLIPBOARD</button>'+
+    '<div style="color:rgba(255,255,255,.3);font-size:10px;text-align:center;margin:12px 0 6px;letter-spacing:1px">— or paste manually —</div>'+
+    '<textarea id="imp-ta" placeholder="Paste your code here..." style="width:100%;height:72px;background:rgba(0,0,0,.6);border:1px solid rgba(0,207,255,.22);color:#00cfff;font-size:9px;padding:10px;box-sizing:border-box;font-family:monospace;resize:none;outline:none;word-break:break-all"></textarea>'+
+    '<button onclick="_applyImport()" style="width:100%;margin-top:7px;background:rgba(0,207,255,.12);border:1px solid rgba(0,207,255,.28);color:#00cfff;padding:12px;font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">APPLY CODE</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:7px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">CANCEL</button>'
   );
 }
 function _clipImport(){
   if(navigator.clipboard&&navigator.clipboard.readText){
     navigator.clipboard.readText()
-      .then(text=>{if(!text){toast('Presse-papier vide','err');return;}_applyImportText(text.trim());})
-      .catch(()=>{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}});
-  }else{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Colle manuellement dans la zone texte','err');}}
+      .then(text=>{if(!text){toast('Clipboard empty','err');return;}_applyImportText(text.trim());})
+      .catch(()=>{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Paste manually in the text area','err');}});
+  }else{const ta=document.getElementById('imp-ta');if(ta){ta.focus();toast('Paste manually in the text area','err');}}
 }
 function _applyImport(){const ta=document.getElementById('imp-ta');if(!ta)return;_applyImportText(ta.value.trim());}
 function _applyImportText(raw){
@@ -2347,20 +2347,20 @@ function _applyImportText(raw){
     checkReset();rHdr();
     const tab=document.querySelector('.nb.on');if(tab)go(tab.id.replace('nb-',''));
     const ov=document.getElementById('transfer-ov');
-    if(ov)ov.innerHTML='<div style="color:#00cfff;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNC EN COURS...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Envoi vers le cloud…</div>';
+    if(ov)ov.innerHTML='<div style="color:#00cfff;font-size:12px;font-weight:800;letter-spacing:3px;margin-bottom:14px">SYNCING...</div><div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center">Uploading to cloud…</div>';
     setSy('synching');
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),9000);
     fetch(SURL,{method:'POST',body:JSON.stringify(S),signal:ctrl.signal,headers:{'Content-Type':'text/plain;charset=utf-8'}})
       .then(r=>{clearTimeout(tid);
-        if(r.ok){setSy('synched');localStorage.removeItem('cp_sync_pending');_hideTransferOv();toast('IMPORTÉ + CLOUD MIS À JOUR ✓','win');}
-        else{_onSyncFail();_hideTransferOv();toast('IMPORTÉ — SYNC ÉCHOUÉ (données locales OK)','err');}
+        if(r.ok){setSy('synched');localStorage.removeItem('cp_sync_pending');_hideTransferOv();toast('IMPORTED + CLOUD UPDATED ✓','win');}
+        else{_onSyncFail();_hideTransferOv();toast('IMPORTED — SYNC FAILED (local data OK)','err');}
       })
-      .catch(()=>{clearTimeout(tid);_onSyncFail();_hideTransferOv();toast('IMPORTÉ — HORS LIGNE (données locales OK)','err');});
+      .catch(()=>{clearTimeout(tid);_onSyncFail();_hideTransferOv();toast('IMPORTED — OFFLINE (local data OK)','err');});
   }catch(e){
     const ov=document.getElementById('transfer-ov');
     if(ov){const el=ov.querySelector('button');if(el)el.style.background='#ff003c';}
-    toast('CODE INVALIDE — Réessaie avec un nouveau lien','err');
+    toast('INVALID CODE — Try again with a new link','err');
   }
 }
 function _checkHashImport(){
@@ -2370,10 +2370,10 @@ function _checkHashImport(){
   history.replaceState(null,'',location.pathname+location.search);
   window._pendingImport=code;
   _showTransferOv(
-    '<div style="color:#fcee0a;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">IMPORT DÉTECTÉ</div>'+
-    '<div style="color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-bottom:18px;line-height:1.7">Un code de sauvegarde a été détecté dans l\'URL.<br>Veux-tu remplacer les données actuelles ?</div>'+
-    '<button onclick="_applyImportText(window._pendingImport)" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">OUI — APPLIQUER</button>'+
-    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:9px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">ANNULER</button>'
+    '<div style="color:#fcee0a;font-size:11px;font-weight:800;letter-spacing:3px;margin-bottom:14px">IMPORT DETECTED</div>'+
+    '<div style="color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-bottom:18px;line-height:1.7">A save code was detected in the URL.<br>Do you want to replace the current data?</div>'+
+    '<button onclick="_applyImportText(window._pendingImport)" style="width:100%;background:#fcee0a;border:none;color:#000;padding:16px;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">YES — APPLY</button>'+
+    '<button onclick="_hideTransferOv()" style="width:100%;margin-top:9px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.4);padding:12px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)">CANCEL</button>'
   );
 }
 function resetAll(){
@@ -2493,21 +2493,21 @@ function closeMonthRecap(){
 
 load();prevIp=S.player.ip;prevXp=S.player.xp;
 checkReset();rHdr();rDailies();
-// Sync en attente depuis dernière session → relancer
+// Pending sync from last session → retry
 if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
-// Données locales vides (ex: iOS a effacé le localStorage) → pull silencieux automatique
+// Local data empty (e.g. iOS wiped localStorage) → silent automatic pull
 if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
 
-// autoMode=true : s'exécute au démarrage — restaure UNIQUEMENT si données locales nulles
-// autoMode=false : initié par l'utilisateur — restaure toujours le meilleur snapshot cloud
+// autoMode=true : runs at startup — restores ONLY if local data is empty
+// autoMode=false : user-initiated — always restores the best cloud snapshot
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
   fetch(SURL)
     .then(r=>r.json())
     .then(resp=>{
-      // Préférer current (dernier push) directement — sans comparaison de score
-      // Les snapshots historiques peuvent avoir un score plus élevé (plus de totalDone)
-      // et écraser des données récentes avec streak correct
+      // Prefer current (last push) directly — no score comparison
+      // Historical snapshots may have a higher score (more totalDone)
+      // and could overwrite recent data with the correct streak
       let best=null,bestScore=-1;
       function _try(d){if(!d||!d.player)return;const sc=_score(d);if(sc>bestScore){bestScore=sc;best=d;}}
       if(resp&&resp.current&&resp.current.player&&_hasMeaningfulData(resp.current)){
@@ -2522,7 +2522,7 @@ function pullFromCloud(autoMode){
       const localEmpty=!_hasMeaningfulData(S);
 
       if(autoMode&&!localEmpty){
-        // Mode auto : données locales présentes → ne rien écraser, juste syncer si besoin
+        // Auto mode: local data present → do not overwrite, just sync if needed
         setSy('synched');
         return;
       }
@@ -2538,16 +2538,16 @@ function pullFromCloud(autoMode){
         const activeTab=document.querySelector('.nb.on');
         if(activeTab)go(activeTab.id.replace('nb-',''));
         setSy('synched');_hideOfflineBanner();
-        toast(localEmpty?'DONNÉES RESTAURÉES DEPUIS LE CLOUD ✓':'BACKUP CLOUD RESTAURÉ ✓','win');
+        toast(localEmpty?'DATA RESTORED FROM CLOUD ✓':'CLOUD BACKUP RESTORED ✓','win');
       }else{
         setSy('synched');
-        if(!autoMode)toast('AUCUN BACKUP CLOUD DISPONIBLE','err');
+        if(!autoMode)toast('NO CLOUD BACKUP AVAILABLE','err');
       }
     })
     .catch(()=>{setSy('offline');if(_hasMeaningfulData(S))_showOfflineBanner();});
 }
 
-// données chargées pendant auth
+// data loaded during auth
 document.getElementById('syu').addEventListener('click',function(e){e.stopPropagation();pullFromCloud();});
 document.getElementById('hd').addEventListener('click',toggleStats);
 
