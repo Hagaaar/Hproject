@@ -1632,6 +1632,8 @@ function buildAcc(k,title,badge,content,pct){
 
 function buildBioRoadmap(pLoss){
   const milestones=S.poids,start=S.weightStart||null;
+  const maxKg=milestones.length?Math.max(...milestones.map(m=>m.kg)):20;
+  const target=start!=null?start-maxKg:null;
   let html='<div class="bio-roadmap" style="background:var(--pan);padding:0 12px 12px">';
   const rows=[milestones.slice(0,10),milestones.slice(10)];
   rows.forEach((row,rowIdx)=>{
@@ -1640,12 +1642,14 @@ function buildBioRoadmap(pLoss){
     if(rowIdx===0){
       html+='<div style="flex:0 0 56px;background:#111d28;border-right:1.5px solid #3d5570;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;min-height:58px">';
       html+='<div style="font-size:8px;font-weight:900;color:#8899aa;letter-spacing:2px;margin-bottom:4px">START</div>';
-      if(start){html+='<div style="font-size:18px;font-weight:900;color:#fcee0a;line-height:1">'+start.toFixed(1)+'</div><div style="font-size:8px;font-weight:800;color:#6b7d8f">KG</div>';}
+      if(start!=null){html+='<div style="font-size:18px;font-weight:900;color:#fcee0a;line-height:1">'+start.toFixed(1)+'</div><div style="font-size:8px;font-weight:800;color:#6b7d8f">KG</div>';}
       else{html+='<div style="font-size:10px;font-weight:800;color:#2a3d50">—</div>';}
       html+='</div>';
     }else{
-      html+='<div style="flex:0 0 56px;background:#0e1820;border-right:1.5px solid #1e3040;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;min-height:58px">';
-      html+='<div style="font-size:7px;font-weight:900;color:#253545;letter-spacing:1px;text-align:center">11-20<br>KG</div>';
+      html+='<div style="flex:0 0 56px;background:#111d28;border-right:1.5px solid #3d5570;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;min-height:58px">';
+      html+='<div style="font-size:8px;font-weight:900;color:#8899aa;letter-spacing:2px;margin-bottom:4px">FINISH</div>';
+      if(target!=null){html+='<div style="font-size:18px;font-weight:900;color:#fcee0a;line-height:1">'+target.toFixed(1)+'</div><div style="font-size:8px;font-weight:800;color:#6b7d8f">KG</div>';}
+      else{html+='<div style="font-size:10px;font-weight:800;color:#2a3d50">—</div>';}
       html+='</div>';
     }
     row.forEach(m=>{
@@ -1653,8 +1657,7 @@ function buildBioRoadmap(pLoss){
       const bg=done?(boss?'rgba(252,238,10,0.14)':'rgba(0,207,255,0.16)'):'#0e1820';
       const border=done?(boss?'#fcee0a':'#00cfff'):'#1a2a38';
       const txtC=done?(boss?'#fcee0a':'#00cfff'):'#253545';
-      html+='<div style="flex:1;background:'+bg+';border-left:1.5px solid '+border+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 1px;min-height:58px;gap:3px">';
-      html+='<div style="font-size:6.5px;font-weight:900;color:'+txtC+';text-align:center;line-height:1.1">+'+m.ip+'E$</div>';
+      html+='<div style="flex:1;background:'+bg+';border-left:1.5px solid '+border+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 1px;min-height:58px">';
       html+='<div style="font-size:10px;font-weight:900;color:'+txtC+';text-align:center;line-height:1">-'+m.kg+'KG</div>';
       html+='</div>';
     });
@@ -1843,9 +1846,9 @@ function rCamps(){
   blks.biometrie=buildAcc('biometrie','BIOMETRICS',buildSegBadge(Math.min(bioD,10),Math.min(S.poids.length,10),'#00cc55','0,204,85'),
     '<div style="background:var(--pan);padding:6px 12px 0">'+
     '<div class="wrow" style="align-items:stretch;gap:8px;">'+
-    '<button onclick="adjustW(-0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
-    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.5" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
-    '<button onclick="adjustW(0.5)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
+    '<button onclick="adjustW(-0.1)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">−</button>'+
+    '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="MASS" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.1" onblur="const v=parseFloat(this.value); if(!isNaN(v)) this.value=v.toFixed(1);" style="flex:1;min-width:0;font-size:22px;font-weight:700;text-align:center;-webkit-appearance:none;appearance:none;background:rgba(252,238,10,0.06);border-color:rgba(252,238,10,0.2)">'+
+    '<button onclick="adjustW(0.1)" ontouchstart="" style="background:rgba(252,238,10,0.08);border:1px solid rgba(252,238,10,0.25);color:var(--y);padding:0;width:44px;min-height:44px;font-size:28px;font-weight:300;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;">+</button>'+
     '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:70px;">ADD</button></div>'+
     '</div>'+
     (wLog.length>=2 ? chartSvg+buildBioRoadmap(pLoss) : ''));
