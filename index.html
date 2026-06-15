@@ -1044,7 +1044,7 @@ function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.i
 
 function _doSync(){
   if(!_hasMeaningfulData(S))return;
-  fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
+  fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true})
     .then(r=>{
       if(!r.ok){_onSyncFail();return;}
       return r.text().then(txt=>{
@@ -2555,6 +2555,14 @@ function pullFromCloud(autoMode){
 // data loaded during auth
 document.getElementById('syu').addEventListener('click',function(e){e.stopPropagation();pullFromCloud();});
 document.getElementById('hd').addEventListener('click',toggleStats);
+
+// Flush pending sync immediately when app goes to background / tab is hidden
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='hidden'&&_hasMeaningfulData(S)){
+    if(syncTmr){clearTimeout(syncTmr);syncTmr=null;}
+    _doSync();
+  }
+});
 
 let statsOpen=false;
 function toggleStats(){
