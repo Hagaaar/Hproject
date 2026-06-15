@@ -2504,15 +2504,12 @@ if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_do
 if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
 
 // autoMode=true : runs at startup — restores ONLY if local data is empty
-// autoMode=false : user-initiated — always restores the best cloud snapshot
+// autoMode=false : user-initiated — score guard still prevents downgrade
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
   fetch(SURL+'?_='+Date.now())
     .then(r=>r.json())
     .then(resp=>{
-      // Prefer current (last push) directly — no score comparison
-      // Historical snapshots may have a higher score (more totalDone)
-      // and could overwrite recent data with the correct streak
       let best=null,bestScore=-1;
       function _try(d){if(!d||!d.player)return;const sc=_score(d);if(sc>bestScore){bestScore=sc;best=d;}}
       if(resp&&resp.current&&resp.current.player&&_hasMeaningfulData(resp.current)){
@@ -2525,14 +2522,26 @@ function pullFromCloud(autoMode){
       }
 
       const localEmpty=!_hasMeaningfulData(S);
+      const localScore=_score(S);
 
-      if(autoMode&&!localEmpty){
-        // Auto mode: local data present → do not overwrite, just sync if needed
+      // ── SCORE GUARD: never overwrite local with a worse cloud snapshot ──
+      // Applies in both auto and manual mode. If cloud ≤ local, keep local
+      // and push local up to fix the stale cloud instead.
+      if(!localEmpty&&(!best||bestScore<=localScore)){
         setSy('synched');
+        if(!autoMode)toast('LOCAL DATA IS MORE RECENT — CLOUD UPDATED ✓','win');
+        setTimeout(_doSync,500); // heal stale cloud
         return;
       }
 
+      if(autoMode&&!localEmpty){
+        // Auto mode with local data: handled above (cloud was better here)
+        // Proceed to restore only if cloud is strictly better
+      }
+
       if(best&&bestScore>0){
+        // Save a pre-restore backup so the overwrite can be undone
+        if(!localEmpty)localStorage.setItem('cp_prerestore',JSON.stringify(S));
         S=best;
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
