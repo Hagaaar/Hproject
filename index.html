@@ -845,7 +845,6 @@ const DS={
     {id:'w9',t:'SECTOR VISUAL PURGE',desc:'Visual purge of the apartment — clear out the surplus',done:false,xp:50,ip:40},
     {id:'w10',t:'CHASSIS RIG MAINTENANCE',desc:'10 minutes of postural calibration — stretches and mobility',done:false,xp:40,ip:30},
     {id:'w11',t:'FLORA HYDRATION CYCLE',desc:'Watering round — keep biological organisms operational',done:false,xp:35,ip:25},
-    {id:'w12',t:'CODE DEFRAG',desc:'30 minutes of cleanup, optimization or debug on active scripts',done:false,xp:50,ip:40},
     {id:'w13',t:'HARDWARE MAINTENANCE',desc:'Dust PC/PS5, clean projector filters, general chrome upkeep',done:false,xp:55,ip:45},
     {id:'w14',t:'RELICS DUSTING',desc:'Maintenance and careful cleaning of display artifacts',done:false,xp:45,ip:35},
     {id:'w15',t:'FOOD DATA AUDIT',desc:'Check and update weekly macro tracking (meal prep app, journal or notes)',done:false,xp:40,ip:30},
@@ -1047,12 +1046,15 @@ function _doSync(){
   if(!_hasMeaningfulData(S))return;
   fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'}})
     .then(r=>{
-      if(r.ok){
-        setSy('synched');_syncRetry=0;_offlineDismissed=false;
-        localStorage.removeItem('cp_sync_pending');
-        _hideOfflineBanner();
-        if(_wasOffline){_wasOffline=false;toast('CLOUD BACKUP UPDATED','win');}
-      }else{_onSyncFail();}
+      if(!r.ok){_onSyncFail();return;}
+      return r.text().then(txt=>{
+        if(txt&&txt.includes('UPLOAD_SUCCESS')){
+          setSy('synched');_syncRetry=0;_offlineDismissed=false;
+          localStorage.removeItem('cp_sync_pending');
+          _hideOfflineBanner();
+          if(_wasOffline){_wasOffline=false;toast('CLOUD BACKUP UPDATED','win');}
+        }else{_onSyncFail();}
+      });
     }).catch(_onSyncFail);
 }
 function _onSyncFail(){
@@ -2505,7 +2507,7 @@ if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
 // autoMode=false : user-initiated — always restores the best cloud snapshot
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
-  fetch(SURL)
+  fetch(SURL+'?_='+Date.now())
     .then(r=>r.json())
     .then(resp=>{
       // Prefer current (last push) directly — no score comparison
