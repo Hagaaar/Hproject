@@ -1040,7 +1040,7 @@ function setSy(st){document.getElementById('syu').className='sync '+st;document.
 let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false;
 const _RETRY_DELAYS=[3000,6000,12000,24000,48000,90000];
 
-function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.ip||0)+((d.totalDone||0)*10);}
+function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.ip||0)+((d.totalDone||0)*10)+((d.player.streak||0)*10);}
 
 function _doSync(){
   if(!_hasMeaningfulData(S))return;
@@ -2500,8 +2500,10 @@ load();prevIp=S.player.ip;prevXp=S.player.xp;
 checkReset();rHdr();rDailies();
 // Pending sync from last session → retry
 if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
-// Local data empty (e.g. iOS wiped localStorage) → silent automatic pull
-if(!_hasMeaningfulData(S))setTimeout(()=>pullFromCloud(true),1200);
+// Always reconcile with cloud on startup (score guard decides the winner) —
+// catches cases where this device's local streak/state is stale (e.g. checkReset
+// ran against a local lastStreakDate that another device already advanced past).
+setTimeout(()=>pullFromCloud(true),1200);
 
 // autoMode=true : runs at startup — restores ONLY if local data is empty
 // autoMode=false : user-initiated — score guard still prevents downgrade
