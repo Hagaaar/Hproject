@@ -807,7 +807,7 @@ const DS={
   player:{level:1,xp:0,ip:0,streak:0},
   lastDate:'',lastStreakDate:'',lastWeekId:'',totalDone:0,daysPlayed:0,practiceWeek:0,conduiteWeek:0,iceProtocolUsed:0,iceProtocolMonth:'',
   portfolioWeek:0,memoireWeek:0,lastPortfolioXp:0,lastPortfolioIp:0,lastPortfolioDate:'',lastMemoireXp:0,lastMemoireIp:0,lastMemoireDate:'',
-  kiroshiWeek:0,lastKiroshiXp:0,lastKiroshiIp:0,lastKiroshiDate:'',kiroshiPhotos:0,lastKiroshiPhotosAdded:0,kiroshiPhotoMilestones:[],mainOrder:[],
+  kiroshiWeek:0,lastKiroshiXp:0,lastKiroshiIp:0,lastKiroshiDate:'',kiroshiPhotos:0,lastKiroshiPhotosAdded:0,kiroshiPhotoMilestones:[],mainOrder:[],lastModified:0,
   weightStart:null,weightCurrent:null,weightLog:[],mysteryPending:[],dailyTaskLog:[],streakMilestonesEarned:[],
   monthlyStats:{xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}},
   lastMonthRecap:null,showMonthRecap:false,
@@ -1000,7 +1000,7 @@ function _hasMeaningfulData(d){return d&&d.player&&(d.player.xp>0||d.player.ip>0
 function _applySnapshot(saved){
   S=JSON.parse(JSON.stringify(DS));
   if(saved.player)S.player={...S.player,...saved.player};
-  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','kiroshiWeek','lastKiroshiXp','lastKiroshiIp','lastKiroshiDate','kiroshiPhotos','lastKiroshiPhotosAdded','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','kiroshiPhotoMilestones','lastMonthRecap','showMonthRecap','iceProtocolUsed','iceProtocolMonth'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
+  ['lastDate','lastStreakDate','lastWeekId','totalDone','daysPlayed','practiceWeek','conduiteWeek','lastConduiteXp','lastConduiteIp','lastConduiteDate','portfolioWeek','memoireWeek','lastPortfolioXp','lastPortfolioIp','lastPortfolioDate','lastMemoireXp','lastMemoireIp','lastMemoireDate','kiroshiWeek','lastKiroshiXp','lastKiroshiIp','lastKiroshiDate','kiroshiPhotos','lastKiroshiPhotosAdded','weightStart','weightCurrent','weightLog','streakV','dailyTaskLog','streakMilestonesEarned','kiroshiPhotoMilestones','lastMonthRecap','showMonthRecap','iceProtocolUsed','iceProtocolMonth','lastModified'].forEach(k=>{if(saved[k]!==undefined)S[k]=saved[k];});
   if(saved.monthlyStats)S.monthlyStats={...S.monthlyStats,...saved.monthlyStats};
   if(!S.weightLog)S.weightLog=[];
   ['dailies','weeklies','portfolio','memoire','poids','guitare','conduite','kiroshi'].forEach(k=>{
@@ -1030,6 +1030,7 @@ function load(){
 }
 
 function save(){
+  S.lastModified=Date.now();
   const snap=JSON.stringify(S);
   localStorage.setItem(KEY,snap);
   if(_hasMeaningfulData(S))localStorage.setItem(BKEY,snap);
@@ -2522,27 +2523,44 @@ function pullFromCloud(autoMode){
       }
 
       const localEmpty=!_hasMeaningfulData(S);
-      const localScore=_score(S);
+      const localTs=S.lastModified||0;
+      const cloudTs=(best&&best.lastModified)||0;
+      // Snapshot of local shop before any overwrite — used for union merge
+      const localShop=(S.shop||[]).map(i=>({id:i.id,bought:!!i.bought}));
 
-      // ── SCORE GUARD: never overwrite local with a worse cloud snapshot ──
-      // Applies in both auto and manual mode. If cloud ≤ local, keep local
-      // and push local up to fix the stale cloud instead.
-      if(!localEmpty&&(!best||bestScore<=localScore)){
+      // ── TIMESTAMP GUARD: local is more recent → keep local, merge shop from cloud ──
+      // Buying items reduces IP (score), so score-based comparison was wrong.
+      // lastModified (ms timestamp set on every save) is the reliable signal.
+      if(!localEmpty&&cloudTs<=localTs){
+        // Union-merge: if cloud has a purchase local doesn't yet, apply it
+        if(best&&best.shop){
+          let merged=false;
+          S.shop=S.shop.map(item=>{
+            const ci=best.shop.find(x=>x.id===item.id);
+            if(ci&&ci.bought&&!item.bought){merged=true;return{...item,bought:true};}
+            return item;
+          });
+          if(merged){save();toast('PURCHASES SYNCED FROM CLOUD ✓','win');return;}
+        }
         setSy('synched');
         if(!autoMode)toast('LOCAL DATA IS MORE RECENT — CLOUD UPDATED ✓','win');
-        setTimeout(_doSync,500); // heal stale cloud
+        setTimeout(_doSync,500);
         return;
       }
 
-      if(autoMode&&!localEmpty){
-        // Auto mode with local data: handled above (cloud was better here)
-        // Proceed to restore only if cloud is strictly better
-      }
+      if(autoMode&&!localEmpty){setSy('synched');return;}
 
       if(best&&bestScore>0){
-        // Save a pre-restore backup so the overwrite can be undone
+        // Save pre-restore backup before overwrite
         if(!localEmpty)localStorage.setItem('cp_prerestore',JSON.stringify(S));
         S=best;
+        // Union-merge shop: never lose a purchase made locally
+        if(localShop.length){
+          S.shop=(S.shop||[]).map(item=>{
+            const li=localShop.find(x=>x.id===item.id);
+            return(li&&li.bought)?{...item,bought:true}:item;
+          });
+        }
         const snap=JSON.stringify(S);
         localStorage.setItem(KEY,snap);
         localStorage.setItem(BKEY,snap);
