@@ -263,19 +263,15 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .wbtn:active{background:rgba(252,238,10,.1)}
 .chart-wrap{background:var(--pan);padding:10px 10px 8px;margin-bottom:6px}
 .chart-empty{padding:16px;text-align:center;font-size:10px;color:var(--mu);font-weight:700;letter-spacing:2px;background:var(--pan);margin-bottom:6px}
-.roadmap{background:var(--pan);padding:8px 10px 10px}
-.roadmap-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
-.rm-sp{grid-column:span 2;height:52px;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#141b24;border:1px solid rgba(255,255,255,.11);text-align:center}
-.rm-sp .sp-lbl{display:block;font-size:7px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.38);text-transform:uppercase;line-height:1}
-.rm-sp .sp-val{display:block;font-size:16px;font-weight:700;color:#ffe600;line-height:1;margin-top:3px}
-.rm-sp .sp-unt{display:block;font-size:7px;font-weight:600;letter-spacing:1.5px;color:rgba(255,230,0,.55);margin-top:2px;line-height:1}
-.rm-sp.empty .sp-val{font-size:12px;color:#2a3d50}
-.rm-m{height:52px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#253545;background:none;border:none;position:relative;overflow:hidden}
-.rm-m.boss{color:#1e2e1e}
-.rm-m.reached{color:#00d4ff}
-.rm-m.reached::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#00d4ff}
-.rm-m.boss.reached{color:#fcee0a}
-.rm-m.boss.reached::before{background:#fcee0a}
+.roadmap{background:var(--pan);padding:10px 12px 12px}
+.bio-prog-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
+.bio-prog-ep{display:flex;flex-direction:column;gap:1px}
+.bio-prog-ep-lbl{font-size:8px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.35);text-transform:uppercase}
+.bio-prog-ep-val{font-size:17px;font-weight:800;color:#ffe600;line-height:1}
+.bio-prog-unit{font-size:9px;font-weight:700;color:rgba(255,230,0,.6);margin-left:2px;letter-spacing:1px}
+.bio-prog-track{height:8px;background:rgba(255,255,255,.07);clip-path:polygon(4px 0,100% 0,100% 100%,0 100%,0 4px);overflow:hidden;margin-bottom:8px}
+.bio-prog-fill{height:100%;background:linear-gradient(to right,#00cfff,#00ff88);transition:width .5s}
+.bio-prog-lost{text-align:center;font-size:20px;font-weight:900;color:#00cfff;letter-spacing:2px;text-shadow:0 0 10px rgba(0,207,255,.25)}
 
 /* SHOP */
 .shop-filters{display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:18px}
@@ -914,7 +910,6 @@ const DS={
     {id:'sm',t:'UNKNOWN MILITECH STASH',desc:'Mystery box - random rewards',cost:75,cat:'fun'},
     {id:'f1',t:'BRAINDANCE SESSION',desc:'2h of guilt-free gaming',cost:100,cat:'fun'},
     {id:'f2',t:'PREMIUM NIBBLES RATION',desc:'New toy or treat for Jiji',cost:150,cat:'fun'},
-    {id:'f3',t:'SYNTH-MEAT DELIVERY',desc:'Order a treat meal (sushi, pizza...)',cost:200,cat:'fun'},
     {id:'f4',t:'TACTICAL TABLETOP SIM',desc:'Buy a board game',cost:350,cat:'fun'},
     {id:'f5',t:'ENTERTAINMENT MODULE',desc:'Buy a standard video game',cost:400,cat:'fun'},
     {id:'f6',t:'COLLECTOR MODULE',desc:'Buy a collector edition video game',cost:700,cat:'fun'},
@@ -1008,6 +1003,8 @@ function _applySnapshot(saved){
   });
   if(saved.shop&&Array.isArray(saved.shop))S.shop=S.shop.map(def=>{const sv=saved.shop.find(x=>x.id===def.id);return sv?{...def,bought:!!sv.bought}:def;});
   if(saved.mysteryPending)S.mysteryPending=saved.mysteryPending;
+  if(saved.treatMealPending)S.treatMealPending=saved.treatMealPending;
+  if(saved.treatMealUnlocked)S.treatMealUnlocked=saved.treatMealUnlocked;
   if(saved.mainOrder&&Array.isArray(saved.mainOrder)&&saved.mainOrder.length)S.mainOrder=saved.mainOrder;
   if(saved.consumed&&Array.isArray(saved.consumed))S.consumed=saved.consumed;
 }
@@ -1653,22 +1650,18 @@ function buildBioRoadmap(pLoss){
   const milestones=S.poids,start=S.weightStart||null;
   const maxKg=milestones.length?Math.max(...milestones.map(m=>m.kg)):20;
   const target=start!=null?start-maxKg:null;
-  const sp=(lbl,val)=>{
-    const empty=val==null;
-    return '<div class="rm-sp'+(empty?' empty':'')+'"><span class="sp-lbl">'+lbl+'</span>'
-      +'<span class="sp-val">'+(val!=null?val.toFixed(1):'—')+'</span>'
-      +(!empty?'<span class="sp-unt">KG</span>':'')+'</div>';
-  };
-  const bm=(m)=>{
-    const reached=m.done||pLoss>=m.kg;
-    return '<div class="rm-m'+(m.boss?' boss':'')+(reached?' reached':'')+'">-'+m.kg+'</div>';
-  };
-  return '<div class="roadmap"><div class="roadmap-grid">'
-    +sp('START',start)
-    +milestones.slice(0,10).map(bm).join('')
-    +milestones.slice(10).map(bm).join('')
-    +sp('FINISH',target)
-    +'</div></div>';
+  const pct=Math.min(100,start!=null?(pLoss/maxKg*100):0);
+  const startStr=start!=null?start.toFixed(1)+'<span class="bio-prog-unit">KG</span>':'—';
+  const finStr=target!=null?target.toFixed(1)+'<span class="bio-prog-unit">KG</span>':'—';
+  const lostStr=pLoss>0?('-'+pLoss.toFixed(1)+' KG'):'— KG';
+  return '<div class="roadmap">'
+    +'<div class="bio-prog-head">'
+    +'<div class="bio-prog-ep"><span class="bio-prog-ep-lbl">START</span><span class="bio-prog-ep-val">'+startStr+'</span></div>'
+    +'<div class="bio-prog-ep" style="text-align:right"><span class="bio-prog-ep-lbl">FINISH</span><span class="bio-prog-ep-val">'+finStr+'</span></div>'
+    +'</div>'
+    +'<div class="bio-prog-track"><div class="bio-prog-fill" style="width:'+pct.toFixed(1)+'%"></div></div>'
+    +'<div class="bio-prog-lost">'+lostStr+'</div>'
+    +'</div>';
 }
 
 
@@ -1930,6 +1923,16 @@ function logW(e){
   if(S.weightLog.length>30)S.weightLog=S.weightLog.slice(-30);
   const loss=Math.max(0,(S.weightStart||v)-v);
   S.poids.forEach(m=>{if(!m.done&&loss>=m.kg){m.done=true;addXP(m.xp);S.player.ip+=m.ip;showGain(m.xp,m.ip,e);}});
+  // Treat meal reward: one per 0.5kg lost below initial weight
+  if(!S.treatMealUnlocked)S.treatMealUnlocked=[];
+  if(!S.treatMealPending)S.treatMealPending=[];
+  const tmReached=Math.floor(loss/0.5);
+  for(let m=1;m<=tmReached;m++){
+    if(!S.treatMealUnlocked.includes(m)){
+      S.treatMealUnlocked.push(m);
+      S.treatMealPending.push({uid:'tm_'+Date.now()+'_'+Math.random().toString(36).slice(2),milestone:m,kgLost:(m*0.5).toFixed(1)});
+    }
+  }
   save();rCamps();rHdr();toast('BIOMETRICS UPDATED');
 }
 function logG(min,e){
@@ -2089,11 +2092,14 @@ function rShop(){
   const searchQ=searchInput?searchInput.value.toLowerCase().trim():'';
   const isNumSearch=/^\d+$/.test(searchQ);
   const searchNum=parseInt(searchQ,10);
-  const bought=S.shop.filter(s=>s.bought),mp=S.mysteryPending||[];
+  const bought=S.shop.filter(s=>s.bought),mp=S.mysteryPending||[],tp=S.treatMealPending||[];
   let ph='',h='';
 
-  if(bought.length>0||mp.length>0){
+  if(bought.length>0||mp.length>0||tp.length>0){
     ph+='<div class="sh-sect">PURCHASED</div>';
+    tp.forEach(r=>{
+      ph+='<div class="shi-b" data-tmid="'+r.uid+'" onclick="useTreatMeal(\''+r.uid+'\')"><div class="shi-info"><div class="shin">Treat yourself to a very good restaurant or order something special</div><div class="shic">TREAT MEAL — -'+r.kgLost+' KG REWARD</div></div><button class="ubtn">USE</button></div>';
+    });
     mp.forEach(r=>{
       const isErr=r.type==='error';
       if(isErr){
@@ -2199,6 +2205,21 @@ function useMystery(uid){
   S.mysteryPending.splice(idx,1);
   save();rShop();rHdr();
   if(r.type==='error'){showBadLuckOverlay();}else{showUsedOverlay(r.desc);}
+}
+
+function useTreatMeal(uid){
+  const el=document.querySelector('[data-tmid="'+uid+'"]');
+  const idx=(S.treatMealPending||[]).findIndex(r=>r.uid===uid);
+  if(idx===-1)return;
+  const r=S.treatMealPending[idx];
+  if(el)el.classList.add('using');
+  setTimeout(()=>{
+    if(!S.consumed)S.consumed=[];
+    S.consumed.push({id:'tm_'+r.uid,t:'TREAT MEAL',desc:'Treat yourself to a very good restaurant or order something special',usedAt:Date.now()});
+    S.treatMealPending.splice(idx,1);
+    save();rShop();
+  },3120);
+  showUsedOverlay('TREAT MEAL ACTIVATED');
 }
 
 function buildSegs(done,total){
