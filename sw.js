@@ -1,4 +1,4 @@
-const CACHE = 'hproject-v14';
+const CACHE = 'hproject-v15';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {
