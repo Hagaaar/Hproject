@@ -1,22 +1,25 @@
 const CACHE = 'hproject-v15';
-const ASSETS = ['/'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// Network-first : toujours tenter le réseau, cache en fallback offline
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  // Navigation requests (index.html) : toujours réseau, jamais cache
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+  // Autres assets : network-first, cache en fallback offline
   e.respondWith(
     fetch(e.request)
       .then(res => {
