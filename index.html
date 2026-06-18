@@ -1845,6 +1845,7 @@ function rCamps(){
     '<input class="winp" type="number" inputmode="decimal" id="winp" placeholder="KG" value="'+(S.weightCurrent?S.weightCurrent.toFixed(1):'')+'" step="0.1" onblur="const v=parseFloat(this.value);if(!isNaN(v))this.value=v.toFixed(1);">'+
     '<button class="wbtn" onclick="adjustW(0.1)" ontouchstart="">+</button>'+
     '<button class="wsave" onclick="logW(event)" style="padding:10px 14px;font-size:14px;flex-shrink:0;min-width:64px;">ADD</button></div>'+
+    (S.weightStart?'<div style="margin-top:6px;text-align:right"><button onclick="resetWeight()" style="background:none;border:none;color:rgba(255,0,60,.5);font-size:9px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:1.5px;padding:2px 4px">RESET WEIGHT DATA</button></div>':'')+
     '</div>'+
     (wLog.length>=2 ? chartSvg : '<div class="chart-empty">LOG AT LEAST 2 ENTRIES TO SEE CHART</div>')+
     buildBioRoadmap(pLoss));
@@ -1910,6 +1911,14 @@ function rCamps(){
   document.getElementById('cl').innerHTML=h;
 }
 
+function resetWeight(){
+  showConfirm('RESET WEIGHT DATA','<div style="font-size:15px;font-weight:700;color:var(--mu);text-align:center;line-height:1.6">All weight history and milestones will be cleared.<br>The next entry will become the new starting weight.</div>',()=>{
+    S.weightStart=null;S.weightCurrent=null;S.weightLog=[];
+    S.treatMealUnlocked=[];S.treatMealPending=[];
+    S.poids.forEach(m=>{m.done=false;});
+    save();rCamps();rHdr();toast('WEIGHT DATA RESET');
+  },'RESET');
+}
 function adjustW(delta){
   const inp=document.getElementById('winp');
   const cur=parseFloat(inp.value)||S.weightCurrent||80;
