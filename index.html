@@ -780,7 +780,8 @@ function submitPin(){
         setTimeout(()=>{
           screen.style.display='none';
           _checkHashImport();
-          if(!_hasMeaningfulData(S))pullFromCloud(true);
+          rHdr();rDailies();
+          pullFromCloud(true);
         },450);
       },2500);
     }else{
@@ -2561,8 +2562,9 @@ function pullFromCloud(autoMode){
       const localShop=(S.shop||[]).map(i=>({id:i.id,bought:!!i.bought}));
 
       // ── TIMESTAMP GUARD: local is more recent → keep local, merge shop from cloud ──
-      // Buying items reduces IP (score), so score-based comparison was wrong.
-      // lastModified (ms timestamp set on every save) is the reliable signal.
+      // lastModified (ms timestamp) is the reliable signal.
+      // On iOS, deleting the PWA icon does NOT clear localStorage, so stale local
+      // data must not block a fresher cloud restore — only block if local is genuinely newer.
       if(!localEmpty&&cloudTs<=localTs){
         // Union-merge: if cloud has a purchase local doesn't yet, apply it
         if(best&&best.shop){
@@ -2579,8 +2581,6 @@ function pullFromCloud(autoMode){
         setTimeout(_doSync,500);
         return;
       }
-
-      if(autoMode&&!localEmpty){setSy('synched');return;}
 
       if(best&&bestScore>0){
         // Save pre-restore backup before overwrite
