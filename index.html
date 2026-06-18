@@ -2537,11 +2537,12 @@ if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_do
 // ran against a local lastStreakDate that another device already advanced past).
 setTimeout(()=>pullFromCloud(true),1200);
 
-// autoMode=true : runs at startup — restores ONLY if local data is empty
-// autoMode=false : user-initiated — score guard still prevents downgrade
+// autoMode=true  : startup — timestamp guard active (local newer → keep local)
+// autoMode=false : user-initiated — bypass timestamp guard, always restore if cloud has data
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
-  fetch(SURL+'?_='+Date.now())
+  // credentials:'omit' + mode:'cors' required for Safari ITP / cross-origin GAS redirects
+  fetch(SURL+'?_='+Date.now(),{mode:'cors',credentials:'omit',redirect:'follow'})
     .then(r=>r.json())
     .then(resp=>{
       let best=null,bestScore=-1;
@@ -2558,15 +2559,13 @@ function pullFromCloud(autoMode){
       const localEmpty=!_hasMeaningfulData(S);
       const localTs=S.lastModified||0;
       const cloudTs=(best&&best.lastModified)||0;
-      // Snapshot of local shop before any overwrite — used for union merge
       const localShop=(S.shop||[]).map(i=>({id:i.id,bought:!!i.bought}));
 
-      // ── TIMESTAMP GUARD: local is more recent → keep local, merge shop from cloud ──
-      // lastModified (ms timestamp) is the reliable signal.
-      // On iOS, deleting the PWA icon does NOT clear localStorage, so stale local
-      // data must not block a fresher cloud restore — only block if local is genuinely newer.
-      if(!localEmpty&&cloudTs<=localTs){
-        // Union-merge: if cloud has a purchase local doesn't yet, apply it
+      // ── TIMESTAMP GUARD (startup only) ──
+      // checkReset() always calls save() which bumps lastModified to "now", making local
+      // appear newer than cloud even on a fresh/stale load. Only apply this guard in
+      // autoMode so the user-initiated pull can always force a cloud restore.
+      if(autoMode&&!localEmpty&&cloudTs<=localTs){
         if(best&&best.shop){
           let merged=false;
           S.shop=S.shop.map(item=>{
@@ -2577,16 +2576,13 @@ function pullFromCloud(autoMode){
           if(merged){save();toast('PURCHASES SYNCED FROM CLOUD ✓','win');return;}
         }
         setSy('synched');
-        if(!autoMode)toast('LOCAL DATA IS MORE RECENT — CLOUD UPDATED ✓','win');
         setTimeout(_doSync,500);
         return;
       }
 
       if(best&&bestScore>0){
-        // Save pre-restore backup before overwrite
         if(!localEmpty)localStorage.setItem('cp_prerestore',JSON.stringify(S));
         S=best;
-        // Union-merge shop: never lose a purchase made locally
         if(localShop.length){
           S.shop=(S.shop||[]).map(item=>{
             const li=localShop.find(x=>x.id===item.id);
