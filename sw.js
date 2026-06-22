@@ -1,4 +1,4 @@
-const CACHE = 'hproject-v15';
+const CACHE = 'hproject-v16';
 
 self.addEventListener('install', e => {
   self.skipWaiting();

@@ -487,10 +487,10 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 #month-recap::after{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(252,238,10,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0}
 .mrc-wrap{width:100%;max-width:430px;position:relative;z-index:1}
 .mrc-scan{position:fixed;left:0;right:0;height:2px;top:-2px;background:var(--cy);box-shadow:0 0 14px 4px var(--cy),0 0 32px 8px rgba(0,207,255,.35);animation:mrcScanDown .55s cubic-bezier(.4,0,1,1) forwards;z-index:100}
-.mrc-header{display:flex;align-items:stretch;justify-content:space-between;width:100%;min-height:88px;animation:mrcRevealUp .4s .1s ease-out both}
-.mrc-year{display:flex;align-items:center;padding:0 20px;font-size:28px;font-weight:300;color:var(--mu);letter-spacing:8px;flex:1}
-.mrc-month-block{padding:14px 20px 14px 12px;display:flex;align-items:center;justify-content:flex-end;animation:mrcGlitchIn .7s .3s ease-out both}
-.mrc-month-name{font-size:48px;font-weight:900;color:var(--cy);line-height:.9;letter-spacing:-1px;text-shadow:0 0 30px rgba(0,207,255,.5),0 0 60px rgba(0,207,255,.2)}
+.mrc-header{display:flex;align-items:stretch;justify-content:space-between;width:100%;min-height:100px;animation:mrcRevealUp .4s .1s ease-out both}
+.mrc-year{display:flex;align-items:center;padding:0 20px;font-size:14px;font-weight:300;color:var(--mu);letter-spacing:8px;flex:1;opacity:.55}
+.mrc-month-block{padding:14px 22px 14px 18px;display:flex;align-items:center;justify-content:flex-end;background:rgba(0,207,255,.07);border-left:1px solid rgba(0,207,255,.18);animation:mrcGlitchIn .7s .3s ease-out both}
+.mrc-month-name{font-size:80px;font-weight:900;color:var(--cy);line-height:.9;letter-spacing:-2px;text-shadow:0 0 30px rgba(0,207,255,.5),0 0 60px rgba(0,207,255,.2)}
 .mrc-streak{margin:10px 12px 0;border:1px solid rgba(252,238,10,.2);border-left:4px solid var(--y);background:linear-gradient(110deg,rgba(252,238,10,.06) 0%,rgba(252,238,10,.01) 100%);padding:12px 14px 10px;position:relative;overflow:hidden;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);animation:mrcRevealUp .4s .45s ease-out both}
 .mrc-streak::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(252,238,10,.018) 3px,rgba(252,238,10,.018) 4px);pointer-events:none}
 .mrc-streak-lbl{font-size:9px;font-weight:800;letter-spacing:3px;color:var(--y);opacity:.6;margin-bottom:4px;position:relative;z-index:1}
@@ -500,6 +500,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .mrc-streak-bar-wrap{position:relative;z-index:1;height:4px;background:rgba(252,238,10,.1);clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);margin-bottom:5px;overflow:hidden}
 .mrc-streak-bar-fill{height:100%;background:linear-gradient(90deg,var(--y),rgba(252,238,10,.7));animation:mrcBarGrow .8s .9s cubic-bezier(.4,0,.2,1) both}
 .mrc-streak-foot{font-size:8px;font-weight:700;color:var(--y);opacity:.4;text-align:right;position:relative;z-index:1;letter-spacing:1px}
+.mrc-streak-badge{position:absolute;top:10px;right:12px;font-size:8px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:3px 8px;z-index:2;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .mrc-missions-hero{padding:24px 12px 12px;text-align:center;position:relative;animation:mrcRevealUp .4s .6s ease-out both}
 .mrc-missions-lbl{font-size:11px;font-weight:800;letter-spacing:6px;color:var(--mu);opacity:.6;margin-bottom:6px;display:flex;align-items:center;gap:10px;justify-content:center}
 .mrc-missions-lbl::before,.mrc-missions-lbl::after{content:'';flex:1;max-width:60px;height:1px;background:rgba(255,255,255,.08)}
@@ -2452,8 +2453,9 @@ function showMonthRecapUI(data){
   const totalDays=daysInMonth(ym);
   const netXp=data.xpGained-data.xpLost,netIp=data.ipGained-data.ipLost;
   const streakPct=Math.round(data.maxStreak/totalDays*100);
-  const dailyPct=Math.min(100,Math.round(data.avgDailies/20*100));
-  const gigPct=Math.min(100,Math.round(data.avgGigsPerWeek/15*100));
+  const dailyPct=Math.min(100,Math.round(data.avgDailies/12*100));
+  const gigPct=Math.min(100,Math.round(data.avgGigsPerWeek/7*100));
+  const streakLabel=streakPct>=90?'PERFECT RUN':streakPct>=70?'SOLID MONTH':streakPct>=40?'ROUGH MONTH':'CRITICAL';
   const repRef=Math.max(data.xpGained,1),ipRef=Math.max(data.ipGained,1);
   const repLostPct=Math.min(100,Math.round(data.xpLost/repRef*100));
   const repNetPct=Math.min(100,Math.max(0,Math.round(netXp/repRef*100)));
@@ -2477,9 +2479,9 @@ function showMonthRecapUI(data){
   wrap.innerHTML=
     '<div class="mrc-scan"></div>'
     +'<div class="mrc-header"><div class="mrc-year">'+year+'</div><div class="mrc-month-block"><div class="mrc-month-name">'+monthStr+'</div></div></div>'
-    +'<div class="mrc-streak"><div class="mrc-streak-lbl">LONGEST STREAK</div><div class="mrc-streak-main"><div class="mrc-streak-num">'+data.maxStreak+'</div><div class="mrc-streak-unit">DAYS</div></div><div class="mrc-streak-bar-wrap"><div class="mrc-streak-bar-fill" style="width:'+streakPct+'%"></div></div><div class="mrc-streak-foot">'+streakPct+'% OF '+monthStr+'</div></div>'
+    +'<div class="mrc-streak"><div class="mrc-streak-lbl">LONGEST STREAK</div><div class="mrc-streak-badge">'+streakLabel+'</div><div class="mrc-streak-main"><div class="mrc-streak-num">'+data.maxStreak+'</div><div class="mrc-streak-unit">DAYS</div></div><div class="mrc-streak-bar-wrap"><div class="mrc-streak-bar-fill" style="width:'+streakPct+'%"></div></div><div class="mrc-streak-foot">'+streakPct+'% OF '+monthStr+'</div></div>'
     +'<div class="mrc-missions-hero"><div class="mrc-missions-lbl">MISSIONS</div><div class="mrc-missions-count">'+data.tasksCompleted+'</div><div class="mrc-missions-sub">ACCOMPLISHED</div></div>'
-    +'<div class="mrc-gauges"><div class="mrc-gauge"><div class="mrc-gauge-arc">'+arc(dailyPct,'var(--cy)','rgba(0,207,255,.1)')+'<div class="mrc-gauge-center-txt"><div class="mrc-gauge-val" style="color:var(--cy)">'+data.avgDailies+'</div><div class="mrc-gauge-denom">/ 20</div></div></div><div class="mrc-gauge-name">AVG DAILIES / DAY</div><div class="mrc-gauge-pct" style="color:var(--cy)">'+dailyPct+'%</div></div><div class="mrc-gauge"><div class="mrc-gauge-arc">'+arc(gigPct,'#c084fc','rgba(192,132,252,.1)')+'<div class="mrc-gauge-center-txt"><div class="mrc-gauge-val" style="color:#c084fc">'+data.avgGigsPerWeek+'</div><div class="mrc-gauge-denom">/ 15</div></div></div><div class="mrc-gauge-name">AVG GIGS / WEEK</div><div class="mrc-gauge-pct" style="color:#c084fc">'+gigPct+'%</div></div></div>'
+    +'<div class="mrc-gauges"><div class="mrc-gauge"><div class="mrc-gauge-arc">'+arc(dailyPct,'var(--cy)','rgba(0,207,255,.1)')+'<div class="mrc-gauge-center-txt"><div class="mrc-gauge-val" style="color:var(--cy)">'+data.avgDailies+'</div><div class="mrc-gauge-denom">/ 12</div></div></div><div class="mrc-gauge-name">AVG DAILIES / DAY</div><div class="mrc-gauge-pct" style="color:var(--cy)">'+dailyPct+'%</div></div><div class="mrc-gauge"><div class="mrc-gauge-arc">'+arc(gigPct,'#c084fc','rgba(192,132,252,.1)')+'<div class="mrc-gauge-center-txt"><div class="mrc-gauge-val" style="color:#c084fc">'+data.avgGigsPerWeek+'</div><div class="mrc-gauge-denom">/ 7</div></div></div><div class="mrc-gauge-name">AVG GIGS / WEEK</div><div class="mrc-gauge-pct" style="color:#c084fc">'+gigPct+'%</div></div></div>'
     +'<div class="mrc-eco"><div class="mrc-eco-block"><div class="mrc-eco-title">REP</div>'+ecoRow('GAINED',100,'var(--gn)','+'+data.xpGained)+ecoRow('BURNED',repLostPct,'var(--rd)','-'+data.xpLost)+ecoRow('NET',repNetPct,'var(--cy)',(netXp>=0?'+':'')+netXp)+'</div><div class="mrc-eco-sep"></div><div class="mrc-eco-block"><div class="mrc-eco-title">E$</div>'+ecoRow('GAINED',100,'var(--gn)','+'+data.ipGained)+ecoRow('BURNED',ipLostPct,'var(--rd)','-'+data.ipLost)+ecoRow('NET',ipNetPct,'var(--cy)',(netIp>=0?'+':'')+netIp)+'</div></div>'
     +'<button class="mrc-close-btn" onclick="closeMonthRecap()">// CLOSE DEBRIEF //</button>';
 
