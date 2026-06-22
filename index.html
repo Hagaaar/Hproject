@@ -309,7 +309,8 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .st-hero{position:relative;overflow:hidden;border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);margin-bottom:8px;margin-top:-30px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);background:#0b1118}
 .st-hero-img{width:100%;display:block}
 .st-hero-overlay{position:absolute;top:0;left:0;padding:26px 16px 14px}
-.st-hero-label{font-size:9px;font-weight:800;letter-spacing:2px;color:#000;opacity:.85}
+.st-hero-label{font-size:28px;font-weight:900;letter-spacing:3px;color:#000;line-height:1}
+.st-hero-sublabel{font-size:10px;font-weight:700;letter-spacing:1px;color:#000;opacity:.7;margin-top:2px}
 .st-hero-lv{font-size:80px;font-weight:900;color:#000;line-height:.9}
 .st-kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .st-kpi{background:linear-gradient(135deg,rgba(20,29,38,.95) 0%,rgba(11,17,24,1) 100%);border:1px solid rgba(0,207,255,.2);border-top:2px solid var(--cy);padding:8px 10px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);position:relative;overflow:hidden}
@@ -2255,7 +2256,7 @@ function rStats(){
   const maxC=Math.max(1,...mLog.map(e=>e.count));
   const monthLabel=ym.replace('-','.');
   const barMaxH=44;
-  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-lv">'+p.level+'</div></div></div>';
+  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-sublabel">LEVEL /</div><div class="st-hero-lv">'+p.level+'</div></div></div>';
   h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div>';
   h+='<div style="display:flex;gap:2px;align-items:flex-end;padding:0 0 4px;margin-bottom:16px">';
   for(let day=1;day<=daysInMonth;day++){
