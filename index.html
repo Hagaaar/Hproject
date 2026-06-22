@@ -2488,8 +2488,18 @@ function showMonthRecapUI(data){
 }
 
 function showMonthRecapManual(){
-  if(S.lastMonthRecap)showMonthRecapUI(S.lastMonthRecap);
-  else toast('NO MONTHLY DATA YET','err');
+  const ym=today().slice(0,7);
+  const ms=S.monthlyStats||{};
+  const log=(S.dailyTaskLog||[]).filter(e=>e.d.startsWith(ym));
+  const days=log.length;
+  const avgD=days>0?Math.round((log.reduce((s,e)=>s+e.count,0)/days)*10)/10:0;
+  const wkDone=ms.weeklyDone||{};
+  const wkKeys=Object.keys(wkDone);
+  const wkTotal=wkKeys.reduce((s,k)=>s+wkDone[k],0);
+  const avgG=wkKeys.length>0?Math.round((wkTotal/wkKeys.length)*10)/10:0;
+  showMonthRecapUI({month:ym,maxStreak:ms.maxStreak||0,avgDailies:avgD,avgGigsPerWeek:avgG,
+    tasksCompleted:ms.tasksCompleted||0,xpGained:ms.xpGained||0,xpLost:ms.xpLost||0,
+    ipGained:ms.ipGained||0,ipLost:ms.ipLost||0});
 }
 
 function closeMonthRecap(){
