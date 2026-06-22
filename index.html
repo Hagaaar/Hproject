@@ -105,9 +105,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   0%,100%{background:#b0001a;box-shadow:0 0 5px rgba(255,0,60,.6),0 0 12px rgba(255,0,60,.22)}
   50%{background:#ff2a52;box-shadow:0 0 10px rgba(255,0,60,1),0 0 22px rgba(255,0,60,.55),0 0 36px rgba(255,0,60,.15)}
 }
-.hlv{display:flex;flex-direction:column;gap:2px;margin-bottom:0;line-height:1}
-.hlv-lbl{font-size:10px;font-weight:700;opacity:.8;letter-spacing:.5px;color:#000;line-height:1}
-.hlv-val{font-size:17px;font-weight:900;color:#000;line-height:1}
+.hlv{font-size:10px;font-weight:700;opacity:.8;margin-bottom:0;letter-spacing:.5px;color:#000;line-height:1}
 .h1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px}
 .hname{font-size:38px;font-weight:700;line-height:1}
 .hip-container{display:flex;align-items:baseline;gap:6px}
@@ -588,7 +586,7 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
   <div id="hd">
     <div class="sync synched" id="syu"><span id="sytx">SYNCHED</span><span class="sdot"></span></div>
     <div class="htop">PLAYER ID</div>
-    <div class="hlv" id="hlv"><span class="hlv-lbl">CORPO // LEVEL</span><span class="hlv-val">1</span></div>
+    <div class="hlv" id="hlv">CORPO // LEVEL 1</div>
     <div class="h1">
       <span class="hname">H</span>
       <div class="hip-container">
@@ -1420,7 +1418,7 @@ function subXP(xp){
 
 function rHdr(){
   const p=S.player,need=p.level*100,pct=Math.min(100,Math.round(p.xp/need*100));
-  document.getElementById('hlv').innerHTML='<span class="hlv-lbl">CORPO // LEVEL</span><span class="hlv-val">'+p.level+'</span>';
+  document.getElementById('hlv').innerHTML='CORPO // LEVEL <span style="font-size:17px;font-weight:900;vertical-align:baseline">'+p.level+'</span>';
   document.getElementById('hsk-val').textContent=(p.streak||0);
   document.getElementById('xbf').style.width=pct+'%';
   document.getElementById('hxm').textContent=need;
