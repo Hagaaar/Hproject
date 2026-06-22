@@ -1036,7 +1036,7 @@ function save(){
 }
 function setSy(st){document.getElementById('syu').className='sync '+st;document.getElementById('sytx').textContent=st.toUpperCase();}
 
-let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false;
+let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false,_bootTs=0;
 const _RETRY_DELAYS=[3000,6000,12000,24000,48000,90000];
 
 function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.ip||0)+((d.totalDone||0)*10)+((d.player.streak||0)*10);}
@@ -2529,6 +2529,7 @@ function closeMonthRecap(){
 }
 
 load();prevIp=S.player.ip;prevXp=S.player.xp;
+_bootTs=S.lastModified||0; // capture real disk timestamp BEFORE checkReset stamps save()
 checkReset();rHdr();rDailies();
 // Pending sync from last session → retry
 if(localStorage.getItem('cp_sync_pending')&&_hasMeaningfulData(S))setTimeout(_doSync,1500);
@@ -2557,7 +2558,9 @@ function pullFromCloud(autoMode){
       }
 
       const localEmpty=!_hasMeaningfulData(S);
-      const localTs=S.lastModified||0;
+      // For auto-startup pulls use _bootTs (pre-checkReset), not S.lastModified which
+      // checkReset() already stamped to now — that would falsely make cloud look stale.
+      const localTs=(autoMode&&_bootTs)?_bootTs:(S.lastModified||0);
       const cloudTs=(best&&best.lastModified)||0;
       const localShop=(S.shop||[]).map(i=>({id:i.id,bought:!!i.bought}));
 
