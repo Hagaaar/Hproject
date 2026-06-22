@@ -313,7 +313,6 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .st-hero-sublabel{font-size:10px;font-weight:700;letter-spacing:1px;color:#000;opacity:.7;line-height:1}
 .st-hero-lv-wrap{position:relative}
 .st-hero-lv{font-size:120px;font-weight:900;line-height:.9;color:#fff;mix-blend-mode:destination-out}
-.st-hero-lv-bevel{position:absolute;inset:0;font-size:120px;font-weight:900;line-height:.9;color:transparent;pointer-events:none;text-shadow:-2px -2px 1px rgba(255,255,255,.3),3px 4px 5px rgba(0,0,0,.95)}
 .st-kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .st-kpi{background:linear-gradient(135deg,rgba(20,29,38,.95) 0%,rgba(11,17,24,1) 100%);border:1px solid rgba(0,207,255,.2);border-top:2px solid var(--cy);padding:8px 10px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);position:relative;overflow:hidden}
 .st-kpi::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,207,255,.02) 3px,rgba(0,207,255,.02) 4px);pointer-events:none}
@@ -2263,7 +2262,7 @@ function rStats(){
   const maxC=Math.max(1,...mLog.map(e=>e.count));
   const monthLabel=ym.replace('-','.');
   const barMaxH=44;
-  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-sublabel">LEVEL /</div><div class="st-hero-lv-wrap"><div class="st-hero-lv">'+p.level+'</div><div class="st-hero-lv-bevel">'+p.level+'</div></div></div></div>';
+  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-sublabel">LEVEL /</div><div class="st-hero-lv-wrap"><div class="st-hero-lv">'+p.level+'</div></div></div></div>';
   h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div>';
   h+='<div style="display:flex;gap:2px;align-items:flex-end;padding:0 0 4px;margin-bottom:16px">';
   for(let day=1;day<=daysInMonth;day++){
