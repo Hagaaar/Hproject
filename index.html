@@ -306,12 +306,14 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .wsave{background:var(--y);border:none;padding:10px 20px;color:#000;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 
 /* STATS */
-.st-hero{position:relative;overflow:hidden;border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);margin-bottom:8px;margin-top:-30px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);background:#0b1118}
+.st-hero{position:relative;overflow:hidden;border:1px solid rgba(252,238,10,.4);border-left:4px solid var(--y);margin-bottom:8px;margin-top:-30px;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);background:#0b1118;isolation:isolate}
 .st-hero-img{width:100%;display:block}
 .st-hero-overlay{position:absolute;top:0;left:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:1px}
 .st-hero-label{font-size:28px;font-weight:900;letter-spacing:3px;color:#000;line-height:1}
 .st-hero-sublabel{font-size:10px;font-weight:700;letter-spacing:1px;color:#000;opacity:.7;line-height:1}
-.st-hero-lv{font-size:120px;font-weight:900;color:var(--cy);line-height:.9}
+.st-hero-lv-wrap{position:relative}
+.st-hero-lv{font-size:120px;font-weight:900;color:#fff;line-height:.9;mix-blend-mode:destination-out}
+.st-hero-lv-stroke{position:absolute;inset:0;font-size:120px;font-weight:900;line-height:.9;color:transparent;-webkit-text-stroke:2px var(--cy);pointer-events:none;text-shadow:0 0 10px rgba(0,207,255,.5)}
 .st-kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .st-kpi{background:linear-gradient(135deg,rgba(20,29,38,.95) 0%,rgba(11,17,24,1) 100%);border:1px solid rgba(0,207,255,.2);border-top:2px solid var(--cy);padding:8px 10px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);position:relative;overflow:hidden}
 .st-kpi::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,207,255,.02) 3px,rgba(0,207,255,.02) 4px);pointer-events:none}
@@ -2261,7 +2263,7 @@ function rStats(){
   const maxC=Math.max(1,...mLog.map(e=>e.count));
   const monthLabel=ym.replace('-','.');
   const barMaxH=44;
-  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-sublabel">LEVEL /</div><div class="st-hero-lv">'+p.level+'</div></div></div>';
+  let h='<div class="st-hero"><img class="st-hero-img" src="player.png" alt="" onerror="this.style.opacity=\'0\'"><div class="st-hero-overlay"><div class="st-hero-label">CORPO</div><div class="st-hero-sublabel">LEVEL /</div><div class="st-hero-lv-wrap"><div class="st-hero-lv">'+p.level+'</div><div class="st-hero-lv-stroke">'+p.level+'</div></div></div></div>';
   h+='<div class="st-section-title">DAILY ACTIVITY — '+monthLabel+'</div>';
   h+='<div style="display:flex;gap:2px;align-items:flex-end;padding:0 0 4px;margin-bottom:16px">';
   for(let day=1;day<=daysInMonth;day++){
