@@ -1050,7 +1050,9 @@ function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.i
 
 function _doSync(){
   if(!_hasMeaningfulData(S))return;
-  fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true})
+  const _ctrl=new AbortController();const _t=setTimeout(()=>_ctrl.abort(),12000);
+  fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow',signal:_ctrl.signal})
+    .finally(()=>clearTimeout(_t))
     .then(r=>{
       if(!r.ok){_onSyncFail();return;}
       return r.text().then(txt=>{
