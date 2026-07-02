@@ -12,6 +12,9 @@
  */
 
 var SECRET_PIN = "48960"; // ← ton PIN
+var MAX_ROWS = 300; // cap l'historique : au-delà, doGet() doit lire/parser chaque ligne
+                     // à chaque sync, donc une feuille non bornée ralentit (et finit par
+                     // timeout) tous les appareils, en particulier sur réseau mobile
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -94,15 +97,23 @@ function doPost(e) {
     ];
     sheet.appendRow(row);
 
-    // Style de la nouvelle ligne
+    // Style de la nouvelle ligne (un seul appel setBackground + un seul setFontColors
+    // au lieu de 5 appels Range séparés — chaque appel Sheets coûte du temps d'exécution,
+    // et c'est ce budget qui manque le plus quand le script tourne à froid)
     var lr = sheet.getLastRow();
     var r  = sheet.getRange(lr, 1, 1, 12);
     r.setBackground(lr % 2 === 0 ? '#0f1923' : '#141d26');
-    r.setFontColor('#e0e0e0');
-    sheet.getRange(lr, 3).setFontColor('#fcee0a');   // XP  → jaune
-    sheet.getRange(lr, 4).setFontColor('#00f0ff');   // IP  → cyan
-    sheet.getRange(lr, 10).setFontColor('#00f0ff').setFontWeight('bold'); // Score
-    sheet.getRange(lr, 11).setFontColor('#00ff66').setFontWeight('bold'); // OK
+    r.setFontColors([[
+      '#e0e0e0','#e0e0e0','#fcee0a','#00f0ff','#e0e0e0',
+      '#e0e0e0','#e0e0e0','#e0e0e0','#e0e0e0','#00f0ff','#00ff66','#e0e0e0'
+    ]]);
+    sheet.getRange(lr, 10, 1, 2).setFontWeight('bold'); // Score + Statut
+
+    // Purge des lignes les plus anciennes au-delà de MAX_ROWS pour garder doGet() rapide
+    var dataRows = lr - 1;
+    if (dataRows > MAX_ROWS) {
+      sheet.deleteRows(2, dataRows - MAX_ROWS);
+    }
 
     return ContentService.createTextOutput('UPLOAD_SUCCESS')
       .setMimeType(ContentService.MimeType.TEXT);

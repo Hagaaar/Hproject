@@ -1043,13 +1043,21 @@ function save(){
 }
 function setSy(st){document.getElementById('syu').className='sync '+st;document.getElementById('sytx').textContent=st.toUpperCase();}
 
-let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false,_bootTs=0;
+let _syncRetry=0,_syncRetryTmr=null,_offlineDismissed=false,_wasOffline=false,_bootTs=0,_lastSyncedSnap=null;
 const _RETRY_DELAYS=[3000,6000,12000,24000,48000,90000];
 
 function _score(d){if(!d||!d.player)return 0;return (d.player.xp||0)+(d.player.ip||0)+((d.totalDone||0)*10)+((d.player.streak||0)*10);}
 
+// Snapshot used to detect no-op syncs (excludes lastModified, which changes on every save()
+// even when nothing meaningful did). iOS backgrounds/foregrounds PWAs constantly, and each
+// hide event forces an immediate sync — without this guard that hammers the GAS backend with
+// duplicate uploads, slowing it down and making genuine syncs more likely to time out.
+function _snapForCompare(s){const c={...s};delete c.lastModified;return JSON.stringify(c);}
+
 function _doSync(){
   if(!_hasMeaningfulData(S))return;
+  const snap=_snapForCompare(S);
+  if(snap===_lastSyncedSnap){setSy('synched');return;}
   const _ctrl=new AbortController();const _t=setTimeout(()=>_ctrl.abort(),12000);
   fetch(SURL,{method:'POST',body:JSON.stringify(S),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow',signal:_ctrl.signal})
     .finally(()=>clearTimeout(_t))
@@ -1057,7 +1065,7 @@ function _doSync(){
       if(!r.ok){_onSyncFail();return;}
       return r.text().then(txt=>{
         if(txt&&txt.includes('UPLOAD_SUCCESS')){
-          setSy('synched');_syncRetry=0;_offlineDismissed=false;
+          setSy('synched');_syncRetry=0;_offlineDismissed=false;_lastSyncedSnap=snap;
           localStorage.removeItem('cp_sync_pending');
           _hideOfflineBanner();
           if(_wasOffline){_wasOffline=false;toast('CLOUD BACKUP UPDATED','win');}
@@ -2538,7 +2546,9 @@ setTimeout(()=>pullFromCloud(true),1200);
 function pullFromCloud(autoMode){
   if(!autoMode){document.getElementById('sytx').textContent='PULLING...';setSy('synching');}
   // credentials:'omit' + mode:'cors' required for Safari ITP / cross-origin GAS redirects
-  fetch(SURL+'?_='+Date.now(),{mode:'cors',credentials:'omit',redirect:'follow'})
+  const _pctrl=new AbortController();const _pt=setTimeout(()=>_pctrl.abort(),15000);
+  fetch(SURL+'?_='+Date.now(),{mode:'cors',credentials:'omit',redirect:'follow',signal:_pctrl.signal})
+    .finally(()=>clearTimeout(_pt))
     .then(r=>r.json())
     .then(resp=>{
       let best=null,bestScore=-1;
@@ -2591,6 +2601,7 @@ function pullFromCloud(autoMode){
         localStorage.setItem(KEY,snap);
         localStorage.setItem(BKEY,snap);
         localStorage.removeItem('cp_sync_pending');
+        _lastSyncedSnap=_snapForCompare(S);
         prevIp=S.player.ip;prevXp=S.player.xp;
         checkReset();rHdr();
         const activeTab=document.querySelector('.nb.on');
