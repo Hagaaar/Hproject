@@ -14,6 +14,23 @@
 var SECRET_PIN = "48960"; // ← ton PIN
 var MAX_ROWS   = 100;     // nombre de lignes d'historique à conserver (hors header)
 
+// ─── MAINTENANCE MANUELLE ──────────────────────────────────────────────────────
+// À lancer UNE FOIS à la main depuis l'éditeur (menu ▶ Exécuter → trimSyncSheetNow)
+// pour purger immédiatement un historique déjà accumulé au-delà de MAX_ROWS, sans
+// attendre le prochain sync (la purge automatique dans doPost prend ensuite le relais).
+function trimSyncSheetNow() {
+  var sheet = _sheet();
+  var lastRow = sheet.getLastRow();
+  var headerRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
+  var dataRows = lastRow - headerRow + 1;
+  if (dataRows > MAX_ROWS) {
+    sheet.deleteRows(headerRow, dataRows - MAX_ROWS);
+    Logger.log('Purgé : ' + (dataRows - MAX_ROWS) + ' lignes supprimées, ' + MAX_ROWS + ' conservées.');
+  } else {
+    Logger.log('Rien à purger (' + dataRows + ' lignes, sous la limite de ' + MAX_ROWS + ').');
+  }
+}
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function _score(d) {
@@ -172,8 +189,12 @@ function doGet(e) {
     }
 
     // ── Lecture des lignes (on saute la ligne de header) ──
-    var startRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
-    var numRows  = lastRow - startRow + 1;
+    // Bornée à MAX_ROWS même si la feuille n'a pas encore été purgée (ex: juste après le
+    // déploiement, avant le premier POST qui déclenche deleteRows) — sinon doGet() reste
+    // lent sur tout l'historique existant et continue de provoquer des timeouts.
+    var headerRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
+    var startRow  = Math.max(headerRow, lastRow - MAX_ROWS + 1);
+    var numRows   = lastRow - startRow + 1;
     if (numRows <= 0) {
       return ContentService.createTextOutput(JSON.stringify({ current: null, snapshots: [] }))
         .setMimeType(ContentService.MimeType.JSON);
