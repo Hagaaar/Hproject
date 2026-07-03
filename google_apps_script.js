@@ -1,5 +1,5 @@
 /**
- * H PROJECT — Google Apps Script v2
+ * H PROJECT — Google Apps Script v4
  *
  * DÉPLOIEMENT :
  * 1. script.google.com → ton projet → remplace TOUT le code par ceci
@@ -12,9 +12,7 @@
  */
 
 var SECRET_PIN = "48960"; // ← ton PIN
-var MAX_ROWS = 300; // cap l'historique : au-delà, doGet() doit lire/parser chaque ligne
-                     // à chaque sync, donc une feuille non bornée ralentit (et finit par
-                     // timeout) tous les appareils, en particulier sur réseau mobile
+var MAX_ROWS   = 100;     // nombre de lignes d'historique à conserver (hors header)
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -77,9 +75,28 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.TEXT);
     }
 
-    // ── Écriture ──
     var sheet = _sheet();
     _headers(sheet);
+
+    // ── GARDE ANTI-RÉGRESSION ──
+    // totalDone est un compteur cumulatif qui ne peut que monter dans le temps.
+    // Si un appareil oublié (cache obsolète, vieil onglet jamais rechargé)
+    // pousse un état avec un totalDone INFÉRIEUR à celui déjà enregistré,
+    // c'est forcément une donnée périmée : on l'ignore silencieusement au lieu
+    // d'écraser le cloud avec un retour en arrière.
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      var lastJson = sheet.getRange(lastRow, 12).getValue();
+      try {
+        var lastState = JSON.parse(lastJson);
+        if (lastState && (obj.totalDone || 0) < (lastState.totalDone || 0)) {
+          return ContentService.createTextOutput('UPLOAD_SUCCESS')
+            .setMimeType(ContentService.MimeType.TEXT);
+        }
+      } catch(_) {}
+    }
+
+    // ── Écriture ──
     var p   = obj.player;
     var row = [
       new Date(),
@@ -97,22 +114,22 @@ function doPost(e) {
     ];
     sheet.appendRow(row);
 
-    // Style de la nouvelle ligne (un seul appel setBackground + un seul setFontColors
-    // au lieu de 5 appels Range séparés — chaque appel Sheets coûte du temps d'exécution,
-    // et c'est ce budget qui manque le plus quand le script tourne à froid)
+    // Style de la nouvelle ligne
     var lr = sheet.getLastRow();
     var r  = sheet.getRange(lr, 1, 1, 12);
     r.setBackground(lr % 2 === 0 ? '#0f1923' : '#141d26');
-    r.setFontColors([[
-      '#e0e0e0','#e0e0e0','#fcee0a','#00f0ff','#e0e0e0',
-      '#e0e0e0','#e0e0e0','#e0e0e0','#e0e0e0','#00f0ff','#00ff66','#e0e0e0'
-    ]]);
-    sheet.getRange(lr, 10, 1, 2).setFontWeight('bold'); // Score + Statut
+    r.setFontColor('#e0e0e0');
+    sheet.getRange(lr, 3).setFontColor('#fcee0a').setNumberFormat('0');   // XP  → jaune
+    sheet.getRange(lr, 4).setFontColor('#00f0ff').setNumberFormat('0');   // IP  → cyan
+    sheet.getRange(lr, 10).setFontColor('#00f0ff').setFontWeight('bold').setNumberFormat('0'); // Score
+    sheet.getRange(lr, 11).setFontColor('#00ff66').setFontWeight('bold'); // OK
 
-    // Purge des lignes les plus anciennes au-delà de MAX_ROWS pour garder doGet() rapide
-    var dataRows = lr - 1;
-    if (dataRows > MAX_ROWS) {
-      sheet.deleteRows(2, dataRows - MAX_ROWS);
+    // ── PURGE : garde uniquement les MAX_ROWS dernières lignes ──
+    // Évite que le JSON (colonne L) ou le nombre de lignes ne grossisse
+    // indéfiniment au fil des mois. Seule la dernière ligne compte vraiment
+    // pour la restauration ; les anciennes ne servent qu'à l'historique.
+    if (lr > MAX_ROWS + 1) {
+      sheet.deleteRows(2, lr - (MAX_ROWS + 1));
     }
 
     return ContentService.createTextOutput('UPLOAD_SUCCESS')
@@ -132,7 +149,6 @@ function doGet(e) {
     var lastRow = sheet.getLastRow();
 
     // ── Fallback : ancien format (1 ligne, colonne B = JSON brut) ──
-    // Si la feuille a 1 seule ligne sans header "DATE / HEURE"
     if (lastRow === 1) {
       var cell = sheet.getRange(1, 2).getValue();
       if (cell && typeof cell === 'string' && cell.indexOf('"player"') !== -1) {
