@@ -1,5 +1,5 @@
 /**
- * H PROJECT — Google Apps Script v2
+ * H PROJECT — Google Apps Script v4
  *
  * DÉPLOIEMENT :
  * 1. script.google.com → ton projet → remplace TOUT le code par ceci
@@ -12,6 +12,24 @@
  */
 
 var SECRET_PIN = "48960"; // ← ton PIN
+var MAX_ROWS   = 100;     // nombre de lignes d'historique à conserver (hors header)
+
+// ─── MAINTENANCE MANUELLE ──────────────────────────────────────────────────────
+// À lancer UNE FOIS à la main depuis l'éditeur (menu ▶ Exécuter → trimSyncSheetNow)
+// pour purger immédiatement un historique déjà accumulé au-delà de MAX_ROWS, sans
+// attendre le prochain sync (la purge automatique dans doPost prend ensuite le relais).
+function trimSyncSheetNow() {
+  var sheet = _sheet();
+  var lastRow = sheet.getLastRow();
+  var headerRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
+  var dataRows = lastRow - headerRow + 1;
+  if (dataRows > MAX_ROWS) {
+    sheet.deleteRows(headerRow, dataRows - MAX_ROWS);
+    Logger.log('Purgé : ' + (dataRows - MAX_ROWS) + ' lignes supprimées, ' + MAX_ROWS + ' conservées.');
+  } else {
+    Logger.log('Rien à purger (' + dataRows + ' lignes, sous la limite de ' + MAX_ROWS + ').');
+  }
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -69,14 +87,27 @@ function doPost(e) {
     }
     var score = _score(obj);
     if (score <= 0) {
-      // Données nulles : refus silencieux (ne rien écrire)
       return ContentService.createTextOutput('UPLOAD_SUCCESS')
         .setMimeType(ContentService.MimeType.TEXT);
     }
 
-    // ── Écriture ──
     var sheet = _sheet();
     _headers(sheet);
+
+    // ── GARDE ANTI-RÉGRESSION ──
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      var lastJson = sheet.getRange(lastRow, 12).getValue();
+      try {
+        var lastState = JSON.parse(lastJson);
+        if (lastState && (obj.totalDone || 0) < (lastState.totalDone || 0)) {
+          return ContentService.createTextOutput('UPLOAD_SUCCESS')
+            .setMimeType(ContentService.MimeType.TEXT);
+        }
+      } catch(_) {}
+    }
+
+    // ── Écriture ──
     var p   = obj.player;
     var row = [
       new Date(),
@@ -94,15 +125,18 @@ function doPost(e) {
     ];
     sheet.appendRow(row);
 
-    // Style de la nouvelle ligne
     var lr = sheet.getLastRow();
     var r  = sheet.getRange(lr, 1, 1, 12);
     r.setBackground(lr % 2 === 0 ? '#0f1923' : '#141d26');
     r.setFontColor('#e0e0e0');
-    sheet.getRange(lr, 3).setFontColor('#fcee0a');   // XP  → jaune
-    sheet.getRange(lr, 4).setFontColor('#00f0ff');   // IP  → cyan
-    sheet.getRange(lr, 10).setFontColor('#00f0ff').setFontWeight('bold'); // Score
-    sheet.getRange(lr, 11).setFontColor('#00ff66').setFontWeight('bold'); // OK
+    sheet.getRange(lr, 3).setFontColor('#fcee0a').setNumberFormat('0');
+    sheet.getRange(lr, 4).setFontColor('#00f0ff').setNumberFormat('0');
+    sheet.getRange(lr, 10).setFontColor('#00f0ff').setFontWeight('bold').setNumberFormat('0');
+    sheet.getRange(lr, 11).setFontColor('#00ff66').setFontWeight('bold');
+
+    if (lr > MAX_ROWS + 1) {
+      sheet.deleteRows(2, lr - (MAX_ROWS + 1));
+    }
 
     return ContentService.createTextOutput('UPLOAD_SUCCESS')
       .setMimeType(ContentService.MimeType.TEXT);
@@ -120,8 +154,6 @@ function doGet(e) {
     var sheet  = _sheet();
     var lastRow = sheet.getLastRow();
 
-    // ── Fallback : ancien format (1 ligne, colonne B = JSON brut) ──
-    // Si la feuille a 1 seule ligne sans header "DATE / HEURE"
     if (lastRow === 1) {
       var cell = sheet.getRange(1, 2).getValue();
       if (cell && typeof cell === 'string' && cell.indexOf('"player"') !== -1) {
@@ -144,9 +176,9 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // ── Lecture des lignes (on saute la ligne de header) ──
-    var startRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
-    var numRows  = lastRow - startRow + 1;
+    var headerRow = (sheet.getRange(1,11).getValue() === 'STATUT') ? 2 : 1;
+    var startRow  = Math.max(headerRow, lastRow - MAX_ROWS + 1);
+    var numRows   = lastRow - startRow + 1;
     if (numRows <= 0) {
       return ContentService.createTextOutput(JSON.stringify({ current: null, snapshots: [] }))
         .setMimeType(ContentService.MimeType.JSON);
@@ -159,12 +191,11 @@ function doGet(e) {
     var currentScore = 0;
     var snapshots    = [];
 
-    // Parcourir du plus récent (bas) au plus ancien (haut)
     for (var i = data.length - 1; i >= 0; i--) {
       var row    = data[i];
-      var status = row[10]; // col K
-      var json   = row[11]; // col L
-      var ts     = row[0];  // col A
+      var status = row[10];
+      var json   = row[11];
+      var ts     = row[0];
 
       if (status !== 'OK' || !json) continue;
 
@@ -174,14 +205,12 @@ function doGet(e) {
         var sc = row[9] || _score(state);
         var tsStr = ts instanceof Date ? ts.toISOString() : String(ts);
 
-        // current = ligne la plus récente valide (première trouvée en descendant)
         if (!current) {
           current      = state;
           currentTs    = tsStr;
           currentScore = sc;
         }
 
-        // snapshots = 30 derniers
         if (snapshots.length < 30) {
           snapshots.push({ ts: tsStr, score: sc, data: state });
         }
