@@ -538,7 +538,24 @@ body{font-family:'Rajdhani',sans-serif;font-size:16px;text-transform:uppercase;l
 .mrc-monthly-btn{width:100%;background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.3);color:var(--cy);padding:14px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:2px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%);transition:background .15s}
 .mrc-monthly-btn:active{background:rgba(0,207,255,.16)}
 </style>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(reg=>{reg.addEventListener('updatefound',()=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){setTimeout(()=>window.location.reload(),400);}});});});}</script>
+<script>
+if('serviceWorker' in navigator){
+  // Force-check for a new SW on every page load (contourne la limite 24h de Safari)
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    reg.update();
+    // controllerchange se déclenche quand skipWaiting+claim activent le nouveau SW
+    let _reloading=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(!_reloading){_reloading=true;window.location.reload();}
+    });
+  });
+  // Re-vérifier aussi quand l'app revient au premier plan (retour depuis une autre app)
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')
+      navigator.serviceWorker.ready.then(r=>r.update());
+  });
+}
+</script>
 </head>
 <body>
 
