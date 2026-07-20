@@ -1158,6 +1158,8 @@ function checkReset(){
         tasksCompleted:ms.tasksCompleted||0,xpGained:ms.xpGained||0,xpLost:ms.xpLost||0,ipGained:ms.ipGained||0,ipLost:ms.ipLost||0};
       S.monthlyStats={xpGained:0,xpLost:0,ipGained:0,ipLost:0,tasksCompleted:0,maxStreak:0,weeklyDone:{}};
       S.showMonthRecap=true;
+      // Streak reset to 0 at the start of every calendar month
+      S.player.streak=0;S.streakMilestonesEarned=[];
     }
     if(S.lastStreakDate&&S.lastStreakDate!==td&&!wasYesterday(S.lastStreakDate)){S.player.streak=0;S.streakMilestonesEarned=[];}
     S.dailies.forEach(d=>d.done=false);S.lastDate=td;
